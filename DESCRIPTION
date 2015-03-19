@@ -1,0 +1,14 @@
+Package: flow
+Type: Package
+Title: Dominant Flow Analysis
+Version: 0.1
+Date: 2015-03-17
+Authors@R: c( person("Timothee", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")))
+Description: compute and plot a dominant flow analysis
+License: CC0
+LazyData: TRUE
+Depends: R (>= 2.10)
+Imports: reshape2,
+    sp
+Suggests: knitr
+VignetteBuilder: knitr
