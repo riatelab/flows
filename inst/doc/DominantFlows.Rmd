@@ -9,9 +9,20 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-## Here we go...
+## The method
+Dominant Flows Analysis establishes a hierarchy between nodes.
+Used in geography it shows the influence of the distance and barrier effects on 
+regionalisation.  
 
+## Data
+Data used here are residential migrations between *communes* of the Lot *département* from 2003 to 2008. 
 
+## How to use the package
+First case :   
+`i` is dominated by `j` when:  
+
+* `i` sends its biggest flow to `j`  
+* `j` receives more flows than `i`
 
 ```{r, fig.show='hold', fig.width = 7, fig.height=7}
 library(flow)
@@ -23,15 +34,38 @@ dom1<- flowDom(mat = MRE46,
                j = "CODGEO",
                fij = "NBFLUX_C08_POP05P")
 
+head(dom1)
+
+plotflowDom(fdom = dom1, spdf = COM46, id = "INSEE_COM")
+title("Residential Dominant Flows")
+```
+
+Second case :   
+`i` is dominated by `j` when:    
+
+* `i` sends at least 50 % of its flows to `j`   
+* `j` receives more flows than `i`
+
+```{r, fig.show='hold', fig.width = 7, fig.height=7}
+
 dom2 <- flowDom(mat = MRE46,
                 i = "DCRAN",
                 j = "CODGEO",
                 fij = "NBFLUX_C08_POP05P",
-                k = 0.3)
+                k = 0.5)
 
+plotflowDom(fdom = dom2, spdf = COM46, id = "INSEE_COM")
+title("Residential Dominant Flows (50% flows threshold)")
+```
 
+It is possible to add the names of dominant centers :
 
+```{r, fig.show='hold', fig.width = 7, fig.height=7}
 
 plotflowDom(fdom = dom2, spdf = COM46, id = "INSEE_COM", name = "NOM_COM")
-
+title("Residential Dominant Flows (50% flows threshold)")
 ```
+
+
+
+
