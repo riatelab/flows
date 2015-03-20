@@ -66,6 +66,7 @@ flowDom <- function(mat, i, j, fij, k = NULL){
   maxOut <- apply(fullMat, 1, max)
   DOM <- matrix(data = 0, nrow = dimMat, ncol = dimMat,
                 dimnames = list(rownames(fullMat),colnames(fullMat) ))
+  pb <- txtProgressBar(min=0, max=dimMat, style=3)
   if(!is.null(k)){
     for (i in 1:dimMat){
       for (j in 1:dimMat)
@@ -76,6 +77,7 @@ flowDom <- function(mat, i, j, fij, k = NULL){
           DOM[i,j] <- (fullMat[i,j] / sumOut[i])
         }
       }
+      setTxtProgressBar(pb, i)
     }
   } else {
     for (i in 1:dimMat){
@@ -87,6 +89,7 @@ flowDom <- function(mat, i, j, fij, k = NULL){
           DOM[i,j] <- (fullMat[i,j] / sumOut[i])
         }
       }
+      setTxtProgressBar(pb, i)
     }
   }
   X <- reshape2::melt(DOM)
@@ -94,8 +97,15 @@ flowDom <- function(mat, i, j, fij, k = NULL){
   X$i<-as.character(X$i)
   X$j<-as.character(X$j)
   X <- X[X$dom > 0, ]
+  X <- merge(X, mat, by =c("i","j"), all.x = T)
+  sumInAndOut <- data.frame(id = colnames(fullMat), sumIn = sumIn, sumOut = sumOut)
+  X <- merge(X, sumInAndOut, by.x = "i", by.y = "id", all.x = T)
+  X <- merge(X, sumInAndOut, by.x = "j", by.y = "id", all.x = T, suffixes = c('I','J' ))
+  close(pb)
   return(X)
 }
+
+
 
 
 #' @title Plot dominant flows
@@ -125,7 +135,15 @@ flowDom <- function(mat, i, j, fij, k = NULL){
 #' @export
 plotflowDom <- function(fdom, spdf, id, name = NULL ){
   pts <- data.frame(sp::coordinates(spdf),spdf@data)
+
+  sumi <- unique(fdom[,c("i","sumInI")])
+  sumj <- unique(fdom[,c("j","sumInJ")])
+  names(sumj) <- c("i", "sumInI")
+  sumij <- unique(rbind(sumi,sumj))
+
   names(pts)[1:2] <- c("X", "Y")
+  pts <- merge(pts, sumij[,c("i", "sumInI")], by.x = id, by.y = "i", all.x = T)
+
   fdom <- merge(fdom, pts, by.x = "i", by.y = id, all.x = T,
                 suffixes = c("i","j"))
   fdom <- merge(fdom, pts, by.x = "j", by.y = id, all.x = T,
@@ -133,17 +151,29 @@ plotflowDom <- function(fdom, spdf, id, name = NULL ){
 
   listI <- unique(fdom$i)
   listJ <- unique(fdom$j)
-  x <- data.frame(pts, d = pts$INSEE_COM %in% listI, D = pts$INSEE_COM %in% listJ,
-                  col = NA, pch = NA, cex = NA)
+  x <- data.frame(pts, d = pts[,id] %in% listI, D = pts[,id] %in% listJ,
+                  col = NA, pch = NA, cex = pts$sumInI)
+
+  bbbox <- spdf@bbox
+  x1 <- bbbox[1]
+  y1 <- bbbox[2]
+  x2 <- bbbox[3]
+  y2 <- bbbox[4]
+  sfdc <- (x2-x1)*(y2-y1)
+  sc <- sum(x$sumInI,na.rm=TRUE)
+  x$cex <- sqrt((x$sumInI * 0.02 * sfdc / sc) / pi)
+  x <- x[order(x$cex,decreasing=TRUE),]
+
+
   # D
   x[!x$d & x$D, "col"] <- "#cc2a36"
-  x[!x$d & x$D, "cex"] <- 2
+  # x[!x$d & x$D, "cex"] <- 2
   # D d
   x[x$d & x$D, "col"] <- "#eb6841"
-  x[x$d & x$D, "cex"] <- 1
+  # x[x$d & x$D, "cex"] <- 1
   # d
   x[x$d & !x$D,"col"] <- "#edc951"
-  x[x$d & !x$D, "cex"] <- 0.5
+  # x[x$d & !x$D, "cex"] <- 0.5
 
   cl <- seq(min(fdom$dom), max(fdom$dom),length.out = 4)
   fdom$col <- findInterval(fdom$dom, cl,all.inside = T)
@@ -155,10 +185,13 @@ plotflowDom <- function(fdom, spdf, id, name = NULL ){
   sp::plot(spdf, col = "#cceae7", border = "grey70")
   segments(fdom$Xi, fdom$Yi, fdom$Xj, fdom$Yj, col=fdom$col, lwd = 4)
 
-  points(x[,1:2], pch = 21, col = "grey50", bg = x$col, cex = x$cex)
+  symbols(x[,c("X","Y")], circles = x$cex, add = TRUE, bg = x$col,
+          inches = FALSE)
+
+  # points(x[,1:2], pch = 21, col = "grey50", bg = x$col, cex = x$cex)
   legend(x = "topleft",
          legend =  c("Dominant", "Dominant-Dominated", "Dominated",
-                     "Share of the emitted flow :",
+                     "Share of the sent flows :",
                      paste("higher - max = ",round(max(cl),2),sep = ""),
                      paste("lower - min = ", round(min(cl),2),sep = "")),
          col= c(rep("grey50",3),rep(NA,3)),
@@ -168,10 +201,10 @@ plotflowDom <- function(fdom, spdf, id, name = NULL ){
                    "#4d343420"),
          pt.cex = c(2,1,0.5,0.1,2,2))
   if (!is.null(name)){
-    text(x[x$cex == 2,1:2],labels = x[x$cex == 2, name], cex = 0.6)
+    text(x[x$col == "#cc2a36",c("X","Y")],labels = x[x$col == "#cc2a36", name], cex = 0.6)
   }
 }
 
-
+?symbols
 
 
