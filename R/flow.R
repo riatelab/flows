@@ -4,41 +4,53 @@
 #' @docType package
 NULL
 
-#' @title MRE46
-#' @name MRE46
+#' @title MRE44
+#' @name MRE44
 #' @references
 #' http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=migration-residentielle-08
 #' @docType data
 NULL
 
-#' @title COM46
-#' @name COM46
+#' @title COM44
+#' @name COM44
 #' @references
 #' http://professionnels.ign.fr/geofla#tab-3
 #' @docType data
 NULL
 
-#' @title Compute dominant flows
+#' @title Dominant Flows Analysis
 #' @name flowDom
-#' @description Compute dominant flows on a long matrix (i, j, fij). Two
-#' methods are allowed: i sends its major flow to j or i sends a specific share
-#' to j.
-#' @param mat A data.frame of flows between \code{i} and \code{j} (long format).
-#' @param i A character giving the name of emiting units field in \code{mat}.
-#' @param j A character giving the name of receiving units field in \code{mat}.
-#' @param fij A character giving the name of the flow field in \code{mat}.
-#' @param k A numeric giving the minimum share of flow that must be emitted from
-#'  \code{i} to \code{j}. (optional)
+#' @description Computes dominant flows on a matrix :
+#'
+#' \code{i} is dominated by \code{j} when \code{i} sends its biggest flow to
+#' \code{j} and \code{j} receives more total inbound flows than \code{i}. A
+#' variant is that \code{i} is dominated by \code{j} when \code{i} sends at
+#' least a specific share (\code{k}) of its outbound flows to \code{j} and
+#' \code{j} receives more total inbound flows than \code{i}.
+#' @param mat A data.frame of flows between \code{i} and \code{j} (long format
+#' matrix: \code{(i, j, fij)}.
+#' @param i A character giving the origin field in \code{mat}.
+#' @param j A character giving the destination field in \code{mat}.
+#' @param fij A character giving the flow field in \code{mat}.
+#' @param k A numeric giving the minimum share of \code{i} outbound flows that
+#' must be sent to \code{j}. (variant - optional)
 #' @details The output of the function is a data.frame giving couples where
-#' \code{i} is dominated by \code{j} and the share of outputs from i to j in the
-#' total outputs from i.
+#' \code{i} is dominated by \code{j}. Other variables are :\itemize{
+#'  \item{dom: }{share of \code{i} outbound flows sent to \code{j}.}
+#'  \item{fij: }{flow from \code{i} to \code{j}}
+#'  \item{sumInI: }{\code{i} total inbound flows}
+#'  \item{sumOutI: }{\code{i} total outbound flows}
+#'  \item{sumInJ: }{\code{j} total inbound flows}
+#'  \item{sumOutJ: }{\code{j} total outbound flows}
+#' }
 #' @examples
-#'data(lot)
-#'dom1<- flowDom(mat = MRE46,
+#'data(LoireAtlantique)
+#'dom1<- flowDom(mat = MRE44,
 #'               i = "DCRAN",
 #'               j = "CODGEO",
 #'               fij = "NBFLUX_C08_POP05P")
-#'dom2 <- flowDom(mat = MRE46,
+#'## or
+#'dom2 <- flowDom(mat = MRE44,
 #'                i = "DCRAN",
 #'                j = "CODGEO",
 #'                fij = "NBFLUX_C08_POP05P",
@@ -98,9 +110,11 @@ flowDom <- function(mat, i, j, fij, k = NULL){
   X$j<-as.character(X$j)
   X <- X[X$dom > 0, ]
   X <- merge(X, mat, by =c("i","j"), all.x = T)
-  sumInAndOut <- data.frame(id = colnames(fullMat), sumIn = sumIn, sumOut = sumOut)
+  sumInAndOut <- data.frame(id = colnames(fullMat), sumIn = sumIn, sumOut =
+                              sumOut)
   X <- merge(X, sumInAndOut, by.x = "i", by.y = "id", all.x = T)
-  X <- merge(X, sumInAndOut, by.x = "j", by.y = "id", all.x = T, suffixes = c('I','J' ))
+  X <- merge(X, sumInAndOut, by.x = "j", by.y = "id", all.x = T, suffixes =
+               c('I','J' ))
   close(pb)
   return(X)
 }
@@ -108,39 +122,38 @@ flowDom <- function(mat, i, j, fij, k = NULL){
 
 
 
-#' @title Plot dominant flows
+#' @title Plot Dominant Flows
 #' @name plotflowDom
 #' @description Plot a map of the Dominant Flows. It uses, as input, the output
-#' of the flowDom function.
-#' @param fdom A data.frame outputed by the flowDom function.
-#' @param spdf A SpatialPolygonsDataFrame to be linked to fdom.
-#' @param id A character giving the name of the 'id' field in spdf.
-#' @param name A character giving the name of a label field in spdf to be
-#' plotted. (optional)
+#' of the \code{\link{flowDom}} function.
+#' @param fdom A data.frame outputed by the \code{\link{flowDom}} function.
+#' @param spdf A SpatialPolygonsDataFrame to be linked to \code{fdom}.
+#' @param id A character giving the identifier field in \code{spdf} to be linked
+#'  to \code{i} and \code{j}.
+#' @param name A character giving the label field in \code{spdf} to be
+#' plotted. A click on a map unit will prompt a unit name. (interactive session
+#' only - optional)
 #' @details The output of the function is a plot of a map. The map shows which
 #' units are either "dominant", "dominated" or both. The darker a link is the
-#' higher the share of the flow is in the total flows emitted by the unit.
+#' higher the share of the flow is in its total outbound flows.
 #' @examples
-#'data(lot)
-#'dom1<- flowDom(mat = MRE46,
+#'data(LoireAtlantique)
+#'dom1<- flowDom(mat = MRE44,
 #'               i = "DCRAN",
 #'               j = "CODGEO",
 #'               fij = "NBFLUX_C08_POP05P")
-#'dom2 <- flowDom(mat = MRE46,
-#'                i = "DCRAN",
-#'                j = "CODGEO",
-#'                fij = "NBFLUX_C08_POP05P",
-#'                k = 0.5)
-#'plotflowDom(fdom = dom1, spdf = COM46, id = "INSEE_COM", name = "NOM_COM")
+#'if (interactive()){
+#'  plotflowDom(fdom = dom1, spdf = COM44, id = "INSEE_COM", name = "NOM_COM")
+#'}
 #' @export
 plotflowDom <- function(fdom, spdf, id, name = NULL ){
-  pts <- data.frame(sp::coordinates(spdf),spdf@data)
 
   sumi <- unique(fdom[,c("i","sumInI")])
   sumj <- unique(fdom[,c("j","sumInJ")])
   names(sumj) <- c("i", "sumInI")
   sumij <- unique(rbind(sumi,sumj))
 
+  pts <- data.frame(sp::coordinates(spdf),spdf@data)
   names(pts)[1:2] <- c("X", "Y")
   pts <- merge(pts, sumij[,c("i", "sumInI")], by.x = id, by.y = "i", all.x = T)
 
@@ -148,13 +161,13 @@ plotflowDom <- function(fdom, spdf, id, name = NULL ){
                 suffixes = c("i","j"))
   fdom <- merge(fdom, pts, by.x = "j", by.y = id, all.x = T,
                 suffixes = c("i","j"))
-
   listI <- unique(fdom$i)
   listJ <- unique(fdom$j)
+
   x <- data.frame(pts, d = pts[,id] %in% listI, D = pts[,id] %in% listJ,
                   col = NA, pch = NA, cex = pts$sumInI)
 
-  bbbox <- spdf@bbox
+  bbbox <- sp::bbox(spdf)
   x1 <- bbbox[1]
   y1 <- bbbox[2]
   x2 <- bbbox[3]
@@ -163,48 +176,61 @@ plotflowDom <- function(fdom, spdf, id, name = NULL ){
   sc <- sum(x$sumInI,na.rm=TRUE)
   x$cex <- sqrt((x$sumInI * 0.02 * sfdc / sc) / pi)
   x <- x[order(x$cex,decreasing=TRUE),]
-
-
-  # D
   x[!x$d & x$D, "col"] <- "#cc2a36"
-  # x[!x$d & x$D, "cex"] <- 2
-  # D d
   x[x$d & x$D, "col"] <- "#eb6841"
-  # x[x$d & x$D, "cex"] <- 1
-  # d
   x[x$d & !x$D,"col"] <- "#edc951"
-  # x[x$d & !x$D, "cex"] <- 0.5
 
   cl <- seq(min(fdom$dom), max(fdom$dom),length.out = 4)
   fdom$col <- findInterval(fdom$dom, cl,all.inside = T)
-  fdom[fdom$dom != 1,"col"] <- paste("#4d3434", round(fdom[fdom$dom!=1,"dom"]*100),sep="")
-  fdom[fdom$dom == 1,"col"] <- "#4d3434"
-  # fdom[,"col"] <- paste("#4d3434", round(fdom$dom*100)}else{99},sep="")
-  fdom <- fdom[order(fdom$dom),]
+
+  fdom[fdom$col == 1,"col"] <- "#4d343440"
+  fdom[fdom$col == 2,"col"] <- "#4d343470"
+  fdom[fdom$col == 3,"col"] <- "#4d3434"
+  #   fdom[fdom$dom <= .1,"col"] <- "#4d343410"
+  #   fdom[fdom$dom > .1,"col"] <-
+  #     paste("#4d3434", round(fdom[fdom$dom >.1,"dom"]*100), sep="")
+  #   fdom[fdom$dom >= 1,"col"] <- "#4d3434"
+
+  fdom <- fdom[order(-fdom$dom),]
 
   sp::plot(spdf, col = "#cceae7", border = "grey70")
+
   segments(fdom$Xi, fdom$Yi, fdom$Xj, fdom$Yj, col=fdom$col, lwd = 4)
 
   symbols(x[,c("X","Y")], circles = x$cex, add = TRUE, bg = x$col,
+          fg ="grey50",
           inches = FALSE)
 
-  # points(x[,1:2], pch = 21, col = "grey50", bg = x$col, cex = x$cex)
   legend(x = "topleft",
          legend =  c("Dominant", "Dominant-Dominated", "Dominated",
                      "Share of the sent flows :",
-                     paste("higher - max = ",round(max(cl),2),sep = ""),
-                     paste("lower - min = ", round(min(cl),2),sep = "")),
-         col= c(rep("grey50",3),rep(NA,3)),
+                     paste("high (",round(cl[3]*100,0),"-",round(cl[4]*100,0),
+                           ")",sep = ""),
+                     paste("medium (",round(cl[2]*100,0),"-",round(cl[3]*100,0),
+                           ")",sep = ""),
+                     paste("low (",round(cl[1]*100,0),"-",round(cl[2]*100,0),
+                           ")",sep = "")),
+         col= c(rep("grey50",3),rep(NA,4)),
          cex = 0.7,
-         pch = c(21,21,21,16,22,22),
+         pch = c(21,21,21,16,22,22,22),
          pt.bg = c("#cc2a36", "#eb6841","#edc951","#ffffff00","#4d3434",
-                   "#4d343420"),
-         pt.cex = c(2,1,0.5,0.1,2,2))
+                   "#4d343470","#4d343440"),
+         pt.cex = c(2,1,0.5,2,2,2,2))
   if (!is.null(name)){
-    text(x[x$col == "#cc2a36",c("X","Y")],labels = x[x$col == "#cc2a36", name], cex = 0.6)
+    if(interactive()){
+      x <- locator()
+      if (!is.null(x)){
+        X <- sp::SpatialPoints(data.frame(x), proj4string = spdf@proj4string)
+        text(x = x$x, y = x$y, labels = sp::over(X, spdf)[,name], cex = 0.6,
+             adj = c(0,0))
+      }
+    } else {
+      text(x[x$col == "#cc2a36",c("X","Y")],labels = x[x$col == "#cc2a36", name],
+           cex = 0.6)
+    }
   }
 }
 
-?symbols
+
 
 

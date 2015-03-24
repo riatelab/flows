@@ -1,31 +1,28 @@
-## ----, fig.show='hold', fig.width = 7, fig.height=7----------------------
+## ----, fig.show='hold', fig.width = 6, fig.height=6, results='hide'------
 library(flow)
 
-data(lot)
+data(LoireAtlantique)
 
-dom1<- flowDom(mat = MRE46,
+dom1<- flowDom(mat = MRE44,
                i = "DCRAN",
                j = "CODGEO",
                fij = "NBFLUX_C08_POP05P")
 
+## ----, fig.show='hold', fig.width = 7, fig.height=7----------------------
 head(dom1)
 
-plotflowDom(fdom = dom1, spdf = COM46, id = "INSEE_COM")
+## ----, fig.show='hold', fig.width = 6, fig.height=6----------------------
+plotflowDom(fdom = dom1, spdf = COM44, id = "INSEE_COM")
 title("Residential Dominant Flows")
 
-## ----, fig.show='hold', fig.width = 7, fig.height=7----------------------
-
-dom2 <- flowDom(mat = MRE46,
+## ----, fig.show='hold', fig.width = 6, fig.height=6, results = 'hide'----
+dom2 <- flowDom(mat = MRE44,
                 i = "DCRAN",
                 j = "CODGEO",
-                fij = "NBFLUX_C08_POP05P",
-                k = 0.5)
+                fij = "NBFLUX_C08_POP05P", 
+                k = 0.2)
 
-plotflowDom(fdom = dom2, spdf = COM46, id = "INSEE_COM")
-title("Residential Dominant Flows (50% flows threshold)")
-
-## ----, fig.show='hold', fig.width = 7, fig.height=7----------------------
-
-plotflowDom(fdom = dom2, spdf = COM46, id = "INSEE_COM", name = "NOM_COM")
-title("Residential Dominant Flows (50% flows threshold)")
+## ----, fig.show='hold', fig.width = 6, fig.height=6----------------------
+plotflowDom(fdom = dom2, spdf = COM44, id = "INSEE_COM")
+title("Residential Dominant Flows (20% flows threshold)")
 

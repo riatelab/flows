@@ -2,39 +2,51 @@
 % Please edit documentation in R/flow.R
 \name{flowDom}
 \alias{flowDom}
-\title{Compute dominant flows}
+\title{Dominant Flows Analysis}
 \usage{
 flowDom(mat, i, j, fij, k = NULL)
 }
 \arguments{
-\item{mat}{A data.frame of flows between \code{i} and \code{j} (long format).}
+\item{mat}{A data.frame of flows between \code{i} and \code{j} (long format
+matrix: \code{(i, j, fij)}.}
 
-\item{i}{A character giving the name of emiting units field in \code{mat}.}
+\item{i}{A character giving the origin field in \code{mat}.}
 
-\item{j}{A character giving the name of receiving units field in \code{mat}.}
+\item{j}{A character giving the destination field in \code{mat}.}
 
-\item{fij}{A character giving the name of the flow field in \code{mat}.}
+\item{fij}{A character giving the flow field in \code{mat}.}
 
-\item{k}{A numeric giving the minimum share of flow that must be emitted from
-\code{i} to \code{j}. (optional)}
+\item{k}{A numeric giving the minimum share of \code{i} outbound flows that
+must be sent to \code{j}. (variant - optional)}
 }
 \description{
-Compute dominant flows on a long matrix (i, j, fij). Two
-methods are allowed: i sends its major flow to j or i sends a specific share
-to j.
+Computes dominant flows on a matrix :
+
+\code{i} is dominated by \code{j} when \code{i} sends its biggest flow to
+\code{j} and \code{j} receives more total inbound flows than \code{i}. A
+variant is that \code{i} is dominated by \code{j} when \code{i} sends at
+least a specific share (\code{k}) of its outbound flows to \code{j} and
+\code{j} receives more total inbound flows than \code{i}.
 }
 \details{
 The output of the function is a data.frame giving couples where
-\code{i} is dominated by \code{j} and the share of outputs from i to j in the
-total outputs from i.
+\code{i} is dominated by \code{j}. Other variables are :\itemize{
+ \item{dom: }{share of \code{i} outbound flows sent to \code{j}.}
+ \item{fij: }{flow from \code{i} to \code{j}}
+ \item{sumInI: }{\code{i} total inbound flows}
+ \item{sumOutI: }{\code{i} total outbound flows}
+ \item{sumInJ: }{\code{j} total inbound flows}
+ \item{sumOutJ: }{\code{j} total outbound flows}
+}
 }
 \examples{
-data(lot)
-dom1<- flowDom(mat = MRE46,
+data(LoireAtlantique)
+dom1<- flowDom(mat = MRE44,
               i = "DCRAN",
               j = "CODGEO",
               fij = "NBFLUX_C08_POP05P")
-dom2 <- flowDom(mat = MRE46,
+## or
+dom2 <- flowDom(mat = MRE44,
                i = "DCRAN",
                j = "CODGEO",
                fij = "NBFLUX_C08_POP05P",

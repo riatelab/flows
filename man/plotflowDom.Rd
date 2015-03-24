@@ -2,40 +2,39 @@
 % Please edit documentation in R/flow.R
 \name{plotflowDom}
 \alias{plotflowDom}
-\title{Plot dominant flows}
+\title{Plot Dominant Flows}
 \usage{
 plotflowDom(fdom, spdf, id, name = NULL)
 }
 \arguments{
-\item{fdom}{A data.frame outputed by the flowDom function.}
+\item{fdom}{A data.frame outputed by the \code{\link{flowDom}} function.}
 
-\item{spdf}{A SpatialPolygonsDataFrame to be linked to fdom.}
+\item{spdf}{A SpatialPolygonsDataFrame to be linked to \code{fdom}.}
 
-\item{id}{A character giving the name of the 'id' field in spdf.}
+\item{id}{A character giving the identifier field in \code{spdf} to be linked
+to \code{i} and \code{j}.}
 
-\item{name}{A character giving the name of a label field in spdf to be
-plotted. (optional)}
+\item{name}{A character giving the label field in \code{spdf} to be
+plotted. A click on a map unit will prompt a unit name. (interactive session
+only - optional)}
 }
 \description{
 Plot a map of the Dominant Flows. It uses, as input, the output
-of the flowDom function.
+of the \code{\link{flowDom}} function.
 }
 \details{
 The output of the function is a plot of a map. The map shows which
 units are either "dominant", "dominated" or both. The darker a link is the
-higher the share of the flow is in the total flows emitted by the unit.
+higher the share of the flow is in its total outbound flows.
 }
 \examples{
-data(lot)
-dom1<- flowDom(mat = MRE46,
+data(LoireAtlantique)
+dom1<- flowDom(mat = MRE44,
               i = "DCRAN",
               j = "CODGEO",
               fij = "NBFLUX_C08_POP05P")
-dom2 <- flowDom(mat = MRE46,
-               i = "DCRAN",
-               j = "CODGEO",
-               fij = "NBFLUX_C08_POP05P",
-               k = 0.5)
-plotflowDom(fdom = dom1, spdf = COM46, id = "INSEE_COM", name = "NOM_COM")
+if (interactive()){
+ plotflowDom(fdom = dom1, spdf = COM44, id = "INSEE_COM", name = "NOM_COM")
+}
 }
 
