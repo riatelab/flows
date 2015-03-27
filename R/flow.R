@@ -18,6 +18,50 @@ NULL
 #' @docType data
 NULL
 
+
+
+
+#' @title Flows Preparation
+#' @name flowPrep
+#' @description From a long format matrix to a weight data.frame and a wide
+#' squared matrix
+#' @param mat A data.frame of flows between \code{i} and \code{j} (long format
+#' matrix: \code{(i, j, fij)}.
+#' @param i A character giving the origin field in \code{mat}.
+#' @param j A character giving the destination field in \code{mat}.
+#' @param fij A character giving the flow field in \code{mat}.
+#' @examples
+#'data(LoireAtlantique)
+#' @export
+flowPrep <- function(mat, i, j, fij){
+  mat <- mat[,c(i,j,fij)]
+  names(mat) <- c("i", "j", "fij")
+  listUnits <- unique(c(unique(mat$i),unique(mat$j)))
+  fullMat <- expand.grid(listUnits,listUnits, stringsAsFactors = F)
+  names(fullMat) <- c("i","j")
+  fullMat <- merge(fullMat,mat,by=c("i","j"),all.x=TRUE)
+  fullMat <- reshape2::dcast(data = fullMat, formula = i~j, value.var="fij",
+                             fill = 0, sum)
+  row.names(fullMat) <- fullMat[,1]
+  fullMat <- fullMat[, -1]
+  fullMat <- as.matrix(fullMat)
+  fullMat[is.na(fullMat)] <- 0
+  w <- data.frame(id = row.names(fullMat),
+                  sumOut = rowSums(fullMat),
+                  sumIn = colSums(fullMat))
+  return(list(w = w, mat = fullMat))
+}
+
+
+
+
+
+
+
+
+
+
+
 #' @title Dominant Flows Analysis
 #' @name flowDom
 #' @description Computes dominant flows on a matrix :
@@ -27,11 +71,8 @@ NULL
 #' variant is that \code{i} is dominated by \code{j} when \code{i} sends at
 #' least a specific share (\code{k}) of its outbound flows to \code{j} and
 #' \code{j} receives more total inbound flows than \code{i}.
-#' @param mat A data.frame of flows between \code{i} and \code{j} (long format
-#' matrix: \code{(i, j, fij)}.
-#' @param i A character giving the origin field in \code{mat}.
-#' @param j A character giving the destination field in \code{mat}.
-#' @param fij A character giving the flow field in \code{mat}.
+#' @param mat A data.frame of flows between from flowPrep.
+#' @param w A vector of weight
 #' @param k A numeric giving the minimum share of \code{i} outbound flows that
 #' must be sent to \code{j}. (variant - optional)
 #' @details The output of the function is a data.frame giving couples where
@@ -58,26 +99,26 @@ NULL
 #' @references Nystuen, J. D. and Dacey, M. F. (1961), A GRAPH THEORY
 #' INTERPRETATION OF NODAL REGIONS. Papers in Regional Science, 7: 29-42.
 #' @export
-flowDom <- function(mat, i, j, fij, k = NULL){
-  mat <- mat[,c(i,j,fij)]
-  names(mat) <- c("i", "j", "fij")
-  listUnits <- unique(c(unique(mat$i),unique(mat$j)))
-  fullMat <- expand.grid(listUnits,listUnits, stringsAsFactors = F)
-  names(fullMat) <- c("i","j")
-  fullMat <- merge(fullMat,mat,by=c("i","j"),all.x=TRUE)
-  fullMat <- reshape2::dcast(data = fullMat, formula = i~j, value.var="fij",
-                             fill=0, sum)
-  row.names(fullMat) <- fullMat[,1]
-  fullMat <- fullMat[, -1]
-  fullMat <- as.matrix(fullMat)
-  fullMat[is.na(fullMat)] <- 0
-  diag(fullMat) <- 0
-  dimMat <- dim(fullMat)[1]
-  sumIn <- apply(fullMat, 2, sum)
-  sumOut <- apply(fullMat, 1, sum)
-  maxOut <- apply(fullMat, 1, max)
-  DOM <- matrix(data = 0, nrow = dimMat, ncol = dimMat,
-                dimnames = list(rownames(fullMat),colnames(fullMat) ))
+flowDom <- function(mat, w, k = NULL){
+#   mat <- mat[,c(i,j,fij)]
+#   names(mat) <- c("i", "j", "fij")
+#   listUnits <- unique(c(unique(mat$i),unique(mat$j)))
+#   fullMat <- expand.grid(listUnits,listUnits, stringsAsFactors = F)
+#   names(fullMat) <- c("i","j")
+#   fullMat <- merge(fullMat,mat,by=c("i","j"),all.x=TRUE)
+#   fullMat <- reshape2::dcast(data = fullMat, formula = i~j, value.var="fij",
+#                              fill=0, sum)
+#   row.names(fullMat) <- fullMat[,1]
+#   fullMat <- fullMat[, -1]
+#   fullMat <- as.matrix(fullMat)
+#   fullMat[is.na(fullMat)] <- 0
+#   diag(fullMat) <- 0
+#   dimMat <- dim(fullMat)[1]
+#   sumIn <- apply(fullMat, 2, sum)
+#   sumOut <- apply(fullMat, 1, sum)
+#   maxOut <- apply(fullMat, 1, max)
+  DOM <- matrix(data = 0, nrow = dim(mat)[1], ncol = dim(mat)[1],
+                dimnames = list(rownames(mat),colnames(mat) ))
   pb <- txtProgressBar(min=0, max=dimMat, style=3)
   if(!is.null(k)){
     for (i in 1:dimMat){
@@ -93,12 +134,14 @@ flowDom <- function(mat, i, j, fij, k = NULL){
     }
   } else {
     for (i in 1:dimMat){
+      maxOut <- max(mat[i,])
+      sumi <- w[i]
       for (j in 1:dimMat)
       {
-        if (fullMat[i,j] == maxOut[i] &&
-            sumIn[i] < sumIn[j] &&
-            fullMat[i,j] != 0) {
-          DOM[i,j] <- (fullMat[i,j] / sumOut[i])
+        if (mat[i,j] == maxOut &&
+            sumi < w[j] &&
+            mat[i,j] != 0) {
+          DOM[i,j] <- mat[i,j]/sumi
         }
       }
       setTxtProgressBar(pb, i)

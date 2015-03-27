@@ -4,17 +4,12 @@
 \alias{flowDom}
 \title{Dominant Flows Analysis}
 \usage{
-flowDom(mat, i, j, fij, k = NULL)
+flowDom(mat, w, k = NULL)
 }
 \arguments{
-\item{mat}{A data.frame of flows between \code{i} and \code{j} (long format
-matrix: \code{(i, j, fij)}.}
+\item{mat}{A data.frame of flows between from flowPrep.}
 
-\item{i}{A character giving the origin field in \code{mat}.}
-
-\item{j}{A character giving the destination field in \code{mat}.}
-
-\item{fij}{A character giving the flow field in \code{mat}.}
+\item{w}{A vector of weight}
 
 \item{k}{A numeric giving the minimum share of \code{i} outbound flows that
 must be sent to \code{j}. (variant - optional)}
