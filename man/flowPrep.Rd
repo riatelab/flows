@@ -22,5 +22,6 @@ squared matrix
 }
 \examples{
 data(LoireAtlantique)
+myflows <- flowPrep(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
 }
 
