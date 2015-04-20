@@ -2,28 +2,22 @@
 % Please edit documentation in R/flow.R
 \name{firstflows}
 \alias{firstflows}
-\title{Flow Selection From I}
+\title{Flow Selection From Origins}
 \usage{
-firstflows(mat, w = NULL, k, method = "nfirst")
+firstflows(mat, method = "nfirst", k)
 }
 \arguments{
-\item{mat}{A matrix. Outputs of flowPrep are perfects}
+\item{mat}{A matrix. Outputs of prepflows are perfects.}
 
-\item{w}{A numeric vector. Outputs of flowPrep are perfects}
-
-\item{k}{Selection threshold. k is a number of flow when method = nfirst, k is a a proportion for methods xfirst et xsumfirst}
-
-\item{method}{One of nfirst, xfirst or xsumfirst. \cr nfirst = select k first fij from i
+\item{method}{One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select k first fij from i
 \cr xfirst = select x fij from i where fij > k  \cr xsumfirst = select x fij from i while sum(fij) < k.}
+
+\item{k}{Selection threshold.}
+}
+\value{
+A boolean matrix of selected flows
 }
 \description{
 Flow selection from i.
-}
-\examples{
-data(LoireAtlantique)
-myflows <- flow::flowPrep(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
-x <- firstflows(mat = myflows$mat, method = "nfirst", w = myflows$w$sumOut, k = 10)
-x <- firstflows(mat = myflows$mat, method = "xfirst", w = myflows$w$sumOut, k = 0.5)
-x <- firstflows(mat = myflows$mat, method = "xsumfirst", w = myflows$w$sumOut, k = 0.8)
 }
 

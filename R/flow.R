@@ -22,20 +22,23 @@ NULL
 #### Public
 
 #' @title Flows Preparation
-#' @name flowPrep
-#' @description From a long format matrix to a weight data.frame and a wide
-#' squared matrix
-#' @param mat A data.frame of flows between \code{i} and \code{j} (long format
-#' matrix: \code{(i, j, fij)}.
-#' @param i A character giving the origin field in \code{mat}.
-#' @param j A character giving the destination field in \code{mat}.
-#' @param fij A character giving the flow field in \code{mat}.
+#' @name prepflows
+#' @description From a long format matrix to a data.frame with sum of outputs and sum of inputs and a wide
+#' matrix of flows.
+#' @param mat A data.frame of flows between origins and destinations: long format
+#' matrix (origins, destinations, flows).
+#' @param i A character giving the origin field name in \code{mat}.
+#' @param j A character giving the destination field name in \code{mat}.
+#' @param fij A character giving the flow field name in \code{mat}.
+#' @return A list of two objects: \code{dfw} a data frame with id, sum of outputs and sum of inputs; \code{mat} a square flows matrix.
 #' @examples
 #' data(LoireAtlantique)
-#' myflows <- flowPrep(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+#' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+#' head(myflows$dfw)
+#' myflows$mat[1:5,1:5]
 #' @import reshape2
 #' @export
-flowPrep <- function(mat, i, j, fij){
+prepflows <- function(mat, i, j, fij){
   mat <- mat[,c(i,j,fij)]
   names(mat) <- c("i", "j", "fij")
   listUnits <- unique(c(unique(mat$i),unique(mat$j)))
@@ -51,29 +54,115 @@ flowPrep <- function(mat, i, j, fij){
   w <- data.frame(id = row.names(fullMat),
                   sumOut = rowSums(fullMat),
                   sumIn = colSums(fullMat))
-  return(list(w = w, mat = fullMat))
+  return(list(dfw = w, mat = fullMat))
+}
+
+#' @title Descriptive Statistics of Flows Matrix
+#' @name statmat
+#' @description Give various indicators and graphical outputs on flow matrices
+#' @param mat A flow matrix
+#' @return  The function returns graphics and statistics (invisible). \cr
+#' \itemize{
+#' \item{
+#' nblinks = number of cells with values > 0,}
+#' \item{ density = nbcellfull/nbcell,}}
+# sumflows = sumflows,
+# min =  summaryflows[1],
+# Q1 =  summaryflows[2],
+# median = summaryflows[3],
+# Q3 = summaryflows[5],
+# max = summaryflows[6],
+# mean = summaryflows[4],
+# sd = summaryflows[7]
+#' @examples
+#' data(LoireAtlantique)
+#' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+#' x <- statmat(myflows$mat)
+#' x
+#' @export
+statmat <- function(mat){
+  nbcell <- length(mat)
+  matdim <- dim(mat)[1]
+  sumflows <- sum(mat)
+  matbool <- mat
+  matbool[mat > 0] <- 1
+  nbcellfull <- sum(matbool)
+  vmat <- as.vector(mat[mat > 0])
+  vmat <- vmat[order(vmat, decreasing = FALSE)]
+  sumflows <- sum(vmat)
+  vmatcs <- cumsum(vmat) /  sumflows * 100
+  summaryflows <- summary(vmat)
+  summaryflows <- c(summaryflows, sd(vmat))
+  names(summaryflows) <- NULL
+
+  ## graphic outputs
+  old.par <- par (mfrow = c(2,2))
+  ## rank-size link
+  deg <- rowSums(matbool)
+  plot(deg[order(deg, decreasing = TRUE)], type = "l", log = c("x","y"),
+       xlab = "nb. origins (log)", ylab = "nb. flows (log)")
+  title("rank - size")
+  ## rank size flow
+  deg <- rowSums(mat)
+  plot(deg[order(deg, decreasing = TRUE)], type = "l", log = c("x","y"),
+       xlab = "nb. origins (log)", ylab = "flows intensity (log)")
+  title("rank - size (weighted)")
+  ##lornz
+  plot( y = vmatcs, x = seq(0,100,length.out = length(vmatcs)),
+        xlim = c(0,100), ylim = c(0,100), asp = 1,
+        xlab = "cum. nb. flows", ylab = "cum. intensity of flows")
+  title ("Lorenz Curve")
+  ## boxplot
+  boxplot(as.vector(mat[mat>0]))
+  title("Boxplot")
+  par(old.par)
+
+  ## stat cat
+  cat('matrix dimension:', matdim, "X", matdim,"\n" )
+  cat('nb. links:', nbcellfull, "\n" )
+  cat('density:', nbcellfull/nbcell, "\n" )
+  cat('sum of flows:', sumflows, "\n")
+  cat('min:', summaryflows[1] ,"\n")
+  cat('Q1:', summaryflows[2] ,"\n")
+  cat('median:', summaryflows[3] ,"\n")
+  cat('Q3:', summaryflows[5] ,"\n")
+  cat('max:', summaryflows[6] ,"\n")
+  cat('mean:', summaryflows[4] ,"\n")
+  cat('sd:', summaryflows[7] ,"\n")
+
+  ## stat list
+  matstat <- list(matdim = dim(mat),
+                  nblinks = nbcellfull,
+                  density = nbcellfull/nbcell,
+                  sumflows = sumflows,
+                  min =  summaryflows[1],
+                  Q1 =  summaryflows[2],
+                  median = summaryflows[3],
+                  Q3 = summaryflows[5],
+                  max = summaryflows[6],
+                  mean = summaryflows[4],
+                  sd = summaryflows[7]
+  )
+  return(invisible(matstat))
+
 }
 
 
 
-#' @title Flow Selection From I
+
+
+
+
+#' @title Flow Selection From Origins
 #' @name firstflows
 #' @description Flow selection from i.
-#' @param mat A matrix. Outputs of flowPrep are perfects
-#' @param w A numeric vector. Outputs of flowPrep are perfects
-#' @param k Selection threshold. k is a number of flow when method = nfirst, k is a a proportion for methods xfirst et xsumfirst
-#' @param method One of nfirst, xfirst or xsumfirst. \cr nfirst = select k first fij from i
+#' @param mat A matrix. Outputs of prepflows are perfects.
+#' @param method One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select k first fij from i
 #' \cr xfirst = select x fij from i where fij > k  \cr xsumfirst = select x fij from i while sum(fij) < k.
-#' @examples
-#' data(LoireAtlantique)
-#' myflows <- flow::flowPrep(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
-#' x <- firstflows(mat = myflows$mat, method = "nfirst", w = myflows$w$sumOut, k = 10)
-#' x <- firstflows(mat = myflows$mat, method = "xfirst", w = myflows$w$sumOut, k = 0.5)
-#' x <- firstflows(mat = myflows$mat, method = "xsumfirst", w = myflows$w$sumOut, k = 0.8)
+#' @param k Selection threshold.
+#' @return A boolean matrix of selected flows
 #' @export
-firstflows <- function(mat, w = NULL, k, method = "nfirst"){
-  # weighting
-  if (!is.null(w)){mat <- mat/w}
+firstflows <- function(mat, method = "nfirst", k){
   # list of i, j selected
   lfirst <- apply(mat, 1, get(method), k = k)
   # if only one selected
@@ -116,6 +205,7 @@ nfirst <- function(x, k){
   }
   return(x)
   # pb : return diag(mat) = 1 if k = 0
+  # Avoir le choix sur les doublons dans les x premiers
 }
 
 #' @title xfirst
@@ -152,7 +242,7 @@ xsumfirst <- function(x, k){
   }else{
     x <- names(x)
   }
-  # pb return error if k > sum(mat) or k sum(mat/w)
+  # pb return error if k > sum(mat) or k > sum(mat/w)
   return(x)
 }
 
