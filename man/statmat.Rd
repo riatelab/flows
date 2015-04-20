@@ -12,9 +12,16 @@ statmat(mat)
 \value{
 The function returns graphics and statistics (invisible). \cr
 \itemize{
-\item{
-nblinks = number of cells with values > 0,}
-\item{ density = nbcellfull/nbcell,}}
+\item{ nblinks: number of cells with values > 0,}
+\item{ density: nbcellfull/nbcell}
+\item{ sumflows: sum of flows}
+\item{ min: min flow }
+\item{ Q1: Q1 flow}
+\item{ median: median fow}
+\item{ Q3: Q3 flow}
+\item{ max: max flow}
+\item{ mean: mean flow}
+\item{ sd: standart deviation flow}}
 }
 \description{
 Give various indicators and graphical outputs on flow matrices

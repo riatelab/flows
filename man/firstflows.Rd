@@ -4,13 +4,15 @@
 \alias{firstflows}
 \title{Flow Selection From Origins}
 \usage{
-firstflows(mat, method = "nfirst", k)
+firstflows(mat, method = "nfirst", ties.method = "first", k)
 }
 \arguments{
 \item{mat}{A matrix. Outputs of prepflows are perfects.}
 
 \item{method}{One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select k first fij from i
 \cr xfirst = select x fij from i where fij > k  \cr xsumfirst = select x fij from i while sum(fij) < k.}
+
+\item{ties.method}{In case of equality with 'nfirst' method.}
 
 \item{k}{Selection threshold.}
 }

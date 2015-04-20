@@ -63,17 +63,16 @@ prepflows <- function(mat, i, j, fij){
 #' @param mat A flow matrix
 #' @return  The function returns graphics and statistics (invisible). \cr
 #' \itemize{
-#' \item{
-#' nblinks = number of cells with values > 0,}
-#' \item{ density = nbcellfull/nbcell,}}
-# sumflows = sumflows,
-# min =  summaryflows[1],
-# Q1 =  summaryflows[2],
-# median = summaryflows[3],
-# Q3 = summaryflows[5],
-# max = summaryflows[6],
-# mean = summaryflows[4],
-# sd = summaryflows[7]
+#' \item{ nblinks: number of cells with values > 0,}
+#' \item{ density: nbcellfull/nbcell}
+#' \item{ sumflows: sum of flows}
+#' \item{ min: min flow }
+#' \item{ Q1: Q1 flow}
+#' \item{ median: median fow}
+#' \item{ Q3: Q3 flow}
+#' \item{ max: max flow}
+#' \item{ mean: mean flow}
+#' \item{ sd: standart deviation flow}}
 #' @examples
 #' data(LoireAtlantique)
 #' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
@@ -100,12 +99,12 @@ statmat <- function(mat){
   ## rank-size link
   deg <- rowSums(matbool)
   plot(deg[order(deg, decreasing = TRUE)], type = "l", log = c("x","y"),
-       xlab = "nb. origins (log)", ylab = "nb. flows (log)")
+       xlab = "rank (log)", ylab = "size (log nb. flows)")
   title("rank - size")
   ## rank size flow
   deg <- rowSums(mat)
   plot(deg[order(deg, decreasing = TRUE)], type = "l", log = c("x","y"),
-       xlab = "nb. origins (log)", ylab = "flows intensity (log)")
+       xlab = "rank (log)", ylab = "size (log flow intensity)")
   title("rank - size (weighted)")
   ##lornz
   plot( y = vmatcs, x = seq(0,100,length.out = length(vmatcs)),
@@ -159,12 +158,13 @@ statmat <- function(mat){
 #' @param mat A matrix. Outputs of prepflows are perfects.
 #' @param method One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select k first fij from i
 #' \cr xfirst = select x fij from i where fij > k  \cr xsumfirst = select x fij from i while sum(fij) < k.
+#' @param ties.method In case of equality with 'nfirst' method.
 #' @param k Selection threshold.
 #' @return A boolean matrix of selected flows
 #' @export
-firstflows <- function(mat, method = "nfirst", k){
+firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
   # list of i, j selected
-  lfirst <- apply(mat, 1, get(method), k = k)
+  lfirst <- apply(mat, 1, get(method), k = k, ties.method = ties.method)
   # if only one selected
   if(is.null(dim(lfirst))){
     lfirst <- as.list((lfirst))
@@ -186,32 +186,82 @@ firstflows <- function(mat, method = "nfirst", k){
 }
 
 
+#' @title Flow Selection From the Total Matrix
+#' @name firstflowsg
+#' @description Various flow selection on global kriterions
+#' @param mat A matrix
+#' @param method A method
+#' @param k A k
+#' @param ties.method A ties.method
+#' @export
+firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
+  matfinal <- mat
+  matfinal[] <- 0
+  if (method == "nfirst"){
+    matfinal[rank(mat, ties.method = ties.method) > ((dim(mat)[1]*dim(mat)[2]) - k)] <- 1
+  }
+  if (method == "xfirst"){
+    matfinal[mat >= k] <- 1
+  }
+  if (method == "xsumfirst"){
+    matv <- as.vector(mat)
+    names(matv) <- 1:length(matv)
+    matvo <- matv[order(matv, decreasing = TRUE)]
+    matvo <- cumsum(matvo)
+    nbgood <- (length(matvo[matvo < k ])+1)
+    matvo[] <- c(rep(1,nbgood), rep(0,(length(matvo)-nbgood)))
+    matfinal[] <- matvo[order(as.numeric(names(matvo)), decreasing = FALSE)]
+  }
+  matfinal[mat == 0] <- 0
+  return(matfinal)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #### Private
 #' @title nfirst
 #' @name nfirst
 #' @noRd
-nfirst <- function(x, k){
+nfirst <- function(x, k, ties.method){
   x <- x[x > 0]
-  x <- x[order(x, decreasing = TRUE)]
   if (length(x) > 0){
     if (length(x) > k ){
-      x <- x[1:k]
+      x <- x[rank(x, ties.method = ties.method) > (length(x) - k)]
       x <- names(x)
     }else{
       x <- names(x)
     }
   }
   return(x)
-  # pb : return diag(mat) = 1 if k = 0
-  # Avoir le choix sur les doublons dans les x premiers
 }
 
 #' @title xfirst
 #' @name xfirst
 #' @noRd
-xfirst <- function(x, k){
+xfirst <- function(x, k, ties.method){
   x <- x[x > 0]
   if (length(x) > 0){
     x <- x[x > k]
@@ -225,7 +275,7 @@ xfirst <- function(x, k){
 #' @title xsumfirst
 #' @name xsumfirst
 #' @noRd
-xsumfirst <- function(x, k){
+xsumfirst <- function(x, k, ties.method){
   x <- x[x > 0]
   x <- x[order(x, decreasing = TRUE)]
   x <- cumsum(x = x)
