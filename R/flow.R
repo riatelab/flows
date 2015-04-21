@@ -217,6 +217,27 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 
 
 
+
+domflows <- function(mat, wi, wj, k){
+  # list of i, j selected
+  matfinal <- mat
+  matfinal[] <- 0
+  for (i in 1:dim(mat)[1]){
+    for (j in 1:dim(mat)[2]){
+      if (wi[i] > 0){
+        if ((wj[j]/wi[i]) > k){
+          matfinal[i,j] <- 1
+        }
+      }
+    }
+  }
+  matfinal[mat == 0] <- 0
+  return(matfinal)
+}
+
+
+
+
 #### Private
 #' @title nfirst
 #' @name nfirst
