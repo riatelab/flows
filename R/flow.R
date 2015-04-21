@@ -30,12 +30,11 @@ NULL
 #' @param i A character giving the origin field name in \code{mat}.
 #' @param j A character giving the destination field name in \code{mat}.
 #' @param fij A character giving the flow field name in \code{mat}.
-#' @return A list of two objects: \code{dfw} a data frame with id, sum of outputs and sum of inputs; \code{mat} a square flows matrix.
+#' @return A square flows matrix.
 #' @examples
 #' data(LoireAtlantique)
 #' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
-#' head(myflows$dfw)
-#' myflows$mat[1:5,1:5]
+#' myflows[1:5,1:5]
 #' @import reshape2
 #' @export
 prepflows <- function(mat, i, j, fij){
@@ -51,10 +50,11 @@ prepflows <- function(mat, i, j, fij){
   fullMat <- fullMat[, -1]
   fullMat <- as.matrix(fullMat)
   fullMat[is.na(fullMat)] <- 0
-  w <- data.frame(id = row.names(fullMat),
-                  sumOut = rowSums(fullMat),
-                  sumIn = colSums(fullMat))
-  return(list(dfw = w, mat = fullMat))
+  #   w <- data.frame(id = row.names(fullMat),
+  #                   sumOut = rowSums(fullMat),
+  #                   sumIn = colSums(fullMat))
+  # return(list(dfw = w, mat = fullMat))
+  return(fullMat)
 }
 
 #' @title Descriptive Statistics of Flows Matrix
@@ -76,7 +76,7 @@ prepflows <- function(mat, i, j, fij){
 #' @examples
 #' data(LoireAtlantique)
 #' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
-#' x <- statmat(myflows$mat)
+#' x <- statmat(myflows)
 #' x
 #' @export
 statmat <- function(mat){
@@ -98,21 +98,23 @@ statmat <- function(mat){
   old.par <- par (mfrow = c(2,2))
   ## rank-size link
   deg <- rowSums(matbool)
-  plot(deg[order(deg, decreasing = TRUE)], type = "l", log = c("x","y"),
+  deg <- deg[deg>0]
+  plot(deg[order(deg, decreasing = TRUE)], type = "l", log = "xy",
        xlab = "rank (log)", ylab = "size (log nb. flows)")
   title("rank - size")
   ## rank size flow
   deg <- rowSums(mat)
-  plot(deg[order(deg, decreasing = TRUE)], type = "l", log = c("x","y"),
+  deg <- deg[deg>0]
+  plot(deg[order(deg, decreasing = TRUE)], type = "l", log = "xy",
        xlab = "rank (log)", ylab = "size (log flow intensity)")
   title("rank - size (weighted)")
   ##lornz
-  plot( y = vmatcs, x = seq(0,100,length.out = length(vmatcs)),
+  plot( y = vmatcs, x = seq(0,100,length.out = length(vmatcs)), type = "l",
         xlim = c(0,100), ylim = c(0,100), asp = 1,
         xlab = "cum. nb. flows", ylab = "cum. intensity of flows")
   title ("Lorenz Curve")
   ## boxplot
-  boxplot(as.vector(mat[mat>0]))
+  boxplot(as.vector(mat[mat>0]), log = "y")
   title("Boxplot")
   par(old.par)
 
@@ -149,13 +151,10 @@ statmat <- function(mat){
 
 
 
-
-
-
 #' @title Flow Selection From Origins
 #' @name firstflows
 #' @description Flow selection from i.
-#' @param mat A matrix. Outputs of prepflows are perfects.
+#' @param mat A square matrix of flows
 #' @param method One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select k first fij from i
 #' \cr xfirst = select x fij from i where fij > k  \cr xsumfirst = select x fij from i while sum(fij) < k.
 #' @param ties.method In case of equality with 'nfirst' method.
@@ -215,29 +214,6 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
   matfinal[mat == 0] <- 0
   return(matfinal)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

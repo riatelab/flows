@@ -4,7 +4,7 @@ Title: Dominant Flow Analysis
 Version: 0.1
 Date: 2015-03-17
 Authors@R: c( person("Timothee", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")))
-Description: compute and plot a dominant flow analysis
+Description: Compute and plot a dominant flow analysis with style.
 License: CC0
 LazyData: TRUE
 Depends: R (>= 2.10)
