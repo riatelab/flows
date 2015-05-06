@@ -10,10 +10,16 @@ statmat(mat)
 \item{mat}{A flow matrix}
 }
 \value{
-The function returns graphics and statistics (invisible). \cr
+The function returns graphics, statistics and a list. \cr
 \itemize{
 \item{ nblinks: number of cells with values > 0,}
 \item{ density: nbcellfull/nbcell}
+\item{ connectcomp: number of connected components (isolates included,
+weakly connected see \code{\link{clusters}})}
+\item{ connectcompx: number of connected components (isolates deleted,
+weakly connected see \code{\link{clusters}})}
+\item{ sizecomp: a data frame only returned in the list, size of the connected components.}
+\item{ compocomp: a data frame only returned in the list, connected components membership of units.}
 \item{ sumflows: sum of flows}
 \item{ min: min flow }
 \item{ Q1: Q1 flow}
@@ -30,6 +36,9 @@ Give various indicators and graphical outputs on flow matrices
 data(LoireAtlantique)
 myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
 x <- statmat(myflows)
-x
+# Size of connected components
+x$sizecomp
+# Sum of flows
+x$sumflows
 }
 

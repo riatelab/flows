@@ -75,10 +75,16 @@ prepflows <- function(mat, i, j, fij){
 #' @name statmat
 #' @description Give various indicators and graphical outputs on flow matrices
 #' @param mat A flow matrix
-#' @return  The function returns graphics and statistics (invisible). \cr
+#' @return  The function returns graphics, statistics and a list. \cr
 #' \itemize{
 #' \item{ nblinks: number of cells with values > 0,}
 #' \item{ density: nbcellfull/nbcell}
+#' \item{ connectcomp: number of connected components (isolates included,
+#' weakly connected see \code{\link{clusters}})}
+#' \item{ connectcompx: number of connected components (isolates deleted,
+#' weakly connected see \code{\link{clusters}})}
+#' \item{ sizecomp: a data frame only returned in the list, size of the connected components.}
+#' \item{ compocomp: a data frame only returned in the list, connected components membership of units.}
 #' \item{ sumflows: sum of flows}
 #' \item{ min: min flow }
 #' \item{ Q1: Q1 flow}
@@ -87,11 +93,15 @@ prepflows <- function(mat, i, j, fij){
 #' \item{ max: max flow}
 #' \item{ mean: mean flow}
 #' \item{ sd: standart deviation flow}}
+#' @import igraph
 #' @examples
 #' data(LoireAtlantique)
 #' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
 #' x <- statmat(myflows)
-#' x
+#' # Size of connected components
+#' x$sizecomp
+#' # Sum of flows
+#' x$sumflows
 #' @export
 statmat <- function(mat){
   nbcell <- length(mat)
@@ -132,10 +142,26 @@ statmat <- function(mat){
   title("Boxplot")
   par(old.par)
 
+
+
+
+
+  ## Connected components of a graph
+  g <- graph.adjacency(adjmatrix = mat, mode = "directed", weighted = TRUE)
+  clustg <- clusters(graph = g, mode = "weak")
+
+  connectcomp <- clustg$no
+  connectcompx <- length(clustg$csize[clustg$csize>1])
+  sizecomp <- data.frame(idcomp = seq(1, length(clustg$csize)),
+                          sizecomp = clustg$csize)
+  compocomp <-  data.frame(id = V(g)$name, idcomp = clustg$membership)
+
   ## stat cat
   cat('matrix dimension:', matdim, "X", matdim,"\n" )
   cat('nb. links:', nbcellfull, "\n" )
   cat('density:', nbcellfull/nbcell, "\n" )
+  cat('nb. of components (weak)', connectcomp, "\n")
+  cat("nb. of components (weak, size > 1)", connectcompx, "\n")
   cat('sum of flows:', sumflows, "\n")
   cat('min:', summaryflows[1] ,"\n")
   cat('Q1:', summaryflows[2] ,"\n")
@@ -149,6 +175,10 @@ statmat <- function(mat){
   matstat <- list(matdim = dim(mat),
                   nblinks = nbcellfull,
                   density = nbcellfull/nbcell,
+                  connectcomp = connectcomp,
+                  connectcompx = connectcompx,
+                  sizecomp = sizecomp,
+                  compocomp = compocomp,
                   sumflows = sumflows,
                   min =  summaryflows[1],
                   Q1 =  summaryflows[2],

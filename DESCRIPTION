@@ -8,6 +8,7 @@ Description: Compute and plot a dominant flow analysis with style.
 License: CC0
 LazyData: TRUE
 Depends: R (>= 2.10)
-Imports: reshape2
+Imports: reshape2,
+    igraph
 Suggests: knitr
 VignetteBuilder: knitr
