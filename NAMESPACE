@@ -3,6 +3,7 @@
 export(domflows)
 export(firstflows)
 export(firstflowsg)
+export(plotDomFlows)
 export(prepflows)
 export(statmat)
 import(igraph)

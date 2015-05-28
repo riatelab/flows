@@ -132,9 +132,9 @@ statmat <- function(mat){
   plot(deg[order(deg, decreasing = TRUE)], type = "l", log = "xy",
        xlab = "rank (log)", ylab = "size (log flow intensity)")
   title("rank - size (weighted)")
-  ##lornz
+  ##lorenz
   plot( y = vmatcs, x = seq(0,100,length.out = length(vmatcs)), type = "l",
-        xlim = c(0,100), ylim = c(0,100), asp = 1,
+        xlim = c(0,100), ylim = c(0,100),
         xlab = "cum. nb. flows", ylab = "cum. intensity of flows")
   title ("Lorenz Curve")
   ## boxplot
@@ -284,6 +284,62 @@ domflows <- function(mat, wi, wj, k){
   matfinal[mat == 0] <- 0
   return(matfinal)
 }
+
+#' @title Dominant Flows Graph
+#' @name plotDomFlows
+#' @description Display a dominant flows graph
+#' @param mat A matrix of flows
+#' @examples
+#' data(LoireAtlantique)
+#' mat <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+#' diag(mat) <- 0
+#' x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
+#' firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
+#' xnb <- firstflows(mat = mat, method = "xfirst", ties.method = "first", k = 20)
+#' mat <- mat * firstx * x * xnb
+#' plotDomFlows(mat)
+#' @export
+plotDomFlows <- function(mat){
+  opar <- par(mar = c(0,0,1.5,0))
+  g <- graph.adjacency(adjmatrix = mat,mode = "directed", weighted = TRUE)
+  g <- delete.vertices(g, names(degree(g)[degree(g)==0]))
+  vertexdf <-  data.frame(id = V(g)$name, col = NA, size = NA, name = NA)
+  # Dominant
+  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "col"] <- "red"
+  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "size"] <- 6
+  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "name"] <-
+    as.character(vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "id"])
+  # intermediaire
+  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") > 0), "col"] <- "orange"
+  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") > 0), "size"] <- 4
+  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") > 0), "name"]<-
+    as.character(vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") > 0), "id"])
+  # Dominé
+  vertexdf[(degree(g, mode = "in") < 1) & (degree(g, mode = "out") > 0), "col"] <- "yellow"
+  vertexdf[(degree(g, mode = "in") < 1) & (degree(g, mode = "out") > 0), "size"] <- 2
+
+  V(g)$color <- vertexdf$col
+  V(g)$size <- vertexdf$size
+  V(g)$names <- as.character(vertexdf$name)
+  E(g)$color <- "black"
+  E(g)$width <- ((E(g)$weight) * 8 / (max(E(g)$weight)-min(E(g)$weight)))+1
+  lg <- layout.fruchterman.reingold(g)
+  g <- set.graph.attribute(graph = g, name = "layout", value = lg)
+
+  x <- igraph::plot.igraph(g, vertex.label = V(g)$names, vertex.label.cex = 1,
+                   vertex.label.color = "black",
+                   vertex.size = V(g)$size, edge.arrow.size = 0)
+  # legend(x = "bottomleft", legend = c("héhé", "hoho", "haha"), col = c("red", "orange", "yellow"), pch = "-", pt.cex = 15)
+  title("Dominant Flows Graph")
+  par(opar)
+}
+
+
+
+
+
+
+
 
 
 
