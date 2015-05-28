@@ -203,6 +203,7 @@ statmat <- function(mat){
 #' \cr xfirst = select x fij from i where fij > k  \cr xsumfirst = select x fij from i while sum(fij) < k.
 #' @param ties.method In case of equality with 'nfirst' method.
 #' @param k Selection threshold.
+#' @references Nystuen & Dacey, 1961
 #' @return A boolean matrix of selected flows
 #' @export
 firstflows <- function(mat, method = "nfirst", ties.method = "first",k){

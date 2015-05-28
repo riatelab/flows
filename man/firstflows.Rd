@@ -22,4 +22,7 @@ A boolean matrix of selected flows
 \description{
 Flow selection from i.
 }
+\references{
+Nystuen & Dacey, 1961
+}
 
