@@ -234,7 +234,7 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
 #' @description Various flow selection on global kriterions
 #' @param mat A matrix
 #' @param method A method
-#' @param k A k
+#' @param k A k value
 #' @param ties.method A ties.method
 #' @export
 firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
