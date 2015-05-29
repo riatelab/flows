@@ -17,7 +17,7 @@ matrix (origins, destinations, flows).}
 \item{fij}{A character giving the flow field name in \code{mat}.}
 }
 \value{
-A square flows matrix.
+A square flows matrix. Diagonal can be filled or empty depending on data used.
 }
 \description{
 From a long format matrix to a data.frame with sum of outputs and sum of inputs and a wide

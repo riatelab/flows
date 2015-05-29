@@ -6,6 +6,6 @@
 \alias{flow-package}
 \title{flow}
 \description{
-This package contains various functions.
+This package contains various functions to filter flows matrices.
 }
 

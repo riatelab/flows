@@ -5,9 +5,9 @@
 \alias{COM31}
 \title{COM31}
 \description{
-COM31
+SpatialPolygonsDataFrame of Haute Garonne (communal level)
 }
 \references{
-http://professionnels.ign.fr/geofla#tab-3
+\url{http://professionnels.ign.fr/geofla#tab-3}
 }
 

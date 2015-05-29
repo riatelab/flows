@@ -5,9 +5,18 @@
 \alias{MRE31}
 \title{MRE31}
 \description{
-MRE31
+Migration flows at the communal level for departement of Haute Garonne (change of residence between 2008 and 2012)
+}
+\details{
+Variables: \cr
+\itemize{
+\item{CODGEO: Departement and commune of residence}
+\item{LIBGEO : Name of the commune of residence}
+\item{DCRAN : INSEE code of former departement and commune of residence (municipal arrondissement for Paris, Lyon, Marseille)}
+\item{L_DCRAN : Name of former commune (municipal arrondissement for Paris, Lyon, Marseille)}
+\item{NBFLUX_C08_POP05P : Number of migrants (5 years or more) from commune or arrondissement DCRAN to commune CODGEO}}
 }
 \references{
-http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=migration-residentielle-08
+\url{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=migration-residentielle-08}
 }
 

@@ -7,7 +7,7 @@
 statmat(mat)
 }
 \arguments{
-\item{mat}{A flow matrix}
+\item{mat}{A square flow matrix}
 }
 \value{
 The function returns graphics, statistics and a list. \cr
@@ -23,11 +23,18 @@ weakly connected see \code{\link{clusters}})}
 \item{ sumflows: sum of flows}
 \item{ min: min flow }
 \item{ Q1: Q1 flow}
-\item{ median: median fow}
+\item{ median: median flow}
 \item{ Q3: Q3 flow}
 \item{ max: max flow}
 \item{ mean: mean flow}
 \item{ sd: standart deviation flow}}
+Graphics returned are: \cr
+\itemize{
+\item{degree distribution}
+\item{weigthed degree distribution}
+\item{Lorenz curve regarding links weights}
+\item{Boxplot regarding links weights}
+}
 }
 \description{
 Give various indicators and graphical outputs on flow matrices
@@ -35,6 +42,11 @@ Give various indicators and graphical outputs on flow matrices
 \examples{
 data(LoireAtlantique)
 myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+x <- statmat(myflows)
+# Size of connected components
+x$sizecomp
+# Sum of flows
+x$sumflows
 x <- statmat(myflows)
 # Size of connected components
 x$sizecomp

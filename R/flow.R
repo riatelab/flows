@@ -1,35 +1,55 @@
 #' @title flow
 #' @name flow
-#' @description This package contains various functions.
+#' @description This package contains various functions to filter flows matrices.
 #' @docType package
 NULL
 
 #' @title MRE44
 #' @name MRE44
+#' @description  Migration flows at the communal level for departement of Loire Atlantique (change of residence between 2008 and 2012)
+#' @details
+#' Variables: \cr
+#' \itemize{
+#' \item{CODGEO: Departement and commune of residence}
+#' \item{LIBGEO : Name of the commune of residence}
+#' \item{DCRAN : INSEE code of former departement and commune of residence (municipal arrondissement for Paris, Lyon, Marseille)}
+#' \item{L_DCRAN : Name of former commune (municipal arrondissement for Paris, Lyon, Marseille)}
+#' \item{NBFLUX_C08_POP05P : Number of migrants (5 years or more) from commune or arrondissement DCRAN to commune CODGEO}}
 #' @references
-#' http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=migration-residentielle-08
+#' \url{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=migration-residentielle-08}
 #' @docType data
 NULL
 
 #' @title COM44
 #' @name COM44
+#' @description SpatialPolygonsDataFrame of Loire Atlantique (communal level)
 #' @references
-#' http://professionnels.ign.fr/geofla#tab-3
+#' \url{http://professionnels.ign.fr/geofla#tab-3}
 #' @docType data
 NULL
 
 
 #' @title MRE31
 #' @name MRE31
+#' @description Migration flows at the communal level for departement of Haute Garonne (change of residence between 2008 and 2012)
+#' @details
+#' Variables: \cr
+#' \itemize{
+#' \item{CODGEO: Departement and commune of residence}
+#' \item{LIBGEO : Name of the commune of residence}
+#' \item{DCRAN : INSEE code of former departement and commune of residence (municipal arrondissement for Paris, Lyon, Marseille)}
+#' \item{L_DCRAN : Name of former commune (municipal arrondissement for Paris, Lyon, Marseille)}
+#' \item{NBFLUX_C08_POP05P : Number of migrants (5 years or more) from commune or arrondissement DCRAN to commune CODGEO}}
 #' @references
-#' http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=migration-residentielle-08
+#' \url{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=migration-residentielle-08}
 #' @docType data
 NULL
 
 #' @title COM31
 #' @name COM31
+#' @description SpatialPolygonsDataFrame of Haute Garonne (communal level)
 #' @references
-#' http://professionnels.ign.fr/geofla#tab-3
+#' \url{http://professionnels.ign.fr/geofla#tab-3}
 #' @docType data
 NULL
 
@@ -44,7 +64,7 @@ NULL
 #' @param i A character giving the origin field name in \code{mat}.
 #' @param j A character giving the destination field name in \code{mat}.
 #' @param fij A character giving the flow field name in \code{mat}.
-#' @return A square flows matrix.
+#' @return A square flows matrix. Diagonal can be filled or empty depending on data used.
 #' @examples
 #' data(LoireAtlantique)
 #' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
@@ -74,7 +94,7 @@ prepflows <- function(mat, i, j, fij){
 #' @title Descriptive Statistics of Flows Matrix
 #' @name statmat
 #' @description Give various indicators and graphical outputs on flow matrices
-#' @param mat A flow matrix
+#' @param mat A square flow matrix
 #' @return  The function returns graphics, statistics and a list. \cr
 #' \itemize{
 #' \item{ nblinks: number of cells with values > 0,}
@@ -88,15 +108,27 @@ prepflows <- function(mat, i, j, fij){
 #' \item{ sumflows: sum of flows}
 #' \item{ min: min flow }
 #' \item{ Q1: Q1 flow}
-#' \item{ median: median fow}
+#' \item{ median: median flow}
 #' \item{ Q3: Q3 flow}
 #' \item{ max: max flow}
 #' \item{ mean: mean flow}
 #' \item{ sd: standart deviation flow}}
+#' Graphics returned are: \cr
+#' \itemize{
+#' \item{degree distribution}
+#' \item{weigthed degree distribution}
+#' \item{Lorenz curve regarding links weights}
+#' \item{Boxplot regarding links weights}
+#' }
 #' @import igraph
 #' @examples
 #' data(LoireAtlantique)
-#' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+#'myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+#'x <- statmat(myflows)
+#' # Size of connected components
+#' x$sizecomp
+#' # Sum of flows
+#' x$sumflows
 #' x <- statmat(myflows)
 #' # Size of connected components
 #' x$sizecomp
