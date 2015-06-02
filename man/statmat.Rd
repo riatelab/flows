@@ -7,13 +7,13 @@
 statmat(mat)
 }
 \arguments{
-\item{mat}{A square flow matrix}
+\item{mat}{A square flow matrix.}
 }
 \value{
 The function returns graphics, statistics and a list. \cr
 \itemize{
 \item{ nblinks: number of cells with values > 0,}
-\item{ density: nbcellfull/nbcell}
+\item{ density: number of links / number of possible links (also called gamma index by geographers)}
 \item{ connectcomp: number of connected components (isolates included,
 weakly connected see \code{\link{clusters}})}
 \item{ connectcompx: number of connected components (isolates deleted,

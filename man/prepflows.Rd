@@ -8,7 +8,7 @@ prepflows(mat, i, j, fij)
 }
 \arguments{
 \item{mat}{A data.frame of flows between origins and destinations: long format
-matrix (origins, destinations, flows).}
+matrix (origins, destinations, flows intensity).}
 
 \item{i}{A character giving the origin field name in \code{mat}.}
 

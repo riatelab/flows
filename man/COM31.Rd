@@ -5,7 +5,7 @@
 \alias{COM31}
 \title{COM31}
 \description{
-SpatialPolygonsDataFrame of Haute Garonne (communal level)
+SpatialPolygonsDataFrame of Haute Garonne (communal level) - same variables than \link{MRE31}
 }
 \references{
 \url{http://professionnels.ign.fr/geofla#tab-3}

@@ -5,7 +5,7 @@
 \alias{COM44}
 \title{COM44}
 \description{
-SpatialPolygonsDataFrame of Loire Atlantique (communal level)
+SpatialPolygonsDataFrame of Loire Atlantique (communal level) - same variables than \link{MRE44}
 }
 \references{
 \url{http://professionnels.ign.fr/geofla#tab-3}

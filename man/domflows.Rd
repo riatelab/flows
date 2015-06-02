@@ -7,7 +7,7 @@
 domflows(mat, wi, wj, k)
 }
 \arguments{
-\item{mat}{A matrix of flows}
+\item{mat}{A square matrix of flows}
 
 \item{wi}{A vector of weight for i}
 
@@ -16,6 +16,6 @@ domflows(mat, wi, wj, k)
 \item{k}{Threshold. wj/wi> k}
 }
 \description{
-Compute the a dominant flow analysis
+Compute the dominant flow analysis
 }
 

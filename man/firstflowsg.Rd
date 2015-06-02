@@ -7,7 +7,7 @@
 firstflowsg(mat, method = "nfirst", k, ties.method = "first")
 }
 \arguments{
-\item{mat}{A matrix}
+\item{mat}{A square matrix}
 
 \item{method}{A method}
 
@@ -16,6 +16,6 @@ firstflowsg(mat, method = "nfirst", k, ties.method = "first")
 \item{ties.method}{A ties.method}
 }
 \description{
-Various flow selection on global kriterions
+Various flow selection on global criterions
 }
 

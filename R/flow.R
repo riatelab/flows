@@ -1,6 +1,7 @@
 #' @title flow
 #' @name flow
-#' @description This package contains various functions to filter flows matrices.
+#' @description This package contains various functions to filter flows matrices (dominant and major flows), provides statistics on selection made
+#'  and proposes map and graph visualisation.
 #' @docType package
 NULL
 
@@ -22,7 +23,7 @@ NULL
 
 #' @title COM44
 #' @name COM44
-#' @description SpatialPolygonsDataFrame of Loire Atlantique (communal level)
+#' @description SpatialPolygonsDataFrame of Loire Atlantique (communal level) - same variables than \link{MRE44}
 #' @references
 #' \url{http://professionnels.ign.fr/geofla#tab-3}
 #' @docType data
@@ -47,7 +48,7 @@ NULL
 
 #' @title COM31
 #' @name COM31
-#' @description SpatialPolygonsDataFrame of Haute Garonne (communal level)
+#' @description SpatialPolygonsDataFrame of Haute Garonne (communal level) - same variables than \link{MRE31}
 #' @references
 #' \url{http://professionnels.ign.fr/geofla#tab-3}
 #' @docType data
@@ -60,7 +61,7 @@ NULL
 #' @description From a long format matrix to a data.frame with sum of outputs and sum of inputs and a wide
 #' matrix of flows.
 #' @param mat A data.frame of flows between origins and destinations: long format
-#' matrix (origins, destinations, flows).
+#' matrix (origins, destinations, flows intensity).
 #' @param i A character giving the origin field name in \code{mat}.
 #' @param j A character giving the destination field name in \code{mat}.
 #' @param fij A character giving the flow field name in \code{mat}.
@@ -94,11 +95,11 @@ prepflows <- function(mat, i, j, fij){
 #' @title Descriptive Statistics of Flows Matrix
 #' @name statmat
 #' @description Give various indicators and graphical outputs on flow matrices
-#' @param mat A square flow matrix
+#' @param mat A square flow matrix.
 #' @return  The function returns graphics, statistics and a list. \cr
 #' \itemize{
 #' \item{ nblinks: number of cells with values > 0,}
-#' \item{ density: nbcellfull/nbcell}
+#' \item{ density: number of links / number of possible links (also called gamma index by geographers)}
 #' \item{ connectcomp: number of connected components (isolates included,
 #' weakly connected see \code{\link{clusters}})}
 #' \item{ connectcompx: number of connected components (isolates deleted,
@@ -229,14 +230,43 @@ statmat <- function(mat){
 
 #' @title Flow Selection From Origins
 #' @name firstflows
-#' @description Flow selection from i.
-#' @param mat A square matrix of flows
-#' @param method One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select k first fij from i
-#' \cr xfirst = select x fij from i where fij > k  \cr xsumfirst = select x fij from i while sum(fij) < k.
+#' @description Flow selection from \emph{i}.
+#' @param mat A square matrix of flows \emph{fij}
+#' @param method One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select \emph{k} first \emph{fij}
+#' from \emph{i}
+#' \cr xfirst = select x \emph{fij} from i where \emph{fij} > k  \cr xsumfirst = select x \emph{fij} from \emph{i}
+#'  while sum(\emph{fij}) < k.
 #' @param ties.method In case of equality with 'nfirst' method.
-#' @param k Selection threshold.
-#' @references Nystuen & Dacey, 1961
-#' @return A boolean matrix of selected flows
+#' @param k Selection threshold (can be relative or absolute).
+#' @references J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,
+#' \emph{Papers and Proceedings of the Regional Science Association}, vol. 7,  29-42.
+#' @return A boolean matrix of selected flows. To incorporate flows intensity, making the product
+#' mat * boolean matrix is necessary.
+#' @examples
+#' data(LoireAtlantique)
+#' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+
+#' #remove diagonal
+#' diag(myflows) <- 0
+#' statmat(myflows)
+
+#' #select 2 flows per spatial unit
+
+#' fflows1 <- firstflows(myflows, method = "nfirst", ties.method = "first", 2)
+#' fflow1 <- fflows1 * myflows
+#' statmat(fflow1)
+
+#' #select flows > 20
+
+#' fflows2 <- firstflows(myflows, method = "xfirst", ties.method = "first", 20)
+#' fflow2 <- fflows2 * myflows
+#' statmat(fflow2)
+
+#' #select sum(flows) from i > 20
+
+#' fflows3 <- firstflows(myflows, method = "xsumfirst", ties.method = "first", 20)
+#' fflow3 <- fflows3 * myflows
+#' statmat(fflow3)
 #' @export
 firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
   # list of i, j selected
@@ -264,8 +294,8 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
 
 #' @title Flow Selection From the Total Matrix
 #' @name firstflowsg
-#' @description Various flow selection on global kriterions
-#' @param mat A matrix
+#' @description Various flow selection on global criterions
+#' @param mat A square matrix
 #' @param method A method
 #' @param k A k value
 #' @param ties.method A ties.method
@@ -295,8 +325,8 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 
 #' @title Dominant Flows Selection
 #' @name domflows
-#' @description Compute the a dominant flow analysis
-#' @param mat A matrix of flows
+#' @description Compute the dominant flow analysis
+#' @param mat A square matrix of flows
 #' @param wi A vector of weight for i
 #' @param wj A vector of weight for j
 #' @param k Threshold. wj/wi> k
