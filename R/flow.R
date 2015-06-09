@@ -12,10 +12,10 @@ NULL
 #' Variables: \cr
 #' \itemize{
 #' \item{CODGEO: Departement and commune of residence}
-#' \item{LIBGEO : Name of the commune of residence}
-#' \item{DCRAN : INSEE code of former departement and commune of residence (municipal arrondissement for Paris, Lyon, Marseille)}
-#' \item{L_DCRAN : Name of former commune (municipal arrondissement for Paris, Lyon, Marseille)}
-#' \item{NBFLUX_C08_POP05P : Number of migrants (5 years or more) from commune or arrondissement DCRAN to commune CODGEO}}
+#' \item{LIBGEO: Name of the commune of residence}
+#' \item{DCRAN: INSEE code of former departement and commune of residence (municipal arrondissement for Paris, Lyon, Marseille)}
+#' \item{L_DCRAN: Name of former commune (municipal arrondissement for Paris, Lyon, Marseille)}
+#' \item{NBFLUX_C08_POP05P: Number of migrants (5 years or more) from commune or arrondissement DCRAN to commune CODGEO}}
 #' @references
 #' \url{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=migration-residentielle-08}
 #' @docType data
@@ -37,10 +37,10 @@ NULL
 #' Variables: \cr
 #' \itemize{
 #' \item{CODGEO: Departement and commune of residence}
-#' \item{LIBGEO : Name of the commune of residence}
-#' \item{DCRAN : INSEE code of former departement and commune of residence (municipal arrondissement for Paris, Lyon, Marseille)}
-#' \item{L_DCRAN : Name of former commune (municipal arrondissement for Paris, Lyon, Marseille)}
-#' \item{NBFLUX_C08_POP05P : Number of migrants (5 years or more) from commune or arrondissement DCRAN to commune CODGEO}}
+#' \item{LIBGEO: Name of the commune of residence}
+#' \item{DCRAN: INSEE code of former departement and commune of residence (municipal arrondissement for Paris, Lyon, Marseille)}
+#' \item{L_DCRAN: Name of former commune (municipal arrondissement for Paris, Lyon, Marseille)}
+#' \item{NBFLUX_C08_POP05P: Number of migrants (5 years or more) from commune or arrondissement DCRAN to commune CODGEO}}
 #' @references
 #' \url{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=migration-residentielle-08}
 #' @docType data
@@ -98,22 +98,22 @@ prepflows <- function(mat, i, j, fij){
 #' @param mat A square flow matrix.
 #' @return  The function returns graphics, statistics and a list. \cr
 #' \itemize{
-#' \item{ nblinks: number of cells with values > 0,}
-#' \item{ density: number of links / number of possible links (also called gamma index by geographers)}
-#' \item{ connectcomp: number of connected components (isolates included,
+#' \item{nblinks: number of cells with values > 0,}
+#' \item{density: number of links / number of possible links (also called gamma index by geographers)}
+#' \item{connectcomp: number of connected components (isolates included,
 #' weakly connected see \code{\link{clusters}})}
-#' \item{ connectcompx: number of connected components (isolates deleted,
+#' \item{connectcompx: number of connected components (isolates deleted,
 #' weakly connected see \code{\link{clusters}})}
-#' \item{ sizecomp: a data frame only returned in the list, size of the connected components.}
-#' \item{ compocomp: a data frame only returned in the list, connected components membership of units.}
-#' \item{ sumflows: sum of flows}
-#' \item{ min: min flow }
-#' \item{ Q1: Q1 flow}
-#' \item{ median: median flow}
-#' \item{ Q3: Q3 flow}
-#' \item{ max: max flow}
-#' \item{ mean: mean flow}
-#' \item{ sd: standart deviation flow}}
+#' \item{sizecomp: a data.frame only returned in the list, size of the connected components.}
+#' \item{compocomp: a data.frame only returned in the list, connected components membership of units.}
+#' \item{sumflows: sum of flows}
+#' \item{min: min flow }
+#' \item{Q1: Q1 flow}
+#' \item{median: median flow}
+#' \item{Q3: Q3 flow}
+#' \item{max: max flow}
+#' \item{mean: mean flow}
+#' \item{sd: standart deviation flow}}
 #' Graphics returned are: \cr
 #' \itemize{
 #' \item{degree distribution}
@@ -175,10 +175,6 @@ statmat <- function(mat){
   title("Boxplot")
   par(old.par)
 
-
-
-
-
   ## Connected components of a graph
   g <- graph.adjacency(adjmatrix = mat, mode = "directed", weighted = TRUE)
   clustg <- clusters(graph = g, mode = "weak")
@@ -224,7 +220,6 @@ statmat <- function(mat){
   return(invisible(matstat))
 
 }
-
 
 
 
@@ -295,10 +290,37 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
 #' @title Flow Selection From the Total Matrix
 #' @name firstflowsg
 #' @description Various flow selection on global criterions
-#' @param mat A square matrix
-#' @param method A method
-#' @param k A k value
-#' @param ties.method A ties.method
+#' @param mat A square matrix of flows \emph{fij}
+#' @param method One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select \emph{k} first \emph{fij}
+#' from the input matrix
+#' \cr xfirst = select x \emph{fij} from the input matrix where \emph{fij} > k  \cr xsumfirst = select x \emph{fij} from the input matrix
+#'  while sum(\emph{fij}) < k.
+#' @param k Selection threshold (can be relative or absolute).
+#' @param ties.method In case of equality with 'nfirst' method.
+#' @return A boolean matrix of selected flows. To incorporate flows intensity, making the product
+#' mat * boolean matrix is necessary.
+#' @examples
+#' data(LoireAtlantique)
+#' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+
+#' #remove diagonal
+#' diag(myflows) <- 0
+#' statmat(myflows)
+
+#' #select 50 first flow on the whole matric
+
+#' fflows1 <- firstflowsg(myflows, method = "nfirst", ties.method = "first", 50)
+#' fflow1 <- fflows1 * myflows
+#' statmat(fflow1)
+
+#' #select flows > 50
+
+#' fflows2 <- firstflowsg(myflows, method = "xfirst", ties.method = "first", 50)
+#' fflow2 <- fflows2 * myflows
+#' statmat(fflow2)
+
+#' #select sum(flows) > 50% of the whole matrix
+#' #I don't know how to make a relative selection...
 #' @export
 firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
   matfinal <- mat
@@ -325,11 +347,27 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 
 #' @title Dominant Flows Selection
 #' @name domflows
-#' @description Compute the dominant flow analysis
+#' @description Compute the dominant flow analysis based on the paper from Nystuen and Dacey
 #' @param mat A square matrix of flows
 #' @param wi A vector of weight for i
 #' @param wj A vector of weight for j
 #' @param k Threshold. wj/wi> k
+#' @references J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,
+#' \emph{Papers and Proceedings of the Regional Science Association}, vol. 7,  29-42.
+#' @return A boolean matrix of selected flows. To incorporate flows intensity, making the product
+#' mat * boolean matrix is necessary.
+#' @examples
+#' data(LoireAtlantique)
+#' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+
+#' #remove diagonal
+#' diag(myflows) <- 0
+#' statmat(myflows)
+
+#' #create the tree of dominant, intermediary and dominated nodes
+#' domf <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows), k = 1)
+#' domfw <-domf * myflows
+#' statmat(domfw)
 #' @export
 domflows <- function(mat, wi, wj, k){
   # list of i, j selected
@@ -351,7 +389,9 @@ domflows <- function(mat, wi, wj, k){
 #' @title Dominant Flows Graph
 #' @name plotDomFlows
 #' @description Display a dominant flows graph
-#' @param mat A matrix of flows
+#' @param mat A square matrix of flows
+#' @note We do not propose visualisation for other outputs as square matrices produced can easily be plot
+#' (after transformation) with \link[igraph]{plot.igraph} or \link[sna]{gplot} functions.
 #' @examples
 #' data(LoireAtlantique)
 #' mat <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
