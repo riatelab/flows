@@ -356,11 +356,11 @@ plotDomFlows <- function(mat){
   V(g)$names <- as.character(vertexdf$name)
   E(g)$color <- "black"
   E(g)$width <- ((E(g)$weight) * 8 / (max(E(g)$weight)-min(E(g)$weight)))+1
-  lg <- layout.fruchterman.reingold(g)
-  g <- set.graph.attribute(graph = g, name = "layout", value = lg)
+#   lg <- layout.fruchterman.reingold(g)
+#   g <- set.graph.attribute(graph = g, name = "layout", value = lg)
 
   x <- igraph::plot.igraph(g, vertex.label = V(g)$names, vertex.label.cex = 1,
-                   vertex.label.color = "black",
+                   vertex.label.color = "black", rescale = F,
                    vertex.size = V(g)$size, edge.arrow.size = 0)
   # legend(x = "bottomleft", legend = c("héhé", "hoho", "haha"), col = c("red", "orange", "yellow"), pch = "-", pt.cex = 15)
   title("Dominant Flows Graph")
