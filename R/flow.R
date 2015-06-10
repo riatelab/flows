@@ -231,7 +231,8 @@ statmat <- function(mat){
 #' from \emph{i}
 #' \cr xfirst = select x \emph{fij} from i where \emph{fij} > k  \cr xsumfirst = select x \emph{fij} from \emph{i}
 #'  while sum(\emph{fij}) < k.
-#' @param ties.method In case of equality with 'nfirst' method.
+#' @param ties.method In case of equality with 'nfirst' method (see \link{rank},
+#' "random" and "first" select only one flow, other methods may select various).
 #' @param k Selection threshold (can be relative or absolute).
 #' @references J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,
 #' \emph{Papers and Proceedings of the Regional Science Association}, vol. 7,  29-42.
@@ -240,28 +241,31 @@ statmat <- function(mat){
 #' @examples
 #' data(LoireAtlantique)
 #' myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
-
+#'
 #' #remove diagonal
 #' diag(myflows) <- 0
 #' statmat(myflows)
-
+#'
 #' #select 2 flows per spatial unit
-
 #' fflows1 <- firstflows(myflows, method = "nfirst", ties.method = "first", 2)
 #' fflow1 <- fflows1 * myflows
 #' statmat(fflow1)
-
+#'
 #' #select flows > 20
-
 #' fflows2 <- firstflows(myflows, method = "xfirst", ties.method = "first", 20)
 #' fflow2 <- fflows2 * myflows
 #' statmat(fflow2)
-
+#'
 #' #select sum(flows) from i > 20
-
 #' fflows3 <- firstflows(myflows, method = "xsumfirst", ties.method = "first", 20)
 #' fflow3 <- fflows3 * myflows
 #' statmat(fflow3)
+#'
+#' # Select each flows that represent at least 10% of the outputs
+#' myflowspct <- myflows / rowSums(myflows) * 100
+#' fflows2 <- firstflows(mat = myflowspct, method = "xfirst", ties.method = "first", k = 10)
+#' fflow2 <- fflows2 * myflows
+#' statmat(fflow2)
 #' @export
 firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
   # list of i, j selected
@@ -296,7 +300,8 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
 #' \cr xfirst = select x \emph{fij} from the input matrix where \emph{fij} > k  \cr xsumfirst = select x \emph{fij} from the input matrix
 #'  while sum(\emph{fij}) < k.
 #' @param k Selection threshold (can be relative or absolute).
-#' @param ties.method In case of equality with 'nfirst' method.
+#' @param ties.method In case of equality with 'nfirst' method (see \link{rank},
+#' "random" and "first" select only one flow, other methods may select various).
 #' @return A boolean matrix of selected flows. To incorporate flows intensity, making the product
 #' mat * boolean matrix is necessary.
 #' @examples
@@ -403,7 +408,6 @@ domflows <- function(mat, wi, wj, k){
 #' plotDomFlows(mat)
 #' @export
 plotDomFlows <- function(mat){
-  opar <- par(mar = c(0,0,1.5,0))
   g <- graph.adjacency(adjmatrix = mat,mode = "directed", weighted = TRUE)
   g <- delete.vertices(g, names(degree(g)[degree(g)==0]))
   vertexdf <-  data.frame(id = V(g)$name, col = NA, size = NA, name = NA)
@@ -430,14 +434,104 @@ plotDomFlows <- function(mat){
 #   g <- set.graph.attribute(graph = g, name = "layout", value = lg)
 
   x <- igraph::plot.igraph(g, vertex.label = V(g)$names, vertex.label.cex = 1,
-                   vertex.label.color = "black", rescale = F,
+                   vertex.label.color = "black",
                    vertex.size = V(g)$size, edge.arrow.size = 0)
   # legend(x = "bottomleft", legend = c("héhé", "hoho", "haha"), col = c("red", "orange", "yellow"), pch = "-", pt.cex = 15)
   title("Dominant Flows Graph")
-  par(opar)
 }
 
+#' @title Dominant Flows Map
+#' @name plotMapDomFlows
+#' @description Display a dominant flows map
+#' @param mat A square matrix of dominant flows
+#' @param spdf Spatial*DataFrame of units
+#' @param spdfid Name of the 'id' variable in the spdf data.frame
+#' @param w A data.frame which contains a weight variable for the units
+#' @param wid Identifier column  in w
+#' @param wvar Weight variable
+#' @param wcex Size factor for circles of weight
+#' @param add Whether to add the plot to an existing one or not.
+#' @import sp
+#' @examples
+#' data(LoireAtlantique)
+#' mat <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+#' diag(mat) <- 0
+#' x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
+#' firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
+#' hab <- mat * firstx * x
+#' inflows <- data.frame(id = colnames(mat), w = colSums(mat))
+#' sp::plot(COM44, col = "#cceae7")
+#' plotMapDomFlows(mat = hab,
+#'                 spdf = COM44,
+#'                 spdfid = "INSEE_COM",
+#'                 w = inflows,
+#'                 wid = "id",
+#'                 wvar = "w",
+#'                 wcex = 0.05,
+#'                 add = TRUE)
+#' @export
+plotMapDomFlows <- function(mat, spdf,
+                            spdfid, w,
+                            wid, wvar,
+                            wcex = 0.05, add = FALSE){
+  # points management
+  pts <- data.frame(sp::coordinates(spdf), id  = spdf@data[,spdfid])
+  names(pts)[1:2] <- c("long", "lat")
+  w <- w[,c(wid, wvar)]
+  names(w) <- c("id", "var")
+  pts <- merge(pts, w, by.x = "id", by.y = "id", all.x = T)
 
+  # points size
+  bbbox <- sp::bbox(spdf)
+  x1 <- bbbox[1]
+  y1 <- bbbox[2]
+  x2 <- bbbox[3]
+  y2 <- bbbox[4]
+  sfdc <- (x2-x1)*(y2-y1)
+  sc <- sum(pts$var, na.rm=TRUE)
+  pts$cex <- sqrt((pts$var * wcex * sfdc / sc) / pi)
+  pts <- pts[order(pts$cex,decreasing=TRUE),]
+  pts <- pts[pts$cex > 0, ]
+
+  # Segment management
+  colnames(mat) <- paste("X", colnames(mat), sep="")
+  row.names(mat) <- paste("X", row.names(mat), sep="")
+  fdom <- reshape2::melt(mat)
+  names(fdom) <- c("i", "j", "fij")
+  fdom <- fdom[fdom$fij > 0,]
+  fdom$i <- substr(x = fdom$i, 2 , nchar(as.character(fdom$i)))
+  fdom$j <- substr(x = fdom$j, 2 , nchar(as.character(fdom$j)))
+  fdom <- merge(fdom, pts, by.x = "i", by.y = "id", all.x = T,
+                suffixes = c("i","j"))
+  fdom <- merge(fdom, pts, by.x = "j", by.y = "id", all.x = T,
+                suffixes = c("i","j"))
+  fdom$width <- (fdom$fij * 8 / (max(fdom$fij) - min(fdom$fij))) + 2
+
+  # points color
+  pts$col <- "red"
+  pts[pts$id %in% fdom$j & pts$id %in% fdom$i, "col"] <- "orange"
+  pts[!pts$id %in% fdom$j & pts$id %in% fdom$i, "col"] <- "yellow"
+
+  # Affichage points and segments
+  if(add == FALSE){
+    sp::plot(spdf, col = NA, border = NA, add = F)
+  }
+  segments(fdom$longi, fdom$lati, fdom$longj, fdom$latj,
+           col="grey20", lwd = fdom$width)
+  symbols(pts[,c("long","lat")],
+          circles = pts$cex,
+          add = TRUE,
+          bg = pts$col,
+          fg ="grey50",
+          inches = F)
+  segments(fdom$longi, fdom$lati, fdom$longj, fdom$latj,
+           col="#00000010", lwd = fdom$width)
+
+  # Affichage legend
+  legend( x="topleft",
+          legend=round(c(min(fdom$fij),max(fdom$fij)),0),
+          col=c("grey20"), lwd=c(2,8), lty=1)
+}
 
 
 

@@ -14,7 +14,8 @@ from \emph{i}
 \cr xfirst = select x \emph{fij} from i where \emph{fij} > k  \cr xsumfirst = select x \emph{fij} from \emph{i}
  while sum(\emph{fij}) < k.}
 
-\item{ties.method}{In case of equality with 'nfirst' method.}
+\item{ties.method}{In case of equality with 'nfirst' method (see \link{rank},
+"random" and "first" select only one flow, other methods may select various).}
 
 \item{k}{Selection threshold (can be relative or absolute).}
 }
@@ -28,21 +29,31 @@ Flow selection from \emph{i}.
 \examples{
 data(LoireAtlantique)
 myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+
 #remove diagonal
 diag(myflows) <- 0
 statmat(myflows)
+
 #select 2 flows per spatial unit
 fflows1 <- firstflows(myflows, method = "nfirst", ties.method = "first", 2)
 fflow1 <- fflows1 * myflows
 statmat(fflow1)
+
 #select flows > 20
 fflows2 <- firstflows(myflows, method = "xfirst", ties.method = "first", 20)
 fflow2 <- fflows2 * myflows
 statmat(fflow2)
+
 #select sum(flows) from i > 20
 fflows3 <- firstflows(myflows, method = "xsumfirst", ties.method = "first", 20)
 fflow3 <- fflows3 * myflows
 statmat(fflow3)
+
+# Select each flows that represent at least 10\% of the outputs
+myflowspct <- myflows / rowSums(myflows) * 100
+fflows2 <- firstflows(mat = myflowspct, method = "xfirst", ties.method = "first", k = 10)
+fflow2 <- fflows2 * myflows
+statmat(fflow2)
 }
 \references{
 J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,

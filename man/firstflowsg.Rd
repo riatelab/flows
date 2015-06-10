@@ -16,7 +16,8 @@ from the input matrix
 
 \item{k}{Selection threshold (can be relative or absolute).}
 
-\item{ties.method}{In case of equality with 'nfirst' method.}
+\item{ties.method}{In case of equality with 'nfirst' method (see \link{rank},
+"random" and "first" select only one flow, other methods may select various).}
 }
 \value{
 A boolean matrix of selected flows. To incorporate flows intensity, making the product
