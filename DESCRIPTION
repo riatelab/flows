@@ -1,4 +1,4 @@
-Package: flow
+Package: flows
 Type: Package
 Title: Dominant Flow Analysis
 Version: 0.1
