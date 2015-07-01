@@ -508,9 +508,11 @@ plotMapDomFlows <- function(mat, spdf,
   fdom$width <- (fdom$fij * 8 / (max(fdom$fij) - min(fdom$fij))) + 2
 
   # points color
-  pts$col <- "red"
+  pts$col <- "green"
+  pts[pts$id %in% fdom$j & !pts$id %in% fdom$i, "col"] <- "red"
   pts[pts$id %in% fdom$j & pts$id %in% fdom$i, "col"] <- "orange"
   pts[!pts$id %in% fdom$j & pts$id %in% fdom$i, "col"] <- "yellow"
+  pts <- pts[pts$col != "green",]
 
   # Affichage points and segments
   if(add == FALSE){
