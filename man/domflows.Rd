@@ -20,7 +20,11 @@ A boolean matrix of selected flows. To incorporate flows intensity, making the p
 mat * boolean matrix is necessary.
 }
 \description{
-Compute the dominant flow analysis based on the paper from Nystuen and Dacey
+Find dominant flows in a matrix.
+}
+\details{
+This function can perform the second criterion of the Nyusten &
+Dacey's dominants flows analysis.
 }
 \examples{
 data(LoireAtlantique)

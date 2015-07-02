@@ -92,10 +92,16 @@ prepflows <- function(mat, i, j, fij){
   return(fullMat)
 }
 
+?output
+
 #' @title Descriptive Statistics of Flows Matrix
 #' @name statmat
 #' @description Give various indicators and graphical outputs on flow matrices
 #' @param mat A square flow matrix.
+#' @param output Type of graphical output. Choices are "all" for all graphics,
+#' "none" to avoid graphical outputs, "degree" for degree distribution, "wdegree" for
+#' weighted degree distribution, "lorenz" for Lorenz curve of link weights and
+#' "boxplot" for boxplot of link weights
 #' @return  The function returns graphics, statistics and a list. \cr
 #' \itemize{
 #' \item{nblinks: number of cells with values > 0,}
@@ -136,7 +142,7 @@ prepflows <- function(mat, i, j, fij){
 #' # Sum of flows
 #' x$sumflows
 #' @export
-statmat <- function(mat){
+statmat <- function(mat, output = "all"){
   nbcell <- length(mat)
   matdim <- dim(mat)[1]
   sumflows <- sum(mat)
@@ -151,29 +157,55 @@ statmat <- function(mat){
   summaryflows <- c(summaryflows, sd(vmat))
   names(summaryflows) <- NULL
 
-  ## graphic outputs
-  old.par <- par (mfrow = c(2,2))
-  ## rank-size link
+
+
+  #prep graph
   deg <- rowSums(matbool)
   deg <- deg[deg>0]
-  plot(deg[order(deg, decreasing = TRUE)], type = "l", log = "xy",
-       xlab = "rank (log)", ylab = "size (log nb. flows)")
-  title("rank - size")
-  ## rank size flow
-  deg <- rowSums(mat)
-  deg <- deg[deg>0]
-  plot(deg[order(deg, decreasing = TRUE)], type = "l", log = "xy",
-       xlab = "rank (log)", ylab = "size (log flow intensity)")
-  title("rank - size (weighted)")
-  ##lorenz
-  plot( y = vmatcs, x = seq(0,100,length.out = length(vmatcs)), type = "l",
-        xlim = c(0,100), ylim = c(0,100),
-        xlab = "cum. nb. flows", ylab = "cum. intensity of flows")
-  title ("Lorenz Curve")
-  ## boxplot
-  boxplot(as.vector(mat[mat>0]), log = "y")
-  title("Boxplot")
-  par(old.par)
+  deg2 <- rowSums(mat)
+  deg2 <- deg2[deg2>0]
+
+  if(output=="degree"){
+    plot(deg[order(deg, decreasing = TRUE)], type = "l", log = "xy",
+         xlab = "rank (log)", ylab = "size (log nb. flows)")
+    title("rank - size")
+  }
+  if(output=="wdegree"){
+    plot(deg2[order(deg2, decreasing = TRUE)], type = "l", log = "xy",
+         xlab = "rank (log)", ylab = "size (log flow intensity)")
+    title("rank - size (weighted)")
+  }
+  if(output=="lorenz"){
+    plot( y = vmatcs, x = seq(0,100,length.out = length(vmatcs)), type = "l",
+          xlim = c(0,100), ylim = c(0,100),
+          xlab = "cum. nb. flows", ylab = "cum. intensity of flows")
+    title ("Lorenz Curve")
+  }
+  if(output=="boxplot"){
+    boxplot(as.vector(mat[mat>0]), log = "y")
+    title("Boxplot")
+  }
+  if(output=="all"){
+    ## graphic outputs
+    old.par <- par (mfrow = c(2,2))
+    ## rank-size link
+    plot(deg[order(deg, decreasing = TRUE)], type = "l", log = "xy",
+         xlab = "rank (log)", ylab = "size (log nb. flows)")
+    title("rank - size")
+    ## rank size flow
+    plot(deg2[order(deg2, decreasing = TRUE)], type = "l", log = "xy",
+         xlab = "rank (log)", ylab = "size (log flow intensity)")
+    title("rank - size (weighted)")
+    ##lorenz
+    plot( y = vmatcs, x = seq(0,100,length.out = length(vmatcs)), type = "l",
+          xlim = c(0,100), ylim = c(0,100),
+          xlab = "cum. nb. flows", ylab = "cum. intensity of flows")
+    title ("Lorenz Curve")
+    ## boxplot
+    boxplot(as.vector(mat[mat>0]), log = "y")
+    title("Boxplot")
+    par(old.par)
+  }
 
   ## Connected components of a graph
   g <- graph.adjacency(adjmatrix = mat, mode = "directed", weighted = TRUE)
@@ -182,7 +214,7 @@ statmat <- function(mat){
   connectcomp <- clustg$no
   connectcompx <- length(clustg$csize[clustg$csize>1])
   sizecomp <- data.frame(idcomp = seq(1, length(clustg$csize)),
-                          sizecomp = clustg$csize)
+                         sizecomp = clustg$csize)
   compocomp <-  data.frame(id = V(g)$name, idcomp = clustg$membership)
 
   ## stat cat
@@ -352,11 +384,13 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 
 #' @title Dominant Flows Selection
 #' @name domflows
-#' @description Compute the dominant flow analysis based on the paper from Nystuen and Dacey
+#' @description Find dominant flows in a matrix.
 #' @param mat A square matrix of flows
 #' @param wi A vector of weight for i
 #' @param wj A vector of weight for j
 #' @param k Threshold. wj/wi> k
+#' @details This function can perform the second criterion of the Nyusten &
+#' Dacey's dominants flows analysis.
 #' @references J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,
 #' \emph{Papers and Proceedings of the Regional Science Association}, vol. 7,  29-42.
 #' @return A boolean matrix of selected flows. To incorporate flows intensity, making the product
@@ -430,12 +464,12 @@ plotDomFlows <- function(mat){
   V(g)$names <- as.character(vertexdf$name)
   E(g)$color <- "black"
   E(g)$width <- ((E(g)$weight) * 8 / (max(E(g)$weight)-min(E(g)$weight)))+1
-#   lg <- layout.fruchterman.reingold(g)
-#   g <- set.graph.attribute(graph = g, name = "layout", value = lg)
+  #   lg <- layout.fruchterman.reingold(g)
+  #   g <- set.graph.attribute(graph = g, name = "layout", value = lg)
 
   x <- igraph::plot.igraph(g, vertex.label = V(g)$names, vertex.label.cex = 1,
-                   vertex.label.color = "black",
-                   vertex.size = V(g)$size, edge.arrow.size = 0)
+                           vertex.label.color = "black",
+                           vertex.size = V(g)$size, edge.arrow.size = 0)
   # legend(x = "bottomleft", legend = c("héhé", "hoho", "haha"), col = c("red", "orange", "yellow"), pch = "-", pt.cex = 15)
   title("Dominant Flows Graph")
 }

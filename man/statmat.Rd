@@ -4,10 +4,15 @@
 \alias{statmat}
 \title{Descriptive Statistics of Flows Matrix}
 \usage{
-statmat(mat)
+statmat(mat, output = "all")
 }
 \arguments{
 \item{mat}{A square flow matrix.}
+
+\item{output}{Type of graphical output. Choices are "all" for all graphics,
+"none" to avoid graphical outputs, "degree" for degree distribution, "wdegree" for
+weighted degree distribution, "lorenz" for Lorenz curve of link weights and
+"boxplot" for boxplot of link weights}
 }
 \value{
 The function returns graphics, statistics and a list. \cr
