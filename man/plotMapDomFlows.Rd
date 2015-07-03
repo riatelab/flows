@@ -4,7 +4,9 @@
 \alias{plotMapDomFlows}
 \title{Dominant Flows Map}
 \usage{
-plotMapDomFlows(mat, spdf, spdfid, w, wid, wvar, wcex = 0.05, add = FALSE)
+plotMapDomFlows(mat, spdf, spdfid, w, wid, wvar, wcex = 0.05,
+  legend.flows.pos = "topright", legend.flows.title = "flow intensity",
+  legend.nodes.pos = "topleft", add = FALSE)
 }
 \arguments{
 \item{mat}{A square matrix of dominant flows}
@@ -21,6 +23,14 @@ plotMapDomFlows(mat, spdf, spdfid, w, wid, wvar, wcex = 0.05, add = FALSE)
 
 \item{wcex}{Size factor for circles of weight}
 
+\item{legend.flows.pos}{position of the flows legend, one of "topleft", "top",
+"topright", "left", "right", "bottomleft", "bottom", "bottomright".}
+
+\item{legend.flows.title}{title of the flows legend.}
+
+\item{legend.nodes.pos}{position of the nodes legend, one of "topleft", "top",
+"topright", "left", "right", "bottomleft", "bottom", "bottomright".}
+
 \item{add}{Whether to add the plot to an existing one or not.}
 }
 \description{
@@ -34,6 +44,7 @@ x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
 firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
 hab <- mat * firstx * x
 inflows <- data.frame(id = colnames(mat), w = colSums(mat))
+par(mar = c(0,0,2,0))
 sp::plot(COM44, col = "#cceae7")
 plotMapDomFlows(mat = hab,
                 spdf = COM44,
@@ -42,6 +53,10 @@ plotMapDomFlows(mat = hab,
                 wid = "id",
                 wvar = "w",
                 wcex = 0.05,
-                add = TRUE)
+                add = TRUE,
+                legend.flows.pos = "bottomleft",
+                legend.flows.title = "Residential flows\\nintensity")
+title("Dominant Residential Flows")
+mtext(text = "INSEE, 2008", side = 4, line = -1, adj = 0.01, cex = 0.8)
 }
 

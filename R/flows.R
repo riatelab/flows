@@ -92,7 +92,6 @@ prepflows <- function(mat, i, j, fij){
   return(fullMat)
 }
 
-?output
 
 #' @title Descriptive Statistics of Flows Matrix
 #' @name statmat
@@ -101,8 +100,9 @@ prepflows <- function(mat, i, j, fij){
 #' @param output Type of graphical output. Choices are "all" for all graphics,
 #' "none" to avoid graphical outputs, "degree" for degree distribution, "wdegree" for
 #' weighted degree distribution, "lorenz" for Lorenz curve of link weights and
-#' "boxplot" for boxplot of link weights
-#' @return  The function returns graphics, statistics and a list. \cr
+#' "boxplot" for boxplot of link weights (see Details).
+#' @return  The function returns graphics, statistics and two data.frames in a
+#' list (size of the connected components and connected components membership of units).
 #' \itemize{
 #' \item{nblinks: number of cells with values > 0,}
 #' \item{density: number of links / number of possible links (also called gamma index by geographers)}
@@ -127,6 +127,7 @@ prepflows <- function(mat, i, j, fij){
 #' \item{Lorenz curve regarding links weights}
 #' \item{Boxplot regarding links weights}
 #' }
+#' @details Graphical ouputs concern outdegrees by default, use \code{t()} to inspect indegrees.
 #' @import igraph
 #' @examples
 #' data(LoireAtlantique)
@@ -141,6 +142,8 @@ prepflows <- function(mat, i, j, fij){
 #' x$sizecomp
 #' # Sum of flows
 #' x$sumflows
+#' # Lorenz curve only
+#' statmat(myflows, output = "lorenz")
 #' @export
 statmat <- function(mat, output = "all"){
   nbcell <- length(mat)
@@ -484,6 +487,11 @@ plotDomFlows <- function(mat){
 #' @param wid Identifier column  in w
 #' @param wvar Weight variable
 #' @param wcex Size factor for circles of weight
+#' @param legend.flows.pos position of the flows legend, one of "topleft", "top",
+#' "topright", "left", "right", "bottomleft", "bottom", "bottomright".
+#' @param legend.flows.title title of the flows legend.
+#' @param legend.nodes.pos position of the nodes legend, one of "topleft", "top",
+#' "topright", "left", "right", "bottomleft", "bottom", "bottomright".
 #' @param add Whether to add the plot to an existing one or not.
 #' @import sp
 #' @examples
@@ -494,6 +502,7 @@ plotDomFlows <- function(mat){
 #' firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
 #' hab <- mat * firstx * x
 #' inflows <- data.frame(id = colnames(mat), w = colSums(mat))
+#' par(mar = c(0,0,2,0))
 #' sp::plot(COM44, col = "#cceae7")
 #' plotMapDomFlows(mat = hab,
 #'                 spdf = COM44,
@@ -502,12 +511,20 @@ plotDomFlows <- function(mat){
 #'                 wid = "id",
 #'                 wvar = "w",
 #'                 wcex = 0.05,
-#'                 add = TRUE)
+#'                 add = TRUE,
+#'                 legend.flows.pos = "bottomleft",
+#'                 legend.flows.title = "Residential flows\nintensity")
+#' title("Dominant Residential Flows")
+#' mtext(text = "INSEE, 2008", side = 4, line = -1, adj = 0.01, cex = 0.8)
 #' @export
 plotMapDomFlows <- function(mat, spdf,
                             spdfid, w,
                             wid, wvar,
-                            wcex = 0.05, add = FALSE){
+                            wcex = 0.05,
+                            legend.flows.pos = "topright",
+                            legend.flows.title = "flow intensity",
+                            legend.nodes.pos = "topleft",
+                            add = FALSE){
   # points management
   pts <- data.frame(sp::coordinates(spdf), id  = spdf@data[,spdfid])
   names(pts)[1:2] <- c("long", "lat")
@@ -564,9 +581,19 @@ plotMapDomFlows <- function(mat, spdf,
            col="#00000010", lwd = fdom$width)
 
   # Affichage legend
-  legend( x="topleft",
-          legend=round(c(min(fdom$fij),max(fdom$fij)),0),
-          col=c("grey20"), lwd=c(2,8), lty=1)
+  LegendPropLines(pos = legend.flows.pos, legTitle = legend.flows.title,
+                  legTitleCex = 0.8, legValuesCex = 0.6,
+                  varvect = c(min(fdom$fij),max(fdom$fij)),
+                  sizevect = c(2, 10), col = "black",
+                  frame = FALSE, round = 0)
+
+
+  legend(x = legend.nodes.pos, legend = c("Dominant", "Intermediary",
+                                          "Dominated",
+                                          "Size proportional\nto sum of inflows"),
+         cex = c(0.8), pt.cex = c(2.8,2,1,0), bty = "n",
+         pt.bg = c("red", "orange", "yellow", NA),
+         pch = c(21,21,21,21))
 }
 
 
@@ -632,6 +659,85 @@ xsumfirst <- function(x, k, ties.method){
   return(x)
 }
 
+
+#' @title LegendPropLines
+#' @name LegendPropLines
+#' @noRd
+LegendPropLines<- function(pos = "topleft", legTitle = "Title of the legend", legTitleCex = 0.8,
+                           legValuesCex = 0.6, varvect, sizevect, col="red", frame=FALSE, round=0){
+
+
+  positions <- c("bottomleft", "topleft", "topright", "bottomright",
+                 "left", "right", "top", "bottom", "middle")
+  if(pos %in% positions){
+
+    # extent
+    x1 <- par()$usr[1]
+    x2 <- par()$usr[2]
+    y1 <- par()$usr[3]
+    y2 <- par()$usr[4]
+    xextent <- x2 - x1
+    yextent <- y2 - y1
+
+    # variables internes
+    paramsize1 <- 25
+    paramsize2 <- 40
+    width <- (x2 - x1) / paramsize1
+    height <- width /1.5
+    delta1 <- min((y2 - y1) / paramsize2, (x2 - x1) / paramsize2) # Gros eccart entre les objets
+    delta2 <- (min((y2 - y1) / paramsize2, (x2 - x1) / paramsize2))/2 # Petit eccart entre les objets
+
+
+    rValmax <- max(varvect,na.rm = TRUE)
+    rValmin <- min(varvect,na.rm = TRUE)
+    rValextent <- rValmax - rValmin
+    rLegmax <- max(sizevect,na.rm = TRUE)
+    rLegmin <- min(sizevect,na.rm = TRUE)
+    rLegextent <- rLegmax - rLegmin
+
+    rVal <- c(rValmax,rValmax - rValextent/3 , rValmax - 2*(rValextent/3),rValmin)
+    rLeg <- c(rLegmax,rLegmax - rLegextent/3 , rLegmax - 2*(rLegextent/3),rLegmin)
+    rVal <- round(rVal,round)
+
+    # xsize & ysize
+
+    longVal <- rVal[strwidth(rVal,cex=legValuesCex)==max(strwidth(rVal,cex=legValuesCex))][1]
+    #if(!is.null(breakval)){if (strwidth(paste(">=",breakval),cex=legValuesCex)>strwidth(longVal,cex=legValuesCex)){longVal <- paste(">=",breakval)}}
+    legend_xsize <- max(width+ strwidth(longVal,cex=legValuesCex)-delta2,strwidth(legTitle,cex = legTitleCex)-delta1)
+
+    legend_ysize <-8*delta1 + strheight(legTitle,cex = legTitleCex)
+
+    # Position
+    if (pos == "bottomleft") {xref <- x1 + delta1 ; yref <- y1 + delta1}
+    if (pos == "topleft") {xref <- x1 + delta1 ; yref <- y2 - 2*delta1 - legend_ysize}
+    if (pos == "topright") {xref <- x2 - 2*delta1 - legend_xsize ; yref <- y2 -2*delta1 - legend_ysize}
+    if (pos == "bottomright") {xref <- x2 - 2*delta1 - legend_xsize ; yref <- y1 + delta1}
+    if (pos == "left") {xref <- x1 + delta1 ; yref <- (y1+y2)/2-legend_ysize/2 - delta2}
+    if (pos == "right") {xref <- x2 - 2*delta1 - legend_xsize ; yref <- (y1+y2)/2-legend_ysize/2 - delta2}
+    if (pos == "top") {xref <- (x1+x2)/2 - legend_xsize/2 ; yref <- y2 - 2*delta1 - legend_ysize}
+    if (pos == "bottom") {xref <- (x1+x2)/2 - legend_xsize/2 ; yref <- y1 + delta1}
+    if (pos == "middle") { xref <- (x1+x2)/2 - legend_xsize/2 ; yref <- (y1+y2)/2-legend_ysize/2 - delta2}
+
+
+    # Frame
+    if (frame==TRUE){
+      rect(xref-delta1, yref-delta1, xref+legend_xsize + delta1*2, yref+legend_ysize + delta1 *2, border = "black",  col="white")
+    }
+
+    mycol <- col
+
+    jump <- delta1
+    for(i in 4:1){
+
+      if (rLeg[i] < 0.2){rLeg[i] <- 0.2} # TAILLE DES LIGNE MINIMALES (A METTRE AUSSI SUR LES CARTES)
+
+      segments(xref, yref + jump, xref + width, yref + jump, col=mycol, lwd=rLeg[i],lend=1)
+      text(xref + width + delta2 ,y= yref + jump,rVal[i],adj=c(0,0.5),cex=legValuesCex)
+      jump <- jump + 2*delta1 # ICI AMELIORER
+    }
+    text(x=xref ,y=yref + 9*delta1,legTitle,adj=c(0,0),cex=legTitleCex)
+  }
+}
 
 
 

@@ -12,10 +12,11 @@ statmat(mat, output = "all")
 \item{output}{Type of graphical output. Choices are "all" for all graphics,
 "none" to avoid graphical outputs, "degree" for degree distribution, "wdegree" for
 weighted degree distribution, "lorenz" for Lorenz curve of link weights and
-"boxplot" for boxplot of link weights}
+"boxplot" for boxplot of link weights (see Details).}
 }
 \value{
-The function returns graphics, statistics and a list. \cr
+The function returns graphics, statistics and two data.frames in a
+list (size of the connected components and connected components membership of units).
 \itemize{
 \item{nblinks: number of cells with values > 0,}
 \item{density: number of links / number of possible links (also called gamma index by geographers)}
@@ -44,6 +45,9 @@ Graphics returned are: \cr
 \description{
 Give various indicators and graphical outputs on flow matrices
 }
+\details{
+Graphical ouputs concern outdegrees by default, use \code{t()} to inspect indegrees.
+}
 \examples{
 data(LoireAtlantique)
 myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
@@ -57,5 +61,7 @@ x <- statmat(myflows)
 x$sizecomp
 # Sum of flows
 x$sumflows
+# Lorenz curve only
+statmat(myflows, output = "lorenz")
 }
 
