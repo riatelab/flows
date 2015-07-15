@@ -555,7 +555,7 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
 #' sp::plot(GE, col = "#cceae7", border = NA)
 #' plotMapDomFlows(mat = hab,
 #'                 spdf = UA,
-#'                 spdfid = names(UA)[1],
+#'                 spdfid = "ID",
 #'                 w = inflows,
 #'                 wid = "id",
 #'                 wvar = "w",
