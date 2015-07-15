@@ -4,26 +4,44 @@
 \alias{plotDomFlows}
 \title{Dominant Flows Graph}
 \usage{
-plotDomFlows(mat)
+plotDomFlows(mat, legend.flows.pos = "topright",
+  legend.flows.title = "Flows Intensity", legend.nodes.pos = "bottomright",
+  legend.node.txt = c("Dominant", "Intermediary", "Dominated",
+  "Size proportional\\nto sum of inflows"), labels = FALSE)
 }
 \arguments{
-\item{mat}{A square matrix of flows}
+\item{mat}{A square matrix of dominant flows (see \link{domflows}).}
+
+\item{legend.flows.pos}{Position of the flows legend, one of "topleft", "top",
+"topright", "left", "right", "bottomleft", "bottom", "bottomright".}
+
+\item{legend.flows.title}{Title of the flows legend.}
+
+\item{legend.nodes.pos}{Position of the nodes legend, one of "topleft", "top",
+"topright", "left", "right", "bottomleft", "bottom", "bottomright".}
+
+\item{legend.node.txt}{Text of the nodes legend.}
+
+\item{labels}{A boolean, if TRUE, labels of dominant and intermediary nodes are plotted.}
 }
 \description{
-Display a dominant flows graph
+This function plots a dominant flows graph.
 }
 \note{
-We do not propose visualisation for other outputs as square matrices produced can easily be plot
-(after transformation) with \link[igraph]{plot.igraph} or \link[sna]{gplot} functions.
+We do not propose visualisation for other outputs as square matrices can easily be plot
+with \link[igraph]{plot.igraph} or \link[sna]{gplot} functions from igraph and sna packages.
 }
 \examples{
-data(LoireAtlantique)
-mat <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+data(nav)
+mat <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 diag(mat) <- 0
 x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
 firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
 xnb <- firstflows(mat = mat, method = "xfirst", ties.method = "first", k = 20)
 mat <- mat * firstx * x * xnb
 plotDomFlows(mat)
+}
+\seealso{
+\link{domflows}, \link{plotMapDomFlows}
 }
 

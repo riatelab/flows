@@ -2,33 +2,34 @@
 % Please edit documentation in R/flows.R
 \name{firstflowsg}
 \alias{firstflowsg}
-\title{Flow Selection From the Total Matrix}
+\title{Flow Selection from Full Matrix}
 \usage{
 firstflowsg(mat, method = "nfirst", k, ties.method = "first")
 }
 \arguments{
-\item{mat}{A square matrix of flows \emph{fij}}
+\item{mat}{A square matrix of flows.}
 
-\item{method}{One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select \emph{k} first \emph{fij}
-from the input matrix
-\cr xfirst = select x \emph{fij} from the input matrix where \emph{fij} > k  \cr xsumfirst = select x \emph{fij} from the input matrix
- while sum(\emph{fij}) < k.}
+\item{method}{One of "nfirst", "xfirst" or "xsumfirst":
+\cr nfirst selects the k first flows,
+\cr xfirst selects flows greater than k,
+\cr xsumfirst selects flows while sum of flows is smaller than k.}
 
-\item{k}{Selection threshold (can be relative or absolute).}
+\item{k}{Selection threshold.}
 
-\item{ties.method}{In case of equality with 'nfirst' method (see \link{rank},
-"random" and "first" select only one flow, other methods may select various).}
+\item{ties.method}{In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).}
 }
 \value{
-A boolean matrix of selected flows. To incorporate flows intensity, making the product
-mat * boolean matrix is necessary.
+A boolean matrix of selected flows.
 }
 \description{
-Various flow selection on global criterions
+Flow selection based on global criteria.
+}
+\details{
+As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 }
 \examples{
-data(LoireAtlantique)
-myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+data(nav)
+myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 #remove diagonal
 diag(myflows) <- 0
 statmat(myflows)
@@ -40,7 +41,8 @@ statmat(fflow1)
 fflows2 <- firstflowsg(myflows, method = "xfirst", ties.method = "first", 50)
 fflow2 <- fflows2 * myflows
 statmat(fflow2)
-#select sum(flows) > 50\% of the whole matrix
-#I don't know how to make a relative selection...
+}
+\seealso{
+\link{firstflows}, \link{domflows}
 }
 

@@ -6,7 +6,8 @@
 \alias{flows-package}
 \title{flows}
 \description{
-This package contains various functions to filter flows matrices (dominant and major flows), provides statistics on selection made
+This package contains various functions to filter flows matrices
+(dominant and major flows), provides statistics on selection made
  and proposes map and graph visualisation.
 }
 

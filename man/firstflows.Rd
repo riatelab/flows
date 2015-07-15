@@ -2,61 +2,57 @@
 % Please edit documentation in R/flows.R
 \name{firstflows}
 \alias{firstflows}
-\title{Flow Selection From Origins}
+\title{Flow Selection from Origins}
 \usage{
 firstflows(mat, method = "nfirst", ties.method = "first", k)
 }
 \arguments{
-\item{mat}{A square matrix of flows \emph{fij}}
+\item{mat}{A square matrix of flows.}
 
-\item{method}{One of "nfirst", "xfirst" or "xsumfirst". \cr nfirst = select \emph{k} first \emph{fij}
-from \emph{i}
-\cr xfirst = select x \emph{fij} from i where \emph{fij} > k  \cr xsumfirst = select x \emph{fij} from \emph{i}
- while sum(\emph{fij}) < k.}
+\item{method}{One of "nfirst", "xfirst" or "xsumfirst":
+\cr nfirst selects k first flows from origins,
+\cr xfirst selects flows from origins greater than k,
+\cr xsumfirst selects flows from origins while sum of flows is smaller than k.}
 
-\item{ties.method}{In case of equality with 'nfirst' method (see \link{rank},
-"random" and "first" select only one flow, other methods may select various).}
+\item{ties.method}{In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).}
 
-\item{k}{Selection threshold (can be relative or absolute).}
+\item{k}{Selection threshold.}
 }
 \value{
-A boolean matrix of selected flows. To incorporate flows intensity, making the product
-mat * boolean matrix is necessary.
+A boolean matrix of selected flows.
 }
 \description{
-Flow selection from \emph{i}.
+Flow selection from origins.
+}
+\details{
+As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 }
 \examples{
-data(LoireAtlantique)
-myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+data(nav)
+myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 
 #remove diagonal
 diag(myflows) <- 0
 statmat(myflows)
 
 #select 2 flows per spatial unit
-fflows1 <- firstflows(myflows, method = "nfirst", ties.method = "first", 2)
+fflows1 <- firstflows(myflows, method = "nfirst", ties.method = "first", k = 2)
+# Use element-wise multiplication to get flows intensity.
 fflow1 <- fflows1 * myflows
 statmat(fflow1)
 
 #select flows > 20
-fflows2 <- firstflows(myflows, method = "xfirst", ties.method = "first", 20)
+fflows2 <- firstflows(myflows, method = "xfirst", k = 20)
 fflow2 <- fflows2 * myflows
 statmat(fflow2)
-
-#select sum(flows) from i > 20
-fflows3 <- firstflows(myflows, method = "xsumfirst", ties.method = "first", 20)
-fflow3 <- fflows3 * myflows
-statmat(fflow3)
 
 # Select each flows that represent at least 10\% of the outputs
 myflowspct <- myflows / rowSums(myflows) * 100
-fflows2 <- firstflows(mat = myflowspct, method = "xfirst", ties.method = "first", k = 10)
+fflows2 <- firstflows(mat = myflowspct, method = "xfirst", k = 10)
 fflow2 <- fflows2 * myflows
 statmat(fflow2)
 }
-\references{
-J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,
-\emph{Papers and Proceedings of the Regional Science Association}, vol. 7,  29-42.
+\seealso{
+\link{firstflowsg}, \link{domflows}
 }
 

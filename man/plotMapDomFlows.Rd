@@ -6,49 +6,53 @@
 \usage{
 plotMapDomFlows(mat, spdf, spdfid, w, wid, wvar, wcex = 0.05,
   legend.flows.pos = "topright", legend.flows.title = "flow intensity",
-  legend.nodes.pos = "topleft", add = FALSE)
+  legend.nodes.pos = "topleft", legend.node.txt = c("Dominant",
+  "Intermediary", "Dominated", "Size proportional\\nto sum of inflows"),
+  add = FALSE)
 }
 \arguments{
-\item{mat}{A square matrix of dominant flows}
+\item{mat}{A square matrix of dominant flows (see \link{domflows}).}
 
-\item{spdf}{Spatial*DataFrame of units}
+\item{spdf}{A SpatialPolygonsDataFrame or a SpatialPointsDataFrame object of units.}
 
-\item{spdfid}{Name of the 'id' variable in the spdf data.frame}
+\item{spdfid}{Name of the 'id' variable in the spdf data.frame.}
 
-\item{w}{A data.frame which contains a weight variable for the units}
+\item{w}{A data.frame which contains the weight variable used to plot units sizes on the map.}
 
-\item{wid}{Identifier column  in w}
+\item{wid}{Name of the 'id' variable in w.}
 
-\item{wvar}{Weight variable}
+\item{wvar}{Name of the weight variable in w.}
 
-\item{wcex}{Size factor for circles of weight}
+\item{wcex}{Share of the surface of the map occupied by circles (0.02 is 2\%).}
 
-\item{legend.flows.pos}{position of the flows legend, one of "topleft", "top",
+\item{legend.flows.pos}{Position of the flows legend, one of "topleft", "top",
 "topright", "left", "right", "bottomleft", "bottom", "bottomright".}
 
-\item{legend.flows.title}{title of the flows legend.}
+\item{legend.flows.title}{Title of the flows legend.}
 
-\item{legend.nodes.pos}{position of the nodes legend, one of "topleft", "top",
+\item{legend.nodes.pos}{Position of the nodes legend, one of "topleft", "top",
 "topright", "left", "right", "bottomleft", "bottom", "bottomright".}
 
-\item{add}{Whether to add the plot to an existing one or not.}
+\item{legend.node.txt}{Text of the nodes legend.}
+
+\item{add}{A boolean, if TRUE, add the layer to an existing plot.}
 }
 \description{
-Display a dominant flows map
+This function displays a dominant flows map.
 }
 \examples{
-data(LoireAtlantique)
-mat <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+data(nav)
+mat <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 diag(mat) <- 0
 x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
 firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
 hab <- mat * firstx * x
 inflows <- data.frame(id = colnames(mat), w = colSums(mat))
 par(mar = c(0,0,2,0))
-sp::plot(COM44, col = "#cceae7")
+sp::plot(GE, col = "#cceae7", border = NA)
 plotMapDomFlows(mat = hab,
-                spdf = COM44,
-                spdfid = "INSEE_COM",
+                spdf = UA,
+                spdfid = names(UA)[1],
                 w = inflows,
                 wid = "id",
                 wvar = "w",
@@ -57,6 +61,9 @@ plotMapDomFlows(mat = hab,
                 legend.flows.pos = "bottomleft",
                 legend.flows.title = "Residential flows\\nintensity")
 title("Dominant Residential Flows")
-mtext(text = "INSEE, 2008", side = 4, line = -1, adj = 0.01, cex = 0.8)
+mtext(text = "INSEE, 2011", side = 4, line = -1, adj = 0.01, cex = 0.8)
+}
+\seealso{
+\link{domflows}, \link{plotDomFlows}
 }
 

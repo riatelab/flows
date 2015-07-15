@@ -2,66 +2,62 @@
 % Please edit documentation in R/flows.R
 \name{statmat}
 \alias{statmat}
-\title{Descriptive Statistics of Flows Matrix}
+\title{Descriptive Statistics on Flow Matrix}
 \usage{
-statmat(mat, output = "all")
+statmat(mat, output = "all", verbose = TRUE)
 }
 \arguments{
 \item{mat}{A square flow matrix.}
 
-\item{output}{Type of graphical output. Choices are "all" for all graphics,
+\item{output}{Graphical output. Choices are "all" for all graphics,
 "none" to avoid graphical outputs, "degree" for degree distribution, "wdegree" for
 weighted degree distribution, "lorenz" for Lorenz curve of link weights and
 "boxplot" for boxplot of link weights (see Details).}
+
+\item{verbose}{A boolean, if TRUE, returns statistics in the console.}
 }
 \value{
-The function returns graphics, statistics and two data.frames in a
-list (size of the connected components and connected components membership of units).
+The function returns a list of statistics and may plot graphics.
 \itemize{
-\item{nblinks: number of cells with values > 0,}
-\item{density: number of links / number of possible links (also called gamma index by geographers)}
+\item{nblinks: number of cells with values > 0}
+\item{density: number of links divided by number of possible links (also called gamma index by geographers)}
 \item{connectcomp: number of connected components (isolates included,
-weakly connected see \code{\link{clusters}})}
+weakly connected: use of \code{\link{clusters}} where mode = "weak")}
 \item{connectcompx: number of connected components (isolates deleted,
-weakly connected see \code{\link{clusters}})}
-\item{sizecomp: a data.frame only returned in the list, size of the connected components.}
-\item{compocomp: a data.frame only returned in the list, connected components membership of units.}
+weakly connected: use of \code{\link{clusters}} where mode = "weak")}
+\item{sizecomp: a data.frame of connected components: size
+and sum of flows per component (isolates included).}
+\item{compocomp: a data.frame of connected components giving membership of units (isolates included).}
+\item{degrees: a data.frame of nodes degrees and weighted degrees.}
 \item{sumflows: sum of flows}
-\item{min: min flow }
-\item{Q1: Q1 flow}
+\item{min: minimum flow }
+\item{Q1: first quartile of flows}
 \item{median: median flow}
-\item{Q3: Q3 flow}
-\item{max: max flow}
+\item{Q3: third quartile of flows}
+\item{max: maximum flow}
 \item{mean: mean flow}
-\item{sd: standart deviation flow}}
-Graphics returned are: \cr
-\itemize{
-\item{degree distribution}
-\item{weigthed degree distribution}
-\item{Lorenz curve regarding links weights}
-\item{Boxplot regarding links weights}
-}
+\item{sd: standart deviation of flows}}
 }
 \description{
-Give various indicators and graphical outputs on flow matrices
+This function provides various indicators and graphical outputs
+on a matrix of flows.
 }
 \details{
-Graphical ouputs concern outdegrees by default, use \code{t()} to inspect indegrees.
+Graphical ouputs concern outdegrees by default. If the matrix is
+transposed, outputs concern indegrees.
 }
 \examples{
-data(LoireAtlantique)
-myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
-x <- statmat(myflows)
-# Size of connected components
-x$sizecomp
-# Sum of flows
-x$sumflows
+data(nav)
+myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 x <- statmat(myflows)
 # Size of connected components
 x$sizecomp
 # Sum of flows
 x$sumflows
 # Lorenz curve only
-statmat(myflows, output = "lorenz")
+statmat(myflows, output = "lorenz", verbose = FALSE)
+}
+\seealso{
+\link{compmat}
 }
 

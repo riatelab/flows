@@ -10,22 +10,22 @@ prepflows(mat, i, j, fij)
 \item{mat}{A data.frame of flows between origins and destinations: long format
 matrix (origins, destinations, flows intensity).}
 
-\item{i}{A character giving the origin field name in \code{mat}.}
+\item{i}{A character giving the origin field name in mat.}
 
-\item{j}{A character giving the destination field name in \code{mat}.}
+\item{j}{A character giving the destination field name in mat.}
 
-\item{fij}{A character giving the flow field name in \code{mat}.}
+\item{fij}{A character giving the flow field name in mat.}
 }
 \value{
-A square flows matrix. Diagonal can be filled or empty depending on data used.
+A square matrix of flows. Diagonal can be filled or empty depending on data used.
 }
 \description{
-From a long format matrix to a data.frame with sum of outputs and sum of inputs and a wide
+From a long format matrix to a a wide
 matrix of flows.
 }
 \examples{
-data(LoireAtlantique)
-myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+data(nav)
+myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 myflows[1:5,1:5]
 }
 

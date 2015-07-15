@@ -7,28 +7,30 @@
 domflows(mat, wi, wj, k)
 }
 \arguments{
-\item{mat}{A square matrix of flows}
+\item{mat}{A square matrix of flows.}
 
-\item{wi}{A vector of weight for i}
+\item{wi}{A vector of weight for rows.}
 
-\item{wj}{A vector of weight for j}
+\item{wj}{A vector of weight for columns.}
 
-\item{k}{Threshold. wj/wi> k}
+\item{k}{A threshold (see Details).}
 }
 \value{
-A boolean matrix of selected flows. To incorporate flows intensity, making the product
-mat * boolean matrix is necessary.
+A boolean matrix of selected flows.
 }
 \description{
 Find dominant flows in a matrix.
 }
 \details{
-This function can perform the second criterion of the Nyusten &
-Dacey's dominants flows analysis.
+This function selects which flow (fij or fji) must be kept.
+If the ratio weight of destination (wj) / weight of origin (wi) is greater than k, then fij is kept.
+This function can perform the second criterion of the Nystuen &
+Dacey's dominants flows analysis.\cr
+As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 }
 \examples{
-data(LoireAtlantique)
-myflows <- prepflows(mat = MRE44, i = "DCRAN", j = "CODGEO", fij = "NBFLUX_C08_POP05P")
+data(nav)
+myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 #remove diagonal
 diag(myflows) <- 0
 statmat(myflows)
@@ -40,5 +42,8 @@ statmat(domfw)
 \references{
 J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,
 \emph{Papers and Proceedings of the Regional Science Association}, vol. 7,  29-42.
+}
+\seealso{
+\link{firstflows}, \link{firstflowsg}, \link{plotDomFlows}, \link{plotMapDomFlows}
 }
 
