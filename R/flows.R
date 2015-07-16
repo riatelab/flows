@@ -288,16 +288,17 @@ compmat <- function(mat1, mat2, digits = 0){
   return(invisible(compdf))
 }
 
-
-
 #' @title Flow Selection from Origins
 #' @name firstflows
 #' @description Flow selection from origins.
 #' @param mat A square matrix of flows.
-#' @param method One of "nfirst", "xfirst" or "xsumfirst":
-#' \cr nfirst selects k first flows from origins,
-#' \cr xfirst selects flows from origins greater than k,
-#'\cr xsumfirst selects flows from origins while sum of flows is smaller than k.
+#' @param method A method of flow selection, one of "nfirst", "xfirst" or "xsumfirst":
+#' \itemize{
+#' \item{nfirst selects k first flows from origins,}
+#' \item{xfirst selects flows greater than k,}
+#' \item{xsumfirst selects as many flows necessary by origins so that their sum is at least equal to k.
+#' If k is not reached for one origin, all its flows are selected.}
+#' }
 #' @param ties.method In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).
 #' @param k Selection threshold.
 #' @return A boolean matrix of selected flows.
@@ -321,6 +322,12 @@ compmat <- function(mat1, mat2, digits = 0){
 #' fflows2 <- firstflows(myflows, method = "xfirst", k = 20)
 #' fflow2 <- fflows2 * myflows
 #' statmat(fflow2)
+#'
+#'# select flows where sum flows >= 20000
+#' fflows2 <- firstflows(myflows, method = "xsumfirst", k = 1000)
+#' fflow2 <- fflows2 * myflows
+#' x <-statmat(fflow2)
+#' x$degree
 #'
 #' # Select each flows that represent at least 10% of the outputs
 #' myflowspct <- myflows / rowSums(myflows) * 100
@@ -346,7 +353,7 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
     return(matfinal)
   }
   for (i in 1:nrow(matfinal)){
-    matfinal[names(lfirst[i][]),lfirst[[i]]] <- 1
+    matfinal[names(lfirst[i][]),lfirst[[i]][is.na(lfirst[[i]])==F]] <- 1
   }
   return(matfinal)
 }
@@ -356,10 +363,12 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
 #' @name firstflowsg
 #' @description Flow selection based on global criteria.
 #' @param mat A square matrix of flows.
-#' @param method One of "nfirst", "xfirst" or "xsumfirst":
-#' \cr nfirst selects the k first flows,
-#' \cr xfirst selects flows greater than k,
-#'\cr xsumfirst selects flows while sum of flows is smaller than k.
+#' @param method A method of flow selection, one of "nfirst", "xfirst" or "xsumfirst":
+#' \itemize{
+#' \item{nfirst selects k first flows,}
+#' \item{xfirst selects flows greater than k,}
+#' \item{xsumfirst selects as many flows necessary so that their sum is at least equal to k.}
+#' }
 #' @param ties.method In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).
 #' @param k Selection threshold.
 #' @return A boolean matrix of selected flows.
@@ -372,13 +381,20 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
 #' diag(myflows) <- 0
 #' statmat(myflows)
 #' #select 50 first flow on the whole matric
-#' fflows1 <- firstflowsg(myflows, method = "nfirst", ties.method = "first", 50)
+#'  xx <- firstflowsg(myflows, method = "nfirst", ties.method = "first", 50)
 #' fflow1 <- fflows1 * myflows
 #' statmat(fflow1)
 #' #select flows > 50
 #' fflows2 <- firstflowsg(myflows, method = "xfirst", ties.method = "first", 50)
 #' fflow2 <- fflows2 * myflows
 #' statmat(fflow2)
+#'
+#' # Select flows that represent at least 50% of the matrix flows
+#' k50 <- sum(myflows)/2
+#' fflows2 <- firstflowsg(myflows, method = "xsumfirst", k = 150000)
+#'
+#'
+#'
 #' @export
 firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
   matfinal <- mat
