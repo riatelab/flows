@@ -9,10 +9,13 @@ firstflows(mat, method = "nfirst", ties.method = "first", k)
 \arguments{
 \item{mat}{A square matrix of flows.}
 
-\item{method}{One of "nfirst", "xfirst" or "xsumfirst":
-\cr nfirst selects k first flows from origins,
-\cr xfirst selects flows from origins greater than k,
-\cr xsumfirst selects flows from origins while sum of flows is smaller than k.}
+\item{method}{A method of flow selection, one of "nfirst", "xfirst" or "xsumfirst":
+\itemize{
+\item{nfirst selects k first flows from origins,}
+\item{xfirst selects flows greater than k,}
+\item{xsumfirst selects as many flows necessary by origins so that their sum is at least equal to k.
+If k is not reached for one origin, all its flows are selected.}
+}}
 
 \item{ties.method}{In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).}
 
@@ -45,6 +48,12 @@ statmat(fflow1)
 fflows2 <- firstflows(myflows, method = "xfirst", k = 20)
 fflow2 <- fflows2 * myflows
 statmat(fflow2)
+
+# select flows where sum flows >= 20000
+fflows2 <- firstflows(myflows, method = "xsumfirst", k = 1000)
+fflow2 <- fflows2 * myflows
+x <-statmat(fflow2)
+x$degree
 
 # Select each flows that represent at least 10\% of the outputs
 myflowspct <- myflows / rowSums(myflows) * 100

@@ -9,10 +9,12 @@ firstflowsg(mat, method = "nfirst", k, ties.method = "first")
 \arguments{
 \item{mat}{A square matrix of flows.}
 
-\item{method}{One of "nfirst", "xfirst" or "xsumfirst":
-\cr nfirst selects the k first flows,
-\cr xfirst selects flows greater than k,
-\cr xsumfirst selects flows while sum of flows is smaller than k.}
+\item{method}{A method of flow selection, one of "nfirst", "xfirst" or "xsumfirst":
+\itemize{
+\item{nfirst selects k first flows,}
+\item{xfirst selects flows greater than k,}
+\item{xsumfirst selects as many flows necessary so that their sum is at least equal to k.}
+}}
 
 \item{k}{Selection threshold.}
 
@@ -34,13 +36,17 @@ myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 diag(myflows) <- 0
 statmat(myflows)
 #select 50 first flow on the whole matric
-fflows1 <- firstflowsg(myflows, method = "nfirst", ties.method = "first", 50)
+ xx <- firstflowsg(myflows, method = "nfirst", ties.method = "first", 50)
 fflow1 <- fflows1 * myflows
 statmat(fflow1)
 #select flows > 50
 fflows2 <- firstflowsg(myflows, method = "xfirst", ties.method = "first", 50)
 fflow2 <- fflows2 * myflows
 statmat(fflow2)
+
+# Select flows that represent at least 50\% of the matrix flows
+k50 <- sum(myflows)/2
+fflows2 <- firstflowsg(myflows, method = "xsumfirst", k = 150000)
 }
 \seealso{
 \link{firstflows}, \link{domflows}
