@@ -5,7 +5,7 @@
 \alias{UA}
 \title{Urban Areas}
 \description{
-SpatialPolygonsDataFrame of Urban Areas of the Grand Est region
+SpatialPolygonsDataFrame of Urban Areas of the Grand Est region in France.
 (2010 delineation).
 }
 \examples{

@@ -20,8 +20,7 @@ matrix (origins, destinations, flows intensity).}
 A square matrix of flows. Diagonal can be filled or empty depending on data used.
 }
 \description{
-From a long format matrix to a a wide
-matrix of flows.
+From a long format matrix to a a wide format matrix.
 }
 \examples{
 # Import data

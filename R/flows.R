@@ -1,24 +1,22 @@
 #' @title Flows Selection and Analysis
 #' @name flows
-#' @description This package contains various functions to filter flows matrices
-#' (dominant and major flows), provides statistics on selection made
-#'  and proposes map and graph visualisation.
+#' @description Selections on flow matrices, statistics on selected flows, map
+#' and graph visualisations.
 #' @docType package
 NULL
 
 #' @title Commuters
 #' @name nav
-#' @description Data on commuters between Urban Areas of the Grand Est Regions in 2011.
-#' @details
-#' Variables: \cr
+#' @description Data on commuters between Urban Areas of the French Grand Est region in 2011.
+#' Fields: \cr
 #' \itemize{
-#' \item{i: Code of urban area of residence}
+#' \item{i: Code of the urban area of residence}
 #' \item{namei: Name of the urban area of residence}
-#' \item{wi: Number of active occupied persons in the urban area of residence}
-#' \item{j: Code of urban area of work}
+#' \item{wi: Total number of active occupied persons in the urban area of residence}
+#' \item{j: Code of the urban area of work}
 #' \item{namej: Name of the urban area of work}
-#' \item{wj: Number of active occupied persons in the urban area of work}
-#' \item{fij: Number of persons commuting}
+#' \item{wj: Total number of active occupied persons in the urban area of work}
+#' \item{fij: Number of commuters between i and j}
 #' }
 #' @references
 #' \url{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=mobilite-professionnelle-11}
@@ -31,7 +29,7 @@ NULL
 
 #' @title Urban Areas
 #' @name UA
-#' @description SpatialPolygonsDataFrame of Urban Areas of the Grand Est region
+#' @description SpatialPolygonsDataFrame of Urban Areas of the Grand Est region in France.
 #' (2010 delineation).
 #' @references
 #' \url{http://professionnels.ign.fr/geofla#tab-3}
@@ -45,7 +43,7 @@ NULL
 
 #' @title Grand Est Region
 #' @name GE
-#' @description SpatialPolygonsDataFrame of the Grand Est region.
+#' @description SpatialPolygonsDataFrame of the Grand Est region in France.
 #' @references
 #' \url{http://professionnels.ign.fr/geofla#tab-3}
 #' @docType data
@@ -59,8 +57,7 @@ NULL
 
 #' @title Flows Preparation
 #' @name prepflows
-#' @description From a long format matrix to a a wide
-#' matrix of flows.
+#' @description From a long format matrix to a a wide format matrix.
 #' @param mat A data.frame of flows between origins and destinations: long format
 #' matrix (origins, destinations, flows intensity).
 #' @param i A character giving the origin field name in mat.
@@ -100,12 +97,12 @@ prepflows <- function(mat, i, j, fij){
 #' @title Descriptive Statistics on Flow Matrix
 #' @name statmat
 #' @description This function provides various indicators and graphical outputs
-#' on a matrix of flows.
-#' @param mat A square flow matrix.
+#' on a flow matrix.
+#' @param mat A square matrix of flows.
 #' @param output Graphical output. Choices are "all" for all graphics,
-#' "none" to avoid graphical outputs, "degree" for degree distribution, "wdegree" for
+#' "none" to avoid any graphical output, "degree" for degree distribution, "wdegree" for
 #' weighted degree distribution, "lorenz" for Lorenz curve of link weights and
-#' "boxplot" for boxplot of link weights (see Details).
+#' "boxplot" for boxplot of link weights (see 'Details').
 #' @param verbose A boolean, if TRUE, returns statistics in the console.
 #' @return  The function returns a list of statistics and may plot graphics.
 #' \itemize{
@@ -280,7 +277,7 @@ statmat <- function(mat, output = "all", verbose = TRUE){
 #' when printing the data.frame in the console (see \link{round}).
 #' @return A data.frame that provides statistics on differences
 #' between mat1 and mat2: absdiff are the
-#' absolute diffences and reldiff are the relative differences (in percent).
+#' absolute differences and reldiff are the relative differences (in percent).
 #' @seealso \link{statmat}
 #' @examples
 #' # Import data
@@ -290,7 +287,7 @@ statmat <- function(mat, output = "all", verbose = TRUE){
 #' # Remove the matrix diagonal
 #' diag(myflows) <- 0
 #'
-#' # Select the dominant flows (incomming flows criteria)
+#' # Select the dominant flows (incoming flows criteria)
 #' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows),
 #'                      k = 1)
 #' # Select the first flows
@@ -333,12 +330,12 @@ compmat <- function(mat1, mat2, digits = 0){
 #' @param mat A square matrix of flows.
 #' @param method A method of flow selection, one of "nfirst", "xfirst" or "xsumfirst":
 #' \itemize{
-#' \item{nfirst selects k first flows from origins,}
+#' \item{nfirst selects the k first flows from origins,}
 #' \item{xfirst selects flows greater than k,}
 #' \item{xsumfirst selects as many flows as necessary for each origin so that their sum is at least equal to k.
 #' If k is not reached for one origin, all its flows are selected.}
 #' }
-#' @param ties.method In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).
+#' @param ties.method In case of equality with "nfirst" method, use "random" or "first" (see \link{rank}).
 #' @param k Selection threshold.
 #' @return A boolean matrix of selected flows.
 #' @details As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
@@ -394,17 +391,17 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
 }
 
 
-#' @title Flow Selection from Full Matrix
+#' @title Flow Selection Based on Global Criteria
 #' @name firstflowsg
 #' @description Flow selection based on global criteria.
 #' @param mat A square matrix of flows.
 #' @param method A method of flow selection, one of "nfirst", "xfirst" or "xsumfirst":
 #' \itemize{
-#' \item{nfirst selects k first flows,}
+#' \item{nfirst selects the k first flows of the matrix,}
 #' \item{xfirst selects flows greater than k,}
 #' \item{xsumfirst selects as many flows as necessary so that their sum is at least equal to k.}
 #' }
-#' @param ties.method In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).
+#' @param ties.method In case of equality with "nfirst" method, use "random" or "first" (see \link{rank}).
 #' @param k Selection threshold.
 #' @return A boolean matrix of selected flows.
 #' @details As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
@@ -456,14 +453,15 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 
 #' @title Dominant Flows Selection
 #' @name domflows
-#' @description Find dominant flows in a matrix.
+#' @description Dominant flows selection.
 #' @param mat A square matrix of flows.
-#' @param wi A vector of weight for rows.
-#' @param wj A vector of weight for columns.
-#' @param k A threshold (see Details).
+#' @param wi A vector of row weigths.
+#' @param wj A vector of column weigths.
+#' @param k A threshold (see 'Details').
 #' @return A boolean matrix of selected flows.
 #' @details This function selects which flow (fij or fji) must be kept.
-#' If the ratio weight of destination (wj) / weight of origin (wi) is greater than k, then fij is kept.
+#' If the ratio weight of destination (wj) / weight of origin (wi) is greater
+#' than k, then fij is selected and fji is not.
 #' This function can perform the second criterion of the Nystuen &
 #' Dacey's dominants flows analysis.\cr
 #' As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
@@ -478,7 +476,7 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 #' # Remove the matrix diagonal
 #' diag(myflows) <- 0
 #'
-#' # Select the dominant flows (incomming flows criteria)
+#' # Select the dominant flows (incoming flows criteria)
 #' flowSel <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
 #'                     k = 1)
 #' statmat(mat = myflows * flowSel, output = "none")
@@ -511,8 +509,9 @@ domflows <- function(mat, wi, wj, k){
 #' "topright", "left", "right", "bottomleft", "bottom", "bottomright".
 #' @param legend.node.txt Text of the nodes legend.
 #' @param labels A boolean, if TRUE, labels of dominant and intermediary nodes are plotted.
-#' @note We do not propose visualisation for other outputs as square matrices can easily be plot
-#' with \link[igraph]{plot.igraph} or \link[sna]{gplot} functions from igraph and sna packages.
+#' @note As square matrices can easily be plot with \link[igraph]{plot.igraph} or
+#' \link[sna]{gplot} functions from igraph and sna packages, we do not propose
+#' visualisation for other outputs.
 #' @seealso \link{domflows}, \link{plotMapDomFlows}
 #' @examples
 #' # Import data
@@ -522,7 +521,7 @@ domflows <- function(mat, wi, wj, k){
 #' # Remove the matrix diagonal
 #' diag(myflows) <- 0
 #'
-#' # Select the dominant flows (incomming flows criteria)
+#' # Select the dominant flows (incoming flows criteria)
 #' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
 #'                      k = 1)
 #' # Select the first flows
@@ -590,12 +589,12 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
 
 #' @title Dominant Flows Map
 #' @name plotMapDomFlows
-#' @description This function displays a dominant flows map.
+#' @description This function plots a dominant flows map.
 #' @param mat A square matrix of dominant flows (see \link{domflows}).
-#' @param spdf A SpatialPolygonsDataFrame or a SpatialPointsDataFrame object of units.
-#' @param spdfid Name of the 'id' variable in the spdf data.frame.
+#' @param spdf A SpatialPolygonsDataFrame or a SpatialPointsDataFrame of units.
+#' @param spdfid Name of the unique identifier variable in the spdf data.frame.
 #' @param w A data.frame which contains the weight variable used to plot units sizes on the map.
-#' @param wid Name of the 'id' variable in w.
+#' @param wid Name of the unique identifier variable in w.
 #' @param wvar Name of the weight variable in w.
 #' @param wcex Share of the surface of the map occupied by circles (0.02 is 2\%).
 #' @param legend.flows.pos Position of the flows legend, one of "topleft", "top",
@@ -615,7 +614,7 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
 #' # Remove the matrix diagonal
 #' diag(myflows) <- 0
 #'
-#' # Select the dominant flows (incomming flows criteria)
+#' # Select the dominant flows (incoming flows criteria)
 #' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
 #'                      k = 1)
 #' # Select the first flows

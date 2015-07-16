@@ -9,21 +9,22 @@ domflows(mat, wi, wj, k)
 \arguments{
 \item{mat}{A square matrix of flows.}
 
-\item{wi}{A vector of weight for rows.}
+\item{wi}{A vector of row weigths.}
 
-\item{wj}{A vector of weight for columns.}
+\item{wj}{A vector of column weigths.}
 
-\item{k}{A threshold (see Details).}
+\item{k}{A threshold (see 'Details').}
 }
 \value{
 A boolean matrix of selected flows.
 }
 \description{
-Find dominant flows in a matrix.
+Dominant flows selection.
 }
 \details{
 This function selects which flow (fij or fji) must be kept.
-If the ratio weight of destination (wj) / weight of origin (wi) is greater than k, then fij is kept.
+If the ratio weight of destination (wj) / weight of origin (wi) is greater
+than k, then fij is selected and fji is not.
 This function can perform the second criterion of the Nystuen &
 Dacey's dominants flows analysis.\cr
 As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
@@ -36,7 +37,7 @@ myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 # Remove the matrix diagonal
 diag(myflows) <- 0
 
-# Select the dominant flows (incomming flows criteria)
+# Select the dominant flows (incoming flows criteria)
 flowSel <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
                     k = 1)
 statmat(mat = myflows * flowSel, output = "none")

@@ -2,7 +2,7 @@
 % Please edit documentation in R/flows.R
 \name{firstflowsg}
 \alias{firstflowsg}
-\title{Flow Selection from Full Matrix}
+\title{Flow Selection Based on Global Criteria}
 \usage{
 firstflowsg(mat, method = "nfirst", k, ties.method = "first")
 }
@@ -11,14 +11,14 @@ firstflowsg(mat, method = "nfirst", k, ties.method = "first")
 
 \item{method}{A method of flow selection, one of "nfirst", "xfirst" or "xsumfirst":
 \itemize{
-\item{nfirst selects k first flows,}
+\item{nfirst selects the k first flows of the matrix,}
 \item{xfirst selects flows greater than k,}
 \item{xsumfirst selects as many flows as necessary so that their sum is at least equal to k.}
 }}
 
 \item{k}{Selection threshold.}
 
-\item{ties.method}{In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).}
+\item{ties.method}{In case of equality with "nfirst" method, use "random" or "first" (see \link{rank}).}
 }
 \value{
 A boolean matrix of selected flows.

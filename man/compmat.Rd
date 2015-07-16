@@ -17,7 +17,7 @@ when printing the data.frame in the console (see \link{round}).}
 \value{
 A data.frame that provides statistics on differences
 between mat1 and mat2: absdiff are the
-absolute diffences and reldiff are the relative differences (in percent).
+absolute differences and reldiff are the relative differences (in percent).
 }
 \description{
 Compares two matrices of same dimension, with same column and
@@ -31,7 +31,7 @@ myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 # Remove the matrix diagonal
 diag(myflows) <- 0
 
-# Select the dominant flows (incomming flows criteria)
+# Select the dominant flows (incoming flows criteria)
 flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows),
                      k = 1)
 # Select the first flows

@@ -28,8 +28,9 @@ plotDomFlows(mat, legend.flows.pos = "topright",
 This function plots a dominant flows graph.
 }
 \note{
-We do not propose visualisation for other outputs as square matrices can easily be plot
-with \link[igraph]{plot.igraph} or \link[sna]{gplot} functions from igraph and sna packages.
+As square matrices can easily be plot with \link[igraph]{plot.igraph} or
+\link[sna]{gplot} functions from igraph and sna packages, we do not propose
+visualisation for other outputs.
 }
 \examples{
 # Import data
@@ -39,7 +40,7 @@ myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 # Remove the matrix diagonal
 diag(myflows) <- 0
 
-# Select the dominant flows (incomming flows criteria)
+# Select the dominant flows (incoming flows criteria)
 flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
                      k = 1)
 # Select the first flows

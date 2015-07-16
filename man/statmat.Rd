@@ -7,12 +7,12 @@
 statmat(mat, output = "all", verbose = TRUE)
 }
 \arguments{
-\item{mat}{A square flow matrix.}
+\item{mat}{A square matrix of flows.}
 
 \item{output}{Graphical output. Choices are "all" for all graphics,
-"none" to avoid graphical outputs, "degree" for degree distribution, "wdegree" for
+"none" to avoid any graphical output, "degree" for degree distribution, "wdegree" for
 weighted degree distribution, "lorenz" for Lorenz curve of link weights and
-"boxplot" for boxplot of link weights (see Details).}
+"boxplot" for boxplot of link weights (see 'Details').}
 
 \item{verbose}{A boolean, if TRUE, returns statistics in the console.}
 }
@@ -40,7 +40,7 @@ and sum of flows per component (isolates included).}
 }
 \description{
 This function provides various indicators and graphical outputs
-on a matrix of flows.
+on a flow matrix.
 }
 \details{
 Graphical ouputs concern outdegrees by default. If the matrix is

@@ -5,18 +5,16 @@
 \alias{nav}
 \title{Commuters}
 \description{
-Data on commuters between Urban Areas of the Grand Est Regions in 2011.
-}
-\details{
-Variables: \cr
+Data on commuters between Urban Areas of the French Grand Est region in 2011.
+Fields: \cr
 \itemize{
-\item{i: Code of urban area of residence}
+\item{i: Code of the urban area of residence}
 \item{namei: Name of the urban area of residence}
-\item{wi: Number of active occupied persons in the urban area of residence}
-\item{j: Code of urban area of work}
+\item{wi: Total number of active occupied persons in the urban area of residence}
+\item{j: Code of the urban area of work}
 \item{namej: Name of the urban area of work}
-\item{wj: Number of active occupied persons in the urban area of work}
-\item{fij: Number of persons commuting}
+\item{wj: Total number of active occupied persons in the urban area of work}
+\item{fij: Number of commuters between i and j}
 }
 }
 \examples{

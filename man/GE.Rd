@@ -5,7 +5,7 @@
 \alias{GE}
 \title{Grand Est Region}
 \description{
-SpatialPolygonsDataFrame of the Grand Est region.
+SpatialPolygonsDataFrame of the Grand Est region in France.
 }
 \examples{
 ###GE

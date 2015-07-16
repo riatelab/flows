@@ -13,13 +13,13 @@ plotMapDomFlows(mat, spdf, spdfid, w, wid, wvar, wcex = 0.05,
 \arguments{
 \item{mat}{A square matrix of dominant flows (see \link{domflows}).}
 
-\item{spdf}{A SpatialPolygonsDataFrame or a SpatialPointsDataFrame object of units.}
+\item{spdf}{A SpatialPolygonsDataFrame or a SpatialPointsDataFrame of units.}
 
-\item{spdfid}{Name of the 'id' variable in the spdf data.frame.}
+\item{spdfid}{Name of the unique identifier variable in the spdf data.frame.}
 
 \item{w}{A data.frame which contains the weight variable used to plot units sizes on the map.}
 
-\item{wid}{Name of the 'id' variable in w.}
+\item{wid}{Name of the unique identifier variable in w.}
 
 \item{wvar}{Name of the weight variable in w.}
 
@@ -38,7 +38,7 @@ plotMapDomFlows(mat, spdf, spdfid, w, wid, wvar, wcex = 0.05,
 \item{add}{A boolean, if TRUE, add the layer to an existing plot.}
 }
 \description{
-This function displays a dominant flows map.
+This function plots a dominant flows map.
 }
 \examples{
 # Import data
@@ -48,7 +48,7 @@ myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 # Remove the matrix diagonal
 diag(myflows) <- 0
 
-# Select the dominant flows (incomming flows criteria)
+# Select the dominant flows (incoming flows criteria)
 flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
                      k = 1)
 # Select the first flows

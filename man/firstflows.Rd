@@ -11,13 +11,13 @@ firstflows(mat, method = "nfirst", ties.method = "first", k)
 
 \item{method}{A method of flow selection, one of "nfirst", "xfirst" or "xsumfirst":
 \itemize{
-\item{nfirst selects k first flows from origins,}
+\item{nfirst selects the k first flows from origins,}
 \item{xfirst selects flows greater than k,}
 \item{xsumfirst selects as many flows as necessary for each origin so that their sum is at least equal to k.
 If k is not reached for one origin, all its flows are selected.}
 }}
 
-\item{ties.method}{In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).}
+\item{ties.method}{In case of equality with "nfirst" method, use "random" or "first" (see \link{rank}).}
 
 \item{k}{Selection threshold.}
 }
