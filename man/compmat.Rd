@@ -24,14 +24,27 @@ Compares two matrices of same dimension, with same column and
 row names.
 }
 \examples{
+# Import data
 data(nav)
-mat <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-diag(mat) <- 0
-x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
-firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
-xnb <- firstflows(mat = mat, method = "xfirst", ties.method = "first", k = 20)
-mat2 <- mat * firstx * x * xnb
-compmat(mat1 = mat, mat2 = mat2, digits = 1)
+myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
+
+# Remove the matrix diagonal
+diag(myflows) <- 0
+
+# Select the dominant flows (incomming flows criteria)
+flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows),
+                     k = 1)
+# Select the first flows
+flowSel2 <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
+                       k = 1)
+# Select flows greater than 2000
+flowSel3 <- firstflows(mat = myflows, method = "xfirst", k = 2000)
+
+# Combine selections
+flowSel <- myflows * flowSel1 * flowSel2 * flowSel3
+
+# Compare flow matrices
+compmat(mat1 = myflows, mat2 = flowSel, digits = 1)
 }
 \seealso{
 \link{statmat}

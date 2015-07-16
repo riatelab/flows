@@ -1,4 +1,4 @@
-#' @title flows
+#' @title Flows Selection and Analysis
 #' @name flows
 #' @description This package contains various functions to filter flows matrices
 #' (dominant and major flows), provides statistics on selection made
@@ -8,7 +8,7 @@ NULL
 
 #' @title Commuters
 #' @name nav
-#' @description Data on commuters between Urban Areas of the Grand-Est Regions in 2011.
+#' @description Data on commuters between Urban Areas of the Grand Est Regions in 2011.
 #' @details
 #' Variables: \cr
 #' \itemize{
@@ -23,23 +23,36 @@ NULL
 #' @references
 #' \url{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=mobilite-professionnelle-11}
 #' @docType data
+#' @examples
+#' ## nav
+#' data(nav)
+#' str(nav)
 NULL
 
 #' @title Urban Areas
 #' @name UA
-#' @description SpatialPolygonsDataFrame of Urban Areas of the Grand-Est region
+#' @description SpatialPolygonsDataFrame of Urban Areas of the Grand Est region
 #' (2010 delineation).
 #' @references
 #' \url{http://professionnels.ign.fr/geofla#tab-3}
 #' @docType data
+#' @examples
+#' ## UA
+#' data(nav)
+#' sp::plot(GE, col = "#cceae7", border = "grey50")
+#' sp::plot(UA, col = "#940000", border = "white", add = TRUE)
 NULL
 
 #' @title Grand Est Region
 #' @name GE
-#' @description SpatialPolygonsDataFrame of the Grand-Est region.
+#' @description SpatialPolygonsDataFrame of the Grand Est region.
 #' @references
 #' \url{http://professionnels.ign.fr/geofla#tab-3}
 #' @docType data
+#' @examples
+#' ###GE
+#' data(nav)
+#' sp::plot(GE, col = "#cceae7", border = "grey50")
 NULL
 
 #### Public
@@ -54,11 +67,14 @@ NULL
 #' @param j A character giving the destination field name in mat.
 #' @param fij A character giving the flow field name in mat.
 #' @return A square matrix of flows. Diagonal can be filled or empty depending on data used.
+#' @import reshape2
 #' @examples
+#' # Import data
 #' data(nav)
+#' head(nav)
+#' # Prepare data
 #' myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 #' myflows[1:5,1:5]
-#' @import reshape2
 #' @export
 prepflows <- function(mat, i, j, fij){
   mat <- mat[,c(i,j,fij)]
@@ -116,15 +132,25 @@ prepflows <- function(mat, i, j, fij){
 #' @seealso \link{compmat}
 #' @import igraph
 #' @examples
+#' # Import data
 #' data(nav)
 #' myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-#' x <- statmat(myflows)
+#'
+#' # Get statistics and graphs about the matrix
+#' mystats <- statmat(mat = myflows, output = "all", verbose = TRUE)
+#'
 #' # Size of connected components
-#' x$sizecomp
+#' mystats$sizecomp
+#'
 #' # Sum of flows
-#' x$sumflows
-#' # Lorenz curve only
-#' statmat(myflows, output = "lorenz", verbose = FALSE)
+#' mystats$sumflows
+#'
+#' # Plot Lorenz curve only
+#' statmat(mat = myflows, output = "lorenz", verbose = FALSE)
+#'
+#' # Statistics only
+#' mystats <- statmat(mat = myflows, output = "none", verbose = FALSE)
+#' str(mystats)
 #' @export
 statmat <- function(mat, output = "all", verbose = TRUE){
   nbcell <- length(mat)
@@ -257,14 +283,27 @@ statmat <- function(mat, output = "all", verbose = TRUE){
 #' absolute diffences and reldiff are the relative differences (in percent).
 #' @seealso \link{statmat}
 #' @examples
+#' # Import data
 #' data(nav)
-#' mat <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-#' diag(mat) <- 0
-#' x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
-#' firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
-#' xnb <- firstflows(mat = mat, method = "xfirst", ties.method = "first", k = 20)
-#' mat2 <- mat * firstx * x * xnb
-#' compmat(mat1 = mat, mat2 = mat2, digits = 1)
+#' myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
+#'
+#' # Remove the matrix diagonal
+#' diag(myflows) <- 0
+#'
+#' # Select the dominant flows (incomming flows criteria)
+#' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows),
+#'                      k = 1)
+#' # Select the first flows
+#' flowSel2 <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
+#'                        k = 1)
+#' # Select flows greater than 2000
+#' flowSel3 <- firstflows(mat = myflows, method = "xfirst", k = 2000)
+#'
+#' # Combine selections
+#' flowSel <- myflows * flowSel1 * flowSel2 * flowSel3
+#'
+#' # Compare flow matrices
+#' compmat(mat1 = myflows, mat2 = flowSel, digits = 1)
 #' @export
 compmat <- function(mat1, mat2, digits = 0){
   x1 <- statmat(mat1, output = "none", verbose = FALSE)
@@ -296,7 +335,7 @@ compmat <- function(mat1, mat2, digits = 0){
 #' \itemize{
 #' \item{nfirst selects k first flows from origins,}
 #' \item{xfirst selects flows greater than k,}
-#' \item{xsumfirst selects as many flows necessary by origins so that their sum is at least equal to k.
+#' \item{xsumfirst selects as many flows as necessary for each origin so that their sum is at least equal to k.
 #' If k is not reached for one origin, all its flows are selected.}
 #' }
 #' @param ties.method In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).
@@ -305,35 +344,31 @@ compmat <- function(mat1, mat2, digits = 0){
 #' @details As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 #' @seealso \link{firstflowsg}, \link{domflows}
 #' @examples
+#' # Import data
 #' data(nav)
 #' myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 #'
-#' #remove diagonal
+#' # Remove the matrix diagonal
 #' diag(myflows) <- 0
-#' statmat(myflows)
 #'
-#' #select 2 flows per spatial unit
-#' fflows1 <- firstflows(myflows, method = "nfirst", ties.method = "first", k = 2)
-#' # Use element-wise multiplication to get flows intensity.
-#' fflow1 <- fflows1 * myflows
-#' statmat(fflow1)
+#' # Select the 2 first flows of each origin
+#' flowSel <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
+#'                       k = 2)
+#' statmat(mat = myflows * flowSel, output = "none")
 #'
-#' #select flows > 20
-#' fflows2 <- firstflows(myflows, method = "xfirst", k = 20)
-#' fflow2 <- fflows2 * myflows
-#' statmat(fflow2)
+#' # Select flows greater than 2000
+#' flowSel <- firstflows(mat = myflows, method = "xfirst", k = 2000)
+#' statmat(mat = myflows * flowSel, output = "none")
 #'
-#'# select flows where sum flows >= 20000
-#' fflows2 <- firstflows(myflows, method = "xsumfirst", k = 1000)
-#' fflow2 <- fflows2 * myflows
-#' x <-statmat(fflow2)
-#' x$degree
+#' # Select as many flows as necessary for each origin so that their sum is at
+#' # least equal to 20000
+#' flowSel <- firstflows(myflows, method = "xsumfirst", k = 20000)
+#' statmat(mat = myflows * flowSel, output = "none")
 #'
 #' # Select each flows that represent at least 10% of the outputs
 #' myflowspct <- myflows / rowSums(myflows) * 100
-#' fflows2 <- firstflows(mat = myflowspct, method = "xfirst", k = 10)
-#' fflow2 <- fflows2 * myflows
-#' statmat(fflow2)
+#' flowSel <- firstflows(mat = myflowspct, method = "xfirst", k = 10)
+#' statmat(mat = myflows * flowSel, output = "none")
 #' @export
 firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
   # list of i, j selected
@@ -367,7 +402,7 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
 #' \itemize{
 #' \item{nfirst selects k first flows,}
 #' \item{xfirst selects flows greater than k,}
-#' \item{xsumfirst selects as many flows necessary so that their sum is at least equal to k.}
+#' \item{xsumfirst selects as many flows as necessary so that their sum is at least equal to k.}
 #' }
 #' @param ties.method In case of equality with "nfirst" method (use "random" or "first", see \link{rank}).
 #' @param k Selection threshold.
@@ -375,26 +410,26 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first",k){
 #' @details As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 #' @seealso \link{firstflows}, \link{domflows}
 #' @examples
+#' # Import data
 #' data(nav)
 #' myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-#' #remove diagonal
+#'
+#' # Remove the matrix diagonal
 #' diag(myflows) <- 0
-#' statmat(myflows)
-#' #select 50 first flow on the whole matric
-#'  xx <- firstflowsg(myflows, method = "nfirst", ties.method = "first", 50)
-#' fflow1 <- fflows1 * myflows
-#' statmat(fflow1)
-#' #select flows > 50
-#' fflows2 <- firstflowsg(myflows, method = "xfirst", ties.method = "first", 50)
-#' fflow2 <- fflows2 * myflows
-#' statmat(fflow2)
+#'
+#' # Select the 50 first flows of the matrix
+#' flowSel <- firstflowsg(mat = myflows, method = "nfirst", ties.method = "first",
+#'                        k = 50)
+#' statmat(mat = myflows * flowSel, output = "none")
+#'
+#' # Select all flows greater than 2000
+#' flowSel <- firstflowsg(myflows, method = "xfirst", k= 2000)
+#' statmat(mat = myflows * flowSel, output = "none")
 #'
 #' # Select flows that represent at least 50% of the matrix flows
 #' k50 <- sum(myflows)/2
-#' fflows2 <- firstflowsg(myflows, method = "xsumfirst", k = 150000)
-#'
-#'
-#'
+#' flowSel <- firstflowsg(mat = myflows, method = "xsumfirst", k = 150000)
+#' statmat(mat = myflows * flowSel, output = "none")
 #' @export
 firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
   matfinal <- mat
@@ -436,15 +471,17 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 #' @references J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,
 #' \emph{Papers and Proceedings of the Regional Science Association}, vol. 7,  29-42.
 #' @examples
+#' # Import data
 #' data(nav)
 #' myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-#' #remove diagonal
+#'
+#' # Remove the matrix diagonal
 #' diag(myflows) <- 0
-#' statmat(myflows)
-#' #create the tree of dominant, intermediary and dominated nodes
-#' domf <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows), k = 1)
-#' domfw <-domf * myflows
-#' statmat(domfw)
+#'
+#' # Select the dominant flows (incomming flows criteria)
+#' flowSel <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
+#'                     k = 1)
+#' statmat(mat = myflows * flowSel, output = "none")
 #' @export
 domflows <- function(mat, wi, wj, k){
   # list of i, j selected
@@ -478,14 +515,25 @@ domflows <- function(mat, wi, wj, k){
 #' with \link[igraph]{plot.igraph} or \link[sna]{gplot} functions from igraph and sna packages.
 #' @seealso \link{domflows}, \link{plotMapDomFlows}
 #' @examples
+#' # Import data
 #' data(nav)
-#' mat <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-#' diag(mat) <- 0
-#' x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
-#' firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
-#' xnb <- firstflows(mat = mat, method = "xfirst", ties.method = "first", k = 20)
-#' mat <- mat * firstx * x * xnb
-#' plotDomFlows(mat)
+#' myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
+#'
+#' # Remove the matrix diagonal
+#' diag(myflows) <- 0
+#'
+#' # Select the dominant flows (incomming flows criteria)
+#' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
+#'                      k = 1)
+#' # Select the first flows
+#' flowSel2 <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
+#'                        k = 1)
+#'
+#' # Combine selections
+#' flowSel <- myflows * flowSel1 * flowSel2
+#'
+#' # Plot dominant flows graph
+#' plotDomFlows(mat = flowSel, legend.flows.title = "Nb. of commuters")
 #' @export
 plotDomFlows <- function(mat, legend.flows.pos = "topright",
                          legend.flows.title = "Flows Intensity",
@@ -560,27 +608,36 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
 #' @seealso \link{domflows}, \link{plotDomFlows}
 #' @import sp
 #' @examples
+#' # Import data
 #' data(nav)
-#' mat <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-#' diag(mat) <- 0
-#' x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
-#' firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
-#' hab <- mat * firstx * x
-#' inflows <- data.frame(id = colnames(mat), w = colSums(mat))
-#' par(mar = c(0,0,2,0))
+#' myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
+#'
+#' # Remove the matrix diagonal
+#' diag(myflows) <- 0
+#'
+#' # Select the dominant flows (incomming flows criteria)
+#' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
+#'                      k = 1)
+#' # Select the first flows
+#' flowSel2 <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
+#'                        k = 1)
+#'
+#' # Combine selections
+#' flowSel <- myflows * flowSel1 * flowSel2
+#'
+#' # Node weights
+#' inflows <- data.frame(id = colnames(myflows), w = colSums(myflows))
+#'
+#' # Plot dominant flows map
+#' opar <- par(mar = c(0,0,2,0))
 #' sp::plot(GE, col = "#cceae7", border = NA)
-#' plotMapDomFlows(mat = hab,
-#'                 spdf = UA,
-#'                 spdfid = "ID",
-#'                 w = inflows,
-#'                 wid = "id",
-#'                 wvar = "w",
-#'                 wcex = 0.05,
-#'                 add = TRUE,
+#' plotMapDomFlows(mat = flowSel, spdf = UA, spdfid = "ID", w = inflows, wid = "id",
+#'                 wvar = "w", wcex = 0.05, add = TRUE,
 #'                 legend.flows.pos = "bottomleft",
-#'                 legend.flows.title = "Residential flows\nintensity")
-#' title("Dominant Residential Flows")
+#'                 legend.flows.title = "Nb. of commuters")
+#' title("Dominant Flows of Commuters")
 #' mtext(text = "INSEE, 2011", side = 4, line = -1, adj = 0.01, cex = 0.8)
+#' par(opar)
 #' @export
 plotMapDomFlows <- function(mat, spdf,
                             spdfid, w,

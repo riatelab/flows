@@ -4,7 +4,7 @@
 \name{flows}
 \alias{flows}
 \alias{flows-package}
-\title{flows}
+\title{Flows Selection and Analysis}
 \description{
 This package contains various functions to filter flows matrices
 (dominant and major flows), provides statistics on selection made

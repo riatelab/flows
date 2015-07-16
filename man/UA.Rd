@@ -5,8 +5,14 @@
 \alias{UA}
 \title{Urban Areas}
 \description{
-SpatialPolygonsDataFrame of Urban Areas of the Grand-Est region
+SpatialPolygonsDataFrame of Urban Areas of the Grand Est region
 (2010 delineation).
+}
+\examples{
+## UA
+data(nav)
+sp::plot(GE, col = "#cceae7", border = "grey50")
+sp::plot(UA, col = "#940000", border = "white", add = TRUE)
 }
 \references{
 \url{http://professionnels.ign.fr/geofla#tab-3}

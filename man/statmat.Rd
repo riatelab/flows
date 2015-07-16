@@ -47,15 +47,25 @@ Graphical ouputs concern outdegrees by default. If the matrix is
 transposed, outputs concern indegrees.
 }
 \examples{
+# Import data
 data(nav)
 myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-x <- statmat(myflows)
+
+# Get statistics and graphs about the matrix
+mystats <- statmat(mat = myflows, output = "all", verbose = TRUE)
+
 # Size of connected components
-x$sizecomp
+mystats$sizecomp
+
 # Sum of flows
-x$sumflows
-# Lorenz curve only
-statmat(myflows, output = "lorenz", verbose = FALSE)
+mystats$sumflows
+
+# Plot Lorenz curve only
+statmat(mat = myflows, output = "lorenz", verbose = FALSE)
+
+# Statistics only
+mystats <- statmat(mat = myflows, output = "none", verbose = FALSE)
+str(mystats)
 }
 \seealso{
 \link{compmat}

@@ -13,7 +13,7 @@ firstflowsg(mat, method = "nfirst", k, ties.method = "first")
 \itemize{
 \item{nfirst selects k first flows,}
 \item{xfirst selects flows greater than k,}
-\item{xsumfirst selects as many flows necessary so that their sum is at least equal to k.}
+\item{xsumfirst selects as many flows as necessary so that their sum is at least equal to k.}
 }}
 
 \item{k}{Selection threshold.}
@@ -30,23 +30,26 @@ Flow selection based on global criteria.
 As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 }
 \examples{
+# Import data
 data(nav)
 myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-#remove diagonal
+
+# Remove the matrix diagonal
 diag(myflows) <- 0
-statmat(myflows)
-#select 50 first flow on the whole matric
- xx <- firstflowsg(myflows, method = "nfirst", ties.method = "first", 50)
-fflow1 <- fflows1 * myflows
-statmat(fflow1)
-#select flows > 50
-fflows2 <- firstflowsg(myflows, method = "xfirst", ties.method = "first", 50)
-fflow2 <- fflows2 * myflows
-statmat(fflow2)
+
+# Select the 50 first flows of the matrix
+flowSel <- firstflowsg(mat = myflows, method = "nfirst", ties.method = "first",
+                       k = 50)
+statmat(mat = myflows * flowSel, output = "none")
+
+# Select all flows greater than 2000
+flowSel <- firstflowsg(myflows, method = "xfirst", k= 2000)
+statmat(mat = myflows * flowSel, output = "none")
 
 # Select flows that represent at least 50\% of the matrix flows
 k50 <- sum(myflows)/2
-fflows2 <- firstflowsg(myflows, method = "xsumfirst", k = 150000)
+flowSel <- firstflowsg(mat = myflows, method = "xsumfirst", k = 150000)
+statmat(mat = myflows * flowSel, output = "none")
 }
 \seealso{
 \link{firstflows}, \link{domflows}

@@ -5,7 +5,12 @@
 \alias{GE}
 \title{Grand Est Region}
 \description{
-SpatialPolygonsDataFrame of the Grand-Est region.
+SpatialPolygonsDataFrame of the Grand Est region.
+}
+\examples{
+###GE
+data(nav)
+sp::plot(GE, col = "#cceae7", border = "grey50")
 }
 \references{
 \url{http://professionnels.ign.fr/geofla#tab-3}

@@ -5,7 +5,7 @@
 \alias{nav}
 \title{Commuters}
 \description{
-Data on commuters between Urban Areas of the Grand-Est Regions in 2011.
+Data on commuters between Urban Areas of the Grand Est Regions in 2011.
 }
 \details{
 Variables: \cr
@@ -18,6 +18,11 @@ Variables: \cr
 \item{wj: Number of active occupied persons in the urban area of work}
 \item{fij: Number of persons commuting}
 }
+}
+\examples{
+## nav
+data(nav)
+str(nav)
 }
 \references{
 \url{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=mobilite-professionnelle-11}

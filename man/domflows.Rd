@@ -29,15 +29,17 @@ Dacey's dominants flows analysis.\cr
 As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 }
 \examples{
+# Import data
 data(nav)
 myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-#remove diagonal
+
+# Remove the matrix diagonal
 diag(myflows) <- 0
-statmat(myflows)
-#create the tree of dominant, intermediary and dominated nodes
-domf <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows), k = 1)
-domfw <-domf * myflows
-statmat(domfw)
+
+# Select the dominant flows (incomming flows criteria)
+flowSel <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
+                    k = 1)
+statmat(mat = myflows * flowSel, output = "none")
 }
 \references{
 J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,

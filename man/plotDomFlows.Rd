@@ -32,14 +32,25 @@ We do not propose visualisation for other outputs as square matrices can easily 
 with \link[igraph]{plot.igraph} or \link[sna]{gplot} functions from igraph and sna packages.
 }
 \examples{
+# Import data
 data(nav)
-mat <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
-diag(mat) <- 0
-x <- domflows(mat = mat, wi = colSums(mat), wj = colSums(mat), k = 1)
-firstx <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
-xnb <- firstflows(mat = mat, method = "xfirst", ties.method = "first", k = 20)
-mat <- mat * firstx * x * xnb
-plotDomFlows(mat)
+myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
+
+# Remove the matrix diagonal
+diag(myflows) <- 0
+
+# Select the dominant flows (incomming flows criteria)
+flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
+                     k = 1)
+# Select the first flows
+flowSel2 <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
+                       k = 1)
+
+# Combine selections
+flowSel <- myflows * flowSel1 * flowSel2
+
+# Plot dominant flows graph
+plotDomFlows(mat = flowSel, legend.flows.title = "Nb. of commuters")
 }
 \seealso{
 \link{domflows}, \link{plotMapDomFlows}

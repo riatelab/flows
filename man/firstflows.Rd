@@ -13,7 +13,7 @@ firstflows(mat, method = "nfirst", ties.method = "first", k)
 \itemize{
 \item{nfirst selects k first flows from origins,}
 \item{xfirst selects flows greater than k,}
-\item{xsumfirst selects as many flows necessary by origins so that their sum is at least equal to k.
+\item{xsumfirst selects as many flows as necessary for each origin so that their sum is at least equal to k.
 If k is not reached for one origin, all its flows are selected.}
 }}
 
@@ -31,35 +31,31 @@ Flow selection from origins.
 As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 }
 \examples{
+# Import data
 data(nav)
 myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 
-#remove diagonal
+# Remove the matrix diagonal
 diag(myflows) <- 0
-statmat(myflows)
 
-#select 2 flows per spatial unit
-fflows1 <- firstflows(myflows, method = "nfirst", ties.method = "first", k = 2)
-# Use element-wise multiplication to get flows intensity.
-fflow1 <- fflows1 * myflows
-statmat(fflow1)
+# Select the 2 first flows of each origin
+flowSel <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
+                      k = 2)
+statmat(mat = myflows * flowSel, output = "none")
 
-#select flows > 20
-fflows2 <- firstflows(myflows, method = "xfirst", k = 20)
-fflow2 <- fflows2 * myflows
-statmat(fflow2)
+# Select flows greater than 2000
+flowSel <- firstflows(mat = myflows, method = "xfirst", k = 2000)
+statmat(mat = myflows * flowSel, output = "none")
 
-# select flows where sum flows >= 20000
-fflows2 <- firstflows(myflows, method = "xsumfirst", k = 1000)
-fflow2 <- fflows2 * myflows
-x <-statmat(fflow2)
-x$degree
+# Select as many flows as necessary for each origin so that their sum is at
+# least equal to 20000
+flowSel <- firstflows(myflows, method = "xsumfirst", k = 20000)
+statmat(mat = myflows * flowSel, output = "none")
 
 # Select each flows that represent at least 10\% of the outputs
 myflowspct <- myflows / rowSums(myflows) * 100
-fflows2 <- firstflows(mat = myflowspct, method = "xfirst", k = 10)
-fflow2 <- fflows2 * myflows
-statmat(fflow2)
+flowSel <- firstflows(mat = myflowspct, method = "xfirst", k = 10)
+statmat(mat = myflows * flowSel, output = "none")
 }
 \seealso{
 \link{firstflowsg}, \link{domflows}
