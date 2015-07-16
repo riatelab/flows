@@ -1,16 +1,19 @@
 ---
-title: "Introduction to the `Flows` package"
+title: "Introduction to the `flows` package"
 author: "Timothée Giraud, Laurent Beauguitte, Marianne Guérois"
 date:  "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Flows}
+  %\VignetteIndexEntry{flows}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
+###Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+The __flows__ package provides various functions to filter flows matrices (dominant and major flows), statistics on selected flows, proposes map and graph visualisation. The first part remins main methods of flows selection (nodal region and major flows), the second part presents main funxtions of the package and the last one proposes an analysis of commuters in the French Grand Est region.
+
+<!--- This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
@@ -25,3 +28,177 @@ plot(cars)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+---!>
+
+###Analysis of geographic flows: issues and methods
+
+Working on flows supposes to focus on the relationships between places rather than on the characteristics of each place, which is the basis of spatial analysis. But the analysis and especially the representation of flows assume most often a selection to facilitate reading and interpretation. 
+
+One of the first methods developed was the so-called dominant flows (or nodal regions) proposed by Nystuen and Dacey in 1961 (@nystuen). Working on telephone flows between cities in the Seattle area, they sought to highlight hierarchy between locations. According to them, a place _i_ is dominated by a place _j_ if two conditions are met:
+
+1. the most important flow from _i_ is emitted towards _j_;
+
+2. the sum of the flows received by _j_ is greater than the sum of the flows received by _i_.
+
+This method creates what is called in graph theory a tree (acyclic graph) or forest (a set of unconnected trees) where three categories of place appear: dominant places, dominated places and intermediate places. If the method creates a clear functional hierarchy, its major drawback is to ignore the flows hierarchy.
+
+Various methods have subsequently been proposed to better reflect this intensity, one of the most frequently used is the so-called major flows: it selects only the most important flows, absolute or relative, either locally or globally. In the case of shuttle commuting between municipalities for example, may choose to analyze:
+
+* all flows greater than 100;
+
+* the first 50 flows (global criterion);
+
+* the first 10 flux emitted by each commune (local criteria).
+
+These criteria can also be expressed in relative form:
+
+* representing the flow more than 10% of the active population of a common (local criteria);
+
+* flows taking into account 80% of all commuters (global criterion).
+
+These methods often highlight hierarchies between places but the loss of information created by the selection is rarely questioned. So it seems useful to propose statistical indicators to know the volume of lost information and characteristics of the selected flows.
+
+###The package flows
+
+The processing chain given by the package is as follows:
+
+* data preparation;
+
+* flows selection;
+
+* statistical data and graphical outputs on the selection made;
+
+* graph or map representation (dominant flow).
+
+The input data can be _ij-fij_ format, ie origin - destination - flux intensity. The function **preflows** transforms this list of links (also called long format matrix) to a square matrix (wided matrix). All functions of selection need a square matrix  with the same list of origins and destinations. The function takes four arguments: the data to transform (**mat**), the origin (_i_), the destination (_j_) and the flow intensity (_fij_).
+
+```{r}
+library(flows)
+data(nav)
+head(nav, 4)
+myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
+myflows[1:4, 1:4]
+```
+
+Three selection methods based on the origin flows are accessible through the **firstflows** function:
+
+*  _k_ first selection flow from all _i_;
+
+*  all flows from _i_ greater than a threshold _k_;
+
+*  all flows from _i_ such that the sum of these flows is below a threshold (absolute or relative) _k_.
+
+Figure 1: The three methods of the **firstflows** function
+ <img src="/home/laurent/Bureau/HUBIC/ARTICLES_EN_COURS/2015_netcom/fluxdom/figure1en.png" width="734.5px" height="266px" />
+_Black links are the selected ones._
+
+Methods taking into account the total volume of flows is implemented in the **firstflowsg** function and are identical to the above three detailed options: selecting the first _k_ flows, selection of flows greater than a given intensity and  selection of flows such as the sum is below a given threshold (absolute or relative).
+
+Finally, the function **domflows** selects flows based on a dominance test. This function allows the selection of particular flows obeying the second criterion of Nystuen and Dacey method.
+
+All these functions take as input a square flow matrix and generate binary matrices of equal size. The flows selected by the method are represented by 1, the other by 0. It is therefore possible to combine the criteria of selection (Figure 2).
+
+Figure 2: Flow Selection and combination of matrices
+ <img src="/home/laurent/Bureau/HUBIC/ARTICLES_EN_COURS/2015_netcom/fluxdom/figure2en.png" width="734.5px" height="266px" />
+
+It is possible to calculate a number of indicators using the **statmat** function. This feature provides especially the  density (number of present flows divided by the number of possible flows), the number, size and composition of connected components, the sum of flows, quartiles and average intensity flows. It is therefore possible to make a statistically relevant selection. This function can also generate four graphics outputs: the degree distribution (by default, outdegree), the weighted degree distribution, a Lorenz curve and a boxplot of the flows intensity.
+
+```{r, fig.height = 3, fig.width=3}
+x <- statmat(myflows, verbose = FALSE, output = "none") 
+#density
+x$density
+#degree distribution
+statmat(myflows, output = "degree", verbose = FALSE)
+```
+
+To make comparisons easier, the function **compmat** provides indicators related on two matrices (for example, original matrix and matrix issued from a given selection). 
+
+As visualisations may help analysis, **plotDomFlows** function produces a graph where the size and color of the vertices are dependent on their position in the graph (dominant, intermediate or dominated) and wherein the thickness of the links varies depending on the intensity of the flow. The **plotMapDomFlows** function maps the selected flows on the same principle. Both functions only apply to the dominant flows type selection.
+
+###Commuters flows in the French Grand Est
+
+As an illustration, we present a brief analysis on commuter flows between the cities of East Grand French[^1]. We test and compare two  different thresholds on the total volume of flows: links greater than 500 and flows greater than 1000. 
+
+```{r, fig.height = 4, fig.width=4}
+#diagonal to zero
+diag(myflows) <- 0
+#flows > 500
+myflows500 <- firstflowsg(myflows, method = "xfirst", ties.method = "first", 500)
+myflow500 <- myflows * myflows500
+#flows > 1000
+myflows1000 <- firstflowsg(myflows, method = "xfirst", ties.method = "first", 1000)
+myflow1000 <- myflows * myflows1000
+#comparison with the initial matrix
+compmat(myflows,myflow500)
+compmat(myflows,myflow1000)
+```
+
+If we keep flows greater than 500, we loose 95% of the number of links but only 38% of the volume of flows. With a threshold of 1000, 98% of links are lost but only 53% of the volume of flows.
+
+The following exemple keeps all out-going flows that represent at least 20% of the sum for each urban area. 
+
+```{r, fig.height = 6, fig.width=6}
+#diagonal to zero
+diag(myflows) <- 0
+#percentage
+myflowspct <- myflows / rowSums(myflows) * 100
+#selection
+fflows20 <- firstflows(mat = myflowspct, method = "xfirst", k = 20)
+fflow20 <- fflows20 * myflows
+#complete statistics and graphical outputs
+statmat(fflow20)
+#comparision with the initial matrix
+compmat(myflows,fflow20)
+```
+
+This selection keeps only 7% all links and 53% of the volume of flows. The hierarchy of "network heads" evaluated from the selection of dominant flow and number of incoming assets brings out clearly, in descending order of domination Strasbourg, Mulhouse, Metz and Nancy, which capture each with more than 10 000 assets.
+
+```{r, fig.height=6, fig.width=6}
+#domflows
+x <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows), k = 1)
+#combinason of criteria
+xx <- myflows * fflows20 * x
+inflows <- data.frame(id = colnames(myflows), w = colSums(myflows))
+#plot area studied
+sp::plot(GE, col = "#cceae7", border = NA)
+plotMapDomFlows(mat = xx,
+                spdf = UA,
+                spdfid = "ID",
+                w = inflows,
+                wid = "id",
+                wvar = "w",
+                wcex = 0.05,
+                add = TRUE,
+                legend.flows.pos = "topright",
+                legend.flows.title = "Residential flows\nintensity")
+title("Dominant Residential Flows")
+mtext(text = "INSEE, 2011", side = 4, line = -1, adj = 0.01, cex = 0.8)
+```
+
+The changes introduced by the variant are far more important in terms of delimitation of spheres of influence: 6 sub-regions can be identified, instead of 27 according to the conventional method. The broader scope of the current corresponds to the regions of Alsace and Lorraine. Another subset combines the cities of Franche-Comté with those in the east and north-western Burgundy. The cities of Champagne-Ardennes are connected between them.
+
+One could easily repeat selection, with a higher or a smaller threshold, to identify the most robust connections and the intermittent ones.
+
+###Conclusion
+
+The **flows** package aims to enable a relevant selection of flows, while leaving maximum flexibility to the user. Viewing options are only dedicated to the nodal regions / dominant flows method since other R packages exist to ensure graph or map representations.
+
+---
+references:
+- id: nystuen
+  title: A graph theory interpretation of nodal flows
+  author:
+  - family: Nystuen
+    given: J.
+  author:
+  - family: Dacey
+    given: M.
+  container-title: Papers and Proceedings of the Regional Science Association
+  volume: 7
+  page: 29-42
+  type: article-journal
+  issued:
+    year: 1961
+---
+
+[^1]: Data comes from the 2011 French National Census (*Recensement Général de la Population de l'INSEE*). The area includes five administrative regions: Champagne-Ardenne, Lorraine, Alsace, Bourgogne, and Franche-Comté. Cities are urban areas (2010 borders).
