@@ -61,7 +61,7 @@ myflows2 <- myflows / rowSums(myflows) * 100
 # each urban area.
 flowSel <- firstflows(mat = myflows2, method = "xfirst", k = 20)
 
-# Comparision with the initial matrix
+# Compare initial and selected matrices
 compmat(mat1 = myflows,mat2 = flowSel * myflows)
 
 
@@ -78,7 +78,7 @@ diag(myflows) <- 0
 flowSel1 <- firstflows(mat = myflows/rowSums(myflows)*100, method = "xfirst", 
                        k = 20)
 
-# Select the dominant flows (incomming flows criteria)
+# Select the dominant flows (incoming flows criterion)
 flowSel2 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows), 
                      k = 1)
 

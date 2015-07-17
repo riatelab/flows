@@ -287,7 +287,7 @@ statmat <- function(mat, output = "all", verbose = TRUE){
 #' # Remove the matrix diagonal
 #' diag(myflows) <- 0
 #'
-#' # Select the dominant flows (incoming flows criteria)
+#' # Select the dominant flows (incoming flows criterion)
 #' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows),
 #'                      k = 1)
 #' # Select the first flows
@@ -476,7 +476,7 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 #' # Remove the matrix diagonal
 #' diag(myflows) <- 0
 #'
-#' # Select the dominant flows (incoming flows criteria)
+#' # Select the dominant flows (incoming flows criterion)
 #' flowSel <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
 #'                     k = 1)
 #' statmat(mat = myflows * flowSel, output = "none")
@@ -521,7 +521,7 @@ domflows <- function(mat, wi, wj, k){
 #' # Remove the matrix diagonal
 #' diag(myflows) <- 0
 #'
-#' # Select the dominant flows (incoming flows criteria)
+#' # Select the dominant flows (incoming flows criterion)
 #' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
 #'                      k = 1)
 #' # Select the first flows
@@ -614,7 +614,7 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
 #' # Remove the matrix diagonal
 #' diag(myflows) <- 0
 #'
-#' # Select the dominant flows (incoming flows criteria)
+#' # Select the dominant flows (incoming flows criterion)
 #' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
 #'                      k = 1)
 #' # Select the first flows

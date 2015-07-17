@@ -13,40 +13,40 @@ vignette: >
 
 #Introduction
 
-The **flows** package contains functions to filter flows matrices, provides statistics on selection made and proposes map and graph visualisation.    
-The first part of the vignette reminds several methods of flows selection, the second part presents the main functions of the package and the last one proposes an exemple of analysis based on commuters data in the French Grand Est region.  
+The **flows** package contains functions that select flows, provide statistics on selections and propose map and graph visualisations.    
+The first part of the vignette reminds several methods of flow selection, the second part presents the main functions of the package and the last one proposes an exemple of analysis based on commuters data in the French Grand Est region.  
 
 #Analysis of geographic flows: issues and methods
 
-In spatial analysis field, working on flows supposes to focus on the relationships between places rather than on their characteristics. The analysis and especially the representation of flows often assume a selection to ease interpretation. 
+In the field of spatial analysis, working on flows supposes to focus on the relationships between places rather than on their characteristics. Analysis and flow representation often assume a selection to ease the interpretation. 
 
-One of the first method developed was the so-called dominant flows (or nodal regions) proposed by Nystuen and Dacey in 1961 (@nystuen). Working on telephone flows between cities in the Seattle area, they sought to highlight hierarchy between locations. According to them, a place _i_ is dominated by a place _j_ if two conditions are met:
+One of the first method developed was the so-called dominant flows (or nodal regions) proposed by Nystuen and Dacey in 1961 (@nystuen). Working on telephone flows between cities in the Seattle area, they sought to highlight hierarchy between locations. According to this method, a place _i_ is dominated by a place _j_ if two conditions are met:
 
 1. the most important flow from _i_ is emitted towards _j_;
 
 2. the sum of the flows received by _j_ is greater than the sum of the flows received by _i_.
 
-This method creates what is called in graph theory a tree (acyclic graph) or a forest (a set of unconnected trees) with three types of nodes: dominant, dominated and intermediate nodes. If the method creates a clear functional hierarchy, its major drawback is to undervalue flows intensities.
+This method creates what is called in graph theory a tree (acyclic graph) or a forest (a set of unconnected trees) with three types of nodes: dominant, dominated and intermediate. If the method creates a clear functional hierarchy, its major drawback is to undervalue flows intensities.
 
-Various methods have subsequently been proposed to better reflect this intensity, one of the most frequently used is the so-called major flows: it selects only the most important flows, absolute or relative, either locally or globally. Analysing commuters data between cities, one may choose to select:
+Various methods have subsequently been proposed to better reflect this intensity, one of the most frequently used being the so-called major flows: it selects only the most important flows, absolute or relative, either locally or globally. Analysing commuters data between cities, one may choose to select:
 
 * all flows greater than 100;
 
 * the 50 first flows (global criterion);
 
-* the 10 first flows emitted by each city (local criteria).
+* the 10 first flows emitted by each city (local criterion).
 
 These criteria can also be expressed in relative form:
 
-* the flows that represent more than 10% of the active population of each city (local criteria);
+* flows that represent more than 10% of the active population of each city (local criterion);
 
 * flows that take into account 80% of all commuters (global criterion).
 
-These methods often highlight hierarchies between places but the loss of information created by the selection is rarely questioned. So it seems useful to propose statistical indicators to know the volume of lost information and characteristics of the selected flows.
+These methods often highlight hierarchies between places but the loss of information created by the selection is rarely questioned. So it seems useful to propose statistical indicators to assess the volume of lost information and characteristics of the selected flows.
 
 #The package flows
 
-A data workflow may be as follow:
+A typical data workflow may be:
 
 1. data preparation;
 
@@ -54,10 +54,11 @@ A data workflow may be as follow:
 
 3. statistical data and graphical outputs on the selection made;
 
-4. graph or map representation (dominant flow).
+4. graph or map representation (dominant flows).
 
 ##Data Preparation
-The input data can be in a long format (_i-j-fij_), i.e. origin - destination - flow intensity. The `preflows` function transforms the links list into a square matrix (wide format). All selection functions take a square matrix with the same list of origins and destinations as input. `preflows` takes four arguments: a data.frame to transform (`mat`), the origin (`i`), the destination (`j`) and the flow intensity (`fij`).
+Flow data can be found in wide (matrix) or long format (_i-j-fij_, i.e. origin - destination - flow intensity).
+As all **flows** function take flow data in wide format, the `preflows` function transforms a link list into a square matrix. `preflows` has four arguments: a data.frame to transform (`mat`), the origin (`i`), the destination (`j`) and the flow intensity (`fij`).
 
 ```{r}
 library(flows)
@@ -71,9 +72,9 @@ myflows[1:4,1:4]
 
 
 ##Flow Selection
-Three selection methods based on the flows origins are accessible through the `firstflows` function:
+Three selection methods based on the flow origins are accessible through the `firstflows` function:
 
-* `nfirst`: `k` first flows from all origins;
+* `nfirst`: the `k` first flows from all origins;
 
 * `xfirst`: all flows greater than a threshold `k`;
 
@@ -87,21 +88,21 @@ Figure 1: The three methods of the `firstflows` function
 
 
 
-Methods taking into account the total volume of flows are implemented in the `firstflowsg` function. They are identical to ones described above: selection of the `k` first flows, selection of flows greater than `k` and  selection of flows such as the sum is at least equal to `k`.
+Methods taking into account the total volume of flows are implemented in the `firstflowsg` function. They are identical to the ones described above: selection of the `k` first flows, selection of flows greater than `k` and  selection of flows such as the sum is at least equal to `k`.
 
 
 
-Finally, the function `domflows` selects flows based on a dominance test. This function may be used to select flows obeying the second criterion of Nystuen and Dacey method.
+The `domflows` function selects flows based on a dominance test. This function may be used to select flows obeying the second criterion of Nystuen and Dacey method.
 
 
 
 
-All these functions take as input a square flow matrix and generate binary matrices of equal size. The flows selected by the method are represented by 1, the other by 0. It is therefore possible to combine criteria of selection through element-wise multiplication of matrices (Figure 2).
+All these functions take as input a square matrix of flows and generate binary matrices of the same size. Selected flows are coded 1, others 0. It is therefore possible to combine criteria of selection through element-wise multiplication of matrices (Figure 2).
 
 Figure 2: Flow selection and criteria combination
  <img src="figure2en.png" width="680px"  />
 
-It is possible to measure a number of indicators using the `statmat` function. Measures provided are density (number of present flows divided by the number of possible flows); number, size and composition of connected components; sum, quartiles and average intensity of flows. It is therefore possible to make a statistically relevant selection. This function can also generate four graphics outputs: the degree distribution (by default, outdegree), the weighted degree distribution, a Lorenz curve and a boxplot of the flows intensity.
+The `statmat` function provides various indicators and graphical outputs on a flow matrix to allow statistically relevant selections. Measures provided are density (number of present flows divided by the number of possible flows); number, size and composition of connected components; sum, quartiles and average intensity of flows. In addition, four graphics can be plotted: degree distribution curve (by default, outdegree), weighted degree distribution curve, Lorenz curve and boxplot on flow intensities.
 
 ```{r, fig.width=5, fig.height=5}
 # Import data
@@ -129,13 +130,14 @@ mystats$sumflows
 
 To ease comparisons, the `compmat` function outputs a data.frame that provides statistics on differences between two matrices (for example a matrix and selection of this matrix).
 
-Visualisations helps analysis, `plotDomFlows` function produces a graph where sizes and colors of vertices depend on their position in the graph (dominant, intermediate or dominated) and links thickness depend on flow intensity.    
+Visualisation helps analysis, `plotDomFlows` function produces a graph where sizes and colors of vertices depend on their position in the graph (dominant, intermediate or dominated) and thicknesses of links depend on flow intensites.    
+  
 The `plotMapDomFlows` function maps the selected flows according to the same principles.    
 Both functions only apply to a dominant flows selection[^1].
 
 # Commuters flows in the French Grand Est
 
-As an illustration, we present a brief analysis on commuter flows between the urban areas of Grand Est region in France[^2]. 
+As an illustration, we present a brief analysis of commuter flows between urban areas of the Grand Est region in France[^2]. 
 
 We compare two different thresholds (500 and 1000) on the total volume of flows.
 
@@ -157,7 +159,7 @@ compmat(mat1 = myflows, mat2 = myflows * flowSel1, digits = 1)
 compmat(mat1 = myflows, mat2 = myflows * flowSel2, digits = 1)
 ```
 
-If we select flows greater than 500 commuters, we loose 95.7% of all links but only 38% of the volume of flows. With a threshold of 1000, 98% of links are lost but only 53% of the volume of flows.
+If we select flows greater than 500 commuters, we loose 95.7% of all links but only 38% of the volume of flows. With a threshold of 1000 commuters, 98% of links are lost but only 53% of the volume of flows.
 
 The following exemple selects flows that represent at least 20% of the sum of outgoing flows for each urban area.
 
@@ -176,14 +178,14 @@ myflows2 <- myflows / rowSums(myflows) * 100
 # each urban area.
 flowSel <- firstflows(mat = myflows2, method = "xfirst", k = 20)
 
-# Comparision with the initial matrix
+# Compare initial and selected matrices
 compmat(mat1 = myflows,mat2 = flowSel * myflows)
 
 ```
 
 This selection keeps only 7% of all links and 53% of the volume of flows. 
 
-We decide to use this selection as first criteria of our analysis. The second one will be a dominant flow selection based on sum of incoming flows.
+We decide to use this selection as first criteria of our analysis. The second one will be a dominant flow selection based on the sum of incoming flows.
 
 ```{r, fig.height=7, fig.width=7, eval = TRUE}
 # Import data
@@ -198,7 +200,7 @@ diag(myflows) <- 0
 flowSel1 <- firstflows(mat = myflows/rowSums(myflows)*100, method = "xfirst", 
                        k = 20)
 
-# Select the dominant flows (incomming flows criteria)
+# Select the dominant flows (incoming flows criterion)
 flowSel2 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows), 
                      k = 1)
 
@@ -230,7 +232,7 @@ UAindegreew[order(UAindegreew$w, decreasing = TRUE),][1:10,]
 
 
 
-The top of the node hierarchy evaluated by the selection of dominant flow and number of incoming commuters brings out clearly, in descending order, the domination of Strasbourg, Mulhouse, Metz and Nancy, each attracting more than 10 000 commuters.
+The top of the node hierarchy brings out clearly, in descending order, the domination of Strasbourg, Mulhouse, Metz and Nancy, each attracting more than 10 000 commuters.
 
 One could easily repeat these selections, with higher or smaller thresholds, to identify the most robust connections and the intermittent ones.
 

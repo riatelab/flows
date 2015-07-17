@@ -37,7 +37,7 @@ myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 # Remove the matrix diagonal
 diag(myflows) <- 0
 
-# Select the dominant flows (incoming flows criteria)
+# Select the dominant flows (incoming flows criterion)
 flowSel <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
                     k = 1)
 statmat(mat = myflows * flowSel, output = "none")
