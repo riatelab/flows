@@ -127,7 +127,8 @@ prepflows <- function(mat, i, j, fij){
 #' @details Graphical ouputs concern outdegrees by default. If the matrix is
 #' transposed, outputs concern indegrees.
 #' @seealso \link{compmat}
-#' @import igraph
+#' @import graphics
+#' @import stats
 #' @examples
 #' # Import data
 #' data(nav)
@@ -215,9 +216,8 @@ statmat <- function(mat, output = "all", verbose = TRUE){
   }
 
   ## Connected components of a graph
-  g <- graph.adjacency(adjmatrix = mat, mode = "directed", weighted = TRUE)
-  clustg <- clusters(graph = g, mode = "weak")
-
+  g <- igraph::graph.adjacency(adjmatrix = mat, mode = "directed", weighted = TRUE)
+  clustg <- igraph::clusters(graph = g, mode = "weak")
   connectcomp <- clustg$no
   connectcompx <- length(clustg$csize[clustg$csize>1])
   compocomp <-  data.frame(id = V(g)$name, idcomp = clustg$membership, stringsAsFactors = FALSE)
@@ -513,6 +513,8 @@ domflows <- function(mat, wi, wj, k){
 #' \link[sna]{gplot} functions from igraph and sna packages, we do not propose
 #' visualisation for other outputs.
 #' @seealso \link{domflows}, \link{plotMapDomFlows}
+#' @import graphics
+#' @importFrom igraph "V" "E" "V<-" "E<-" "degree"
 #' @examples
 #' # Import data
 #' data(nav)
@@ -541,8 +543,8 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
                                              "Dominated",
                                              "Size proportional\nto sum of inflows"),
                          labels = FALSE){
-  g <- graph.adjacency(adjmatrix = mat,mode = "directed", weighted = TRUE)
-  g <- delete.vertices(g, names(degree(g)[degree(g)==0]))
+  g <- igraph::graph.adjacency(adjmatrix = mat,mode = "directed", weighted = TRUE)
+  g <- igraph::delete.vertices(g, names(degree(g)[degree(g)==0]))
   vertexdf <-  data.frame(id = V(g)$name, col = NA, size = NA, name = NA)
   # Dominant
   vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "col"] <- "red"
@@ -606,6 +608,7 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
 #' @param add A boolean, if TRUE, add the layer to an existing plot.
 #' @seealso \link{domflows}, \link{plotDomFlows}
 #' @import sp
+#' @import graphics
 #' @examples
 #' # Import data
 #' data(nav)
@@ -784,6 +787,7 @@ xsumfirst <- function(x, k, ties.method){
 
 #' @title LegendPropLines
 #' @name LegendPropLines
+#' @import graphics
 #' @noRd
 LegendPropLines<- function(pos = "topleft", legTitle = "Title of the legend", legTitleCex = 0.8,
                            legValuesCex = 0.6, varvect, sizevect, col="red", frame=FALSE, round=0){
