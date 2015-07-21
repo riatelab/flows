@@ -8,5 +8,8 @@
 \description{
 Selections on flow matrices, statistics on selected flows, map
 and graph visualisations.
+
+An introduction to the package conceptual background and usage is proposed in
+a vignette (see \code{vignette(topic = "flows")}).
 }
 
