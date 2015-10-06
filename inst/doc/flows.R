@@ -78,6 +78,7 @@ diag(myflows) <- 0
 flowSel1 <- firstflows(mat = myflows/rowSums(myflows)*100, method = "xfirst", 
                        k = 20)
 
+
 # Select the dominant flows (incoming flows criterion)
 flowSel2 <- domflows(mat = myflows, w = colSums(myflows), k = 1)
 

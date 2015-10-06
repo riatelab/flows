@@ -148,7 +148,7 @@ myflows &lt;- prepflows(mat = nav, i = &quot;i&quot;, j = &quot;j&quot;, fij = &
 statmat(mat = myflows, output = &quot;none&quot;, verbose = TRUE)</code></pre>
 <pre><code>## matrix dimension: 159 X 159 
 ## nb. links: 3350 
-## density: 0.1325106 
+## density: 0.1333493 
 ## nb. of components (weak) 1 
 ## nb. of components (weak, size &gt; 1) 1 
 ## sum of flows: 2306585 
@@ -285,6 +285,7 @@ diag(myflows) &lt;- 0
 flowSel1 &lt;- firstflows(mat = myflows/rowSums(myflows)*100, method = &quot;xfirst&quot;, 
                        k = 20)
 
+
 # Select the dominant flows (incoming flows criterion)
 flowSel2 &lt;- domflows(mat = myflows, w = colSums(myflows), k = 1)
 
@@ -323,7 +324,7 @@ UAindegreew[order(UAindegreew$w, decreasing = TRUE),][1:10,]</code></pre>
 ## 8  041  5391.573                                      Besancon
 ## 16 080  3409.050                          Charleville-Mezieres
 ## 12 060  3297.406                              Chalon-sur-Saone</code></pre>
-<p>The top of the node hierarchy brings out clearly, in descending order, the domination of Strasbourg, Mulhouse, Metz and Nancy, each attracting more than 10 000 commuters.</p>
+<p>The top of the node hierarchy brings out clearly, in descending order, the domination of Nancy, Strasbourg, Mulhouse and Metz, each attracting more than 10 000 commuters.</p>
 <p>One could easily repeat these selections, with higher or smaller thresholds, to identify the most robust connections and the intermittent ones.</p>
 </div>
 <div id="conclusion" class="section level1">
