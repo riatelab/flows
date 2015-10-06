@@ -4,14 +4,12 @@
 \alias{domflows}
 \title{Dominant Flows Selection}
 \usage{
-domflows(mat, wi, wj, k)
+domflows(mat, w, k)
 }
 \arguments{
 \item{mat}{A square matrix of flows.}
 
-\item{wi}{A vector of row weigths.}
-
-\item{wj}{A vector of column weigths.}
+\item{w}{A vector of units weigths (sum of incoming flows, sum of outgoing flows...).}
 
 \item{k}{A threshold (see 'Details').}
 }
@@ -38,8 +36,7 @@ myflows <- prepflows(mat = nav, i = "i", j = "j", fij = "fij")
 diag(myflows) <- 0
 
 # Select the dominant flows (incoming flows criterion)
-flowSel <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
-                    k = 1)
+flowSel <- domflows(mat = myflows, w = colSums(myflows), k = 1)
 statmat(mat = myflows * flowSel, output = "none")
 }
 \references{

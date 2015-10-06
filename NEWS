@@ -1,0 +1,9 @@
+flows version 1.1 (Release date: 2015-10-06)
+==============
+
+Changes:
+
+* Link added to the vignette on the flows-package documentation
+* Modification of the density formula in statmat (diagonal excluded)
+* Correction/simplification of domflows function; only one vector of weight is required
+* Slight modification on the vignette related to the previous change

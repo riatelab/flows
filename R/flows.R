@@ -110,15 +110,15 @@ prepflows <- function(mat, i, j, fij){
 #' @return  The function returns a list of statistics and may plot graphics.
 #' \itemize{
 #' \item{nblinks: number of cells with values > 0}
-#' \item{density: number of links divided by number of possible links (also called gamma index by geographers)}
+#' \item{density: number of links divided by number of possible links (also called gamma index by geographers), loops excluded}
 #' \item{connectcomp: number of connected components (isolates included,
 #' weakly connected: use of \code{\link{clusters}} where mode = "weak")}
 #' \item{connectcompx: number of connected components (isolates deleted,
 #' weakly connected: use of \code{\link{clusters}} where mode = "weak")}
 #' \item{sizecomp: a data.frame of connected components: size
-#' and sum of flows per component (isolates included).}
-#' \item{compocomp: a data.frame of connected components giving membership of units (isolates included).}
-#' \item{degrees: a data.frame of nodes degrees and weighted degrees.}
+#' and sum of flows per component (isolates included)}
+#' \item{compocomp: a data.frame of connected components giving membership of units (isolates included)}
+#' \item{degrees: a data.frame of nodes degrees and weighted degrees}
 #' \item{sumflows: sum of flows}
 #' \item{min: minimum flow }
 #' \item{Q1: first quartile of flows}
@@ -234,7 +234,7 @@ statmat <- function(mat, output = "all", verbose = TRUE){
     ## stat cat
     cat('matrix dimension:', matdim, "X", matdim,"\n" )
     cat('nb. links:', nbcellfull, "\n" )
-    cat('density:', nbcellfull/nbcell, "\n" )
+    cat('density:', nbcellfull/(nbcell - matdim), "\n" )
     cat('nb. of components (weak)', connectcomp, "\n")
     cat("nb. of components (weak, size > 1)", connectcompx, "\n")
     cat('sum of flows:', sumflows, "\n")
@@ -249,7 +249,7 @@ statmat <- function(mat, output = "all", verbose = TRUE){
   ## stat list
   matstat <- list(matdim = dim(mat),
                   nblinks = nbcellfull,
-                  density = nbcellfull/nbcell,
+                  density = nbcellfull/(nbcell - matdim),
                   connectcomp = connectcomp,
                   connectcompx = connectcompx,
                   sizecomp = sizecomp,
@@ -291,8 +291,7 @@ statmat <- function(mat, output = "all", verbose = TRUE){
 #' diag(myflows) <- 0
 #'
 #' # Select the dominant flows (incoming flows criterion)
-#' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = colSums(myflows),
-#'                      k = 1)
+#' flowSel1 <- domflows(mat = myflows, w = colSums(myflows), k = 1)
 #' # Select the first flows
 #' flowSel2 <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
 #'                        k = 1)
@@ -458,8 +457,7 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 #' @name domflows
 #' @description Dominant flows selection.
 #' @param mat A square matrix of flows.
-#' @param wi A vector of row weigths.
-#' @param wj A vector of column weigths.
+#' @param w A vector of units weigths (sum of incoming flows, sum of outgoing flows...).
 #' @param k A threshold (see 'Details').
 #' @return A boolean matrix of selected flows.
 #' @details This function selects which flow (fij or fji) must be kept.
@@ -480,18 +478,17 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 #' diag(myflows) <- 0
 #'
 #' # Select the dominant flows (incoming flows criterion)
-#' flowSel <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
-#'                     k = 1)
+#' flowSel <- domflows(mat = myflows, w = colSums(myflows), k = 1)
 #' statmat(mat = myflows * flowSel, output = "none")
 #' @export
-domflows <- function(mat, wi, wj, k){
+domflows <- function(mat, w, k){
   # list of i, j selected
   matfinal <- mat
   matfinal[] <- 0
   for (i in 1:dim(mat)[1]){
     for (j in 1:dim(mat)[2]){
-      if (wi[i] > 0){
-        if ((wj[j]/wi[i]) > k){
+      if (w[i] > 0){
+        if ((w[j]/w[i]) > k){
           matfinal[i,j] <- 1
         }
       }
@@ -527,8 +524,7 @@ domflows <- function(mat, wi, wj, k){
 #' diag(myflows) <- 0
 #'
 #' # Select the dominant flows (incoming flows criterion)
-#' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
-#'                      k = 1)
+#' flowSel1 <- domflows(mat = myflows, w = colSums(myflows), k = 1)
 #' # Select the first flows
 #' flowSel2 <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
 #'                        k = 1)
@@ -621,8 +617,7 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
 #' diag(myflows) <- 0
 #'
 #' # Select the dominant flows (incoming flows criterion)
-#' flowSel1 <- domflows(mat = myflows, wi = colSums(myflows), wj = rowSums(myflows),
-#'                      k = 1)
+#' flowSel1 <- domflows(mat = myflows, w = colSums(myflows), k = 1)
 #' # Select the first flows
 #' flowSel2 <- firstflows(mat = myflows, method = "nfirst", ties.method = "first",
 #'                        k = 1)
@@ -867,118 +862,3 @@ LegendPropLines<- function(pos = "topleft", legTitle = "Title of the legend", le
     text(x=xref ,y=yref + 9*delta1,legTitle,adj=c(0,0),cex=legTitleCex)
   }
 }
-
-
-
-
-
-
-# #' @title Plot Dominant Flows
-# #' @name plotflowDom
-# #' @description Plot a map of the Dominant Flows. It uses, as input, the output
-# #' of the \code{\link{flowDom}} function.
-# #' @param fdom A data.frame outputed by the \code{\link{flowDom}} function.
-# #' @param spdf A SpatialPolygonsDataFrame to be linked to \code{fdom}.
-# #' @param id A character giving the identifier field in \code{spdf} to be linked
-# #'  to \code{i} and \code{j}.
-# #' @param name A character giving the label field in \code{spdf} to be
-# #' plotted. A click on a map unit will prompt a unit name. (interactive session
-# #' only - optional)
-# #' @details The output of the function is a plot of a map. The map shows which
-# #' units are either "dominant", "dominated" or both. The darker a link is the
-# #' higher the share of the flow is in its total outbound flows.
-# #' @examples
-# #'data(LoireAtlantique)
-# #'dom1<- flowDom(mat = MRE44,
-# #'               i = "DCRAN",
-# #'               j = "CODGEO",
-# #'               fij = "NBFLUX_C08_POP05P")
-# #'if (interactive()){
-# #'  plotflowDom(fdom = dom1, spdf = COM44, id = "INSEE_COM", name = "NOM_COM")
-# #'}
-# #' @export
-# plotflowDom <- function(fdom, spdf, id, name = NULL ){
-#
-#   sumi <- unique(fdom[,c("i","sumInI")])
-#   sumj <- unique(fdom[,c("j","sumInJ")])
-#   names(sumj) <- c("i", "sumInI")
-#   sumij <- unique(rbind(sumi,sumj))
-#
-#   pts <- data.frame(sp::coordinates(spdf),spdf@data)
-#   names(pts)[1:2] <- c("X", "Y")
-#   pts <- merge(pts, sumij[,c("i", "sumInI")], by.x = id, by.y = "i", all.x = T)
-#
-#   fdom <- merge(fdom, pts, by.x = "i", by.y = id, all.x = T,
-#                 suffixes = c("i","j"))
-#   fdom <- merge(fdom, pts, by.x = "j", by.y = id, all.x = T,
-#                 suffixes = c("i","j"))
-#   listI <- unique(fdom$i)
-#   listJ <- unique(fdom$j)
-#
-#   x <- data.frame(pts, d = pts[,id] %in% listI, D = pts[,id] %in% listJ,
-#                   col = NA, pch = NA, cex = pts$sumInI)
-#
-#   bbbox <- sp::bbox(spdf)
-#   x1 <- bbbox[1]
-#   y1 <- bbbox[2]
-#   x2 <- bbbox[3]
-#   y2 <- bbbox[4]
-#   sfdc <- (x2-x1)*(y2-y1)
-#   sc <- sum(x$sumInI,na.rm=TRUE)
-#   x$cex <- sqrt((x$sumInI * 0.02 * sfdc / sc) / pi)
-#   x <- x[order(x$cex,decreasing=TRUE),]
-#   x[!x$d & x$D, "col"] <- "#cc2a36"
-#   x[x$d & x$D, "col"] <- "#eb6841"
-#   x[x$d & !x$D,"col"] <- "#edc951"
-#
-#   cl <- seq(min(fdom$dom), max(fdom$dom),length.out = 4)
-#   fdom$col <- findInterval(fdom$dom, cl,all.inside = T)
-#
-#   fdom[fdom$col == 1,"col"] <- "#4d343440"
-#   fdom[fdom$col == 2,"col"] <- "#4d343470"
-#   fdom[fdom$col == 3,"col"] <- "#4d3434"
-#   #   fdom[fdom$dom <= .1,"col"] <- "#4d343410"
-#   #   fdom[fdom$dom > .1,"col"] <-
-#   #     paste("#4d3434", round(fdom[fdom$dom >.1,"dom"]*100), sep="")
-#   #   fdom[fdom$dom >= 1,"col"] <- "#4d3434"
-#
-#   fdom <- fdom[order(-fdom$dom),]
-#
-#   sp::plot(spdf, col = "#cceae7", border = "grey70")
-#
-#   segments(fdom$Xi, fdom$Yi, fdom$Xj, fdom$Yj, col=fdom$col, lwd = 4)
-#
-#   symbols(x[,c("X","Y")], circles = x$cex, add = TRUE, bg = x$col,
-#           fg ="grey50",
-#           inches = FALSE)
-#
-#   legend(x = "topleft",
-#          legend =  c("Dominant", "Dominant-Dominated", "Dominated",
-#                      "Share of the sent flows :",
-#                      paste("high (",round(cl[3]*100,0),"-",round(cl[4]*100,0),
-#                            ")",sep = ""),
-#                      paste("medium (",round(cl[2]*100,0),"-",round(cl[3]*100,0),
-#                            ")",sep = ""),
-#                      paste("low (",round(cl[1]*100,0),"-",round(cl[2]*100,0),
-#                            ")",sep = "")),
-#          col= c(rep("grey50",3),rep(NA,4)),
-#          cex = 0.7,
-#          pch = c(21,21,21,16,22,22,22),
-#          pt.bg = c("#cc2a36", "#eb6841","#edc951","#ffffff00","#4d3434",
-#                    "#4d343470","#4d343440"),
-#          pt.cex = c(2,1,0.5,2,2,2,2))
-#   if (!is.null(name)){
-#     if(interactive()){
-#       x <- locator()
-#       if (!is.null(x)){
-#         X <- sp::SpatialPoints(data.frame(x), proj4string = spdf@proj4string)
-#         text(x = x$x, y = x$y, labels = sp::over(X, spdf)[,name], cex = 0.6,
-#              adj = c(0,0))
-#       }
-#     } else {
-#       text(x[x$col == "#cc2a36",c("X","Y")],labels = x[x$col == "#cc2a36", name],
-#            cex = 0.6)
-#     }
-#   }
-# }
-

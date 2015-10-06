@@ -20,15 +20,15 @@ weighted degree distribution, "lorenz" for Lorenz curve of link weights and
 The function returns a list of statistics and may plot graphics.
 \itemize{
 \item{nblinks: number of cells with values > 0}
-\item{density: number of links divided by number of possible links (also called gamma index by geographers)}
+\item{density: number of links divided by number of possible links (also called gamma index by geographers), loops excluded}
 \item{connectcomp: number of connected components (isolates included,
 weakly connected: use of \code{\link{clusters}} where mode = "weak")}
 \item{connectcompx: number of connected components (isolates deleted,
 weakly connected: use of \code{\link{clusters}} where mode = "weak")}
 \item{sizecomp: a data.frame of connected components: size
-and sum of flows per component (isolates included).}
-\item{compocomp: a data.frame of connected components giving membership of units (isolates included).}
-\item{degrees: a data.frame of nodes degrees and weighted degrees.}
+and sum of flows per component (isolates included)}
+\item{compocomp: a data.frame of connected components giving membership of units (isolates included)}
+\item{degrees: a data.frame of nodes degrees and weighted degrees}
 \item{sumflows: sum of flows}
 \item{min: minimum flow }
 \item{Q1: first quartile of flows}
