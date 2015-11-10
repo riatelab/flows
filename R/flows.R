@@ -80,20 +80,18 @@ prepflows <- function(mat, i, j, fij){
   mat <- mat[,c(i,j,fij)]
   names(mat) <- c("i", "j", "fij")
   listUnits <- unique(c(unique(mat$i),unique(mat$j)))
-  fullMat <- expand.grid(listUnits,listUnits, stringsAsFactors = F)
-  names(fullMat) <- c("i","j")
-  fullMat <- merge(fullMat,mat,by=c("i","j"),all.x=TRUE)
-  fullMat <- reshape2::dcast(data = fullMat, formula = i~j, value.var="fij",
-                             fill = 0, sum)
-  row.names(fullMat) <- fullMat[,1]
-  fullMat <- fullMat[, -1]
-  fullMat <- as.matrix(fullMat)
-  fullMat[is.na(fullMat)] <- 0
-  #   w <- data.frame(id = row.names(fullMat),
-  #                   sumOut = rowSums(fullMat),
-  #                   sumIn = colSums(fullMat))
-  # return(list(dfw = w, mat = fullMat))
-  return(fullMat)
+  matfinal <- matrix(nrow = length(listUnits), ncol = length(listUnits),
+                     dimnames = list(listUnits, listUnits))
+  dmat <- reshape2::dcast(data = mat, formula = i ~
+                            j, value.var = "fij", fill = 0, sum)
+  row.names(dmat) <- dmat[, 1]
+  dmat <- dmat[, -1]
+  dmat <- as.matrix(dmat)
+  i <- factor(row.names(dmat), levels = row.names(dmat))
+  j <- factor(colnames(dmat), levels = colnames(dmat))
+  matfinal[levels(i), levels(j)] <- dmat
+  matfinal[is.na(matfinal)] <- 0
+  return(matfinal)
 }
 
 
