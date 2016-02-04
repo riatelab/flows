@@ -247,7 +247,7 @@ The **flows** package aims to enable a relevant selection of flows, while leavin
 ---
 references:
 - id: nystuen
-  title: A graph theory interpretation of nodal flows
+  title: A Graph Theory Interpretation of Nodal Regions
   author:
   - family: Nystuen
     given: J.
@@ -256,7 +256,7 @@ references:
     given: M.
   container-title: Papers and Proceedings of the Regional Science Association
   volume: 7
-  page: 29-42
+  page: 29-42.bt
   type: article-journal
   issued:
     year: 1961
