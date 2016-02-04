@@ -40,8 +40,8 @@ flowSel <- domflows(mat = myflows, w = colSums(myflows), k = 1)
 statmat(mat = myflows * flowSel, output = "none")
 }
 \references{
-J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,
-\emph{Papers and Proceedings of the Regional Science Association}, vol. 7,  29-42.
+J. Nystuen & M. Dacey, 1961, "A Graph Theory Interpretation of Nodal Regions.",
+\emph{Papers and Proceedings of the Regional Science Association}, 7:29-42.bt
 }
 \seealso{
 \link{firstflows}, \link{firstflowsg}, \link{plotDomFlows}, \link{plotMapDomFlows}

@@ -465,8 +465,8 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 #' Dacey's dominants flows analysis.\cr
 #' As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 #' @seealso \link{firstflows}, \link{firstflowsg}, \link{plotDomFlows}, \link{plotMapDomFlows}
-#' @references J. Nystuen & M. Dacey, 1961, A graph theory interpretation of nodal flows,
-#' \emph{Papers and Proceedings of the Regional Science Association}, vol. 7,  29-42.
+#' @references J. Nystuen & M. Dacey, 1961, "A Graph Theory Interpretation of Nodal Regions.",
+#' \emph{Papers and Proceedings of the Regional Science Association}, 7:29-42.bt
 #' @examples
 #' # Import data
 #' data(nav)
