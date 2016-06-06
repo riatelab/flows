@@ -4,7 +4,9 @@ flows version 1.2 (Release date: 2016)
 ==============
 
 * faster prepflows function
-* correct a reference
+* correct reference
+* add reference to netcom paper
+* add a README
 
 
 
