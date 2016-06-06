@@ -1,5 +1,5 @@
 # flows
-[![Version](http://www.r-pkg.org/badges/version/flows)](https://cran.rstudio.com/web/packages/flows/)
+[![Version](http://www.r-pkg.org/badges/version/flows)](https://cran.r-project.org/package=flows/)
 ![](http://cranlogs.r-pkg.org/badges/grand-total/flows?color=brightgreen)  
 
 ***Flow Selection and Analysis - Sélection et analyse de flux***
