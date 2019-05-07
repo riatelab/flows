@@ -46,4 +46,3 @@ J. Nystuen & M. Dacey, 1961, "A Graph Theory Interpretation of Nodal Regions.",
 \seealso{
 \link{firstflows}, \link{firstflowsg}, \link{plotDomFlows}, \link{plotMapDomFlows}
 }
-

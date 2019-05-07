@@ -60,4 +60,3 @@ statmat(mat = myflows * flowSel, output = "none")
 \seealso{
 \link{firstflowsg}, \link{domflows}
 }
-

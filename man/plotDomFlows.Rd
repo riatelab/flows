@@ -5,9 +5,10 @@
 \title{Dominant Flows Graph}
 \usage{
 plotDomFlows(mat, legend.flows.pos = "topright",
-  legend.flows.title = "Flows Intensity", legend.nodes.pos = "bottomright",
-  legend.node.txt = c("Dominant", "Intermediary", "Dominated",
-  "Size proportional\\nto sum of inflows"), labels = FALSE)
+  legend.flows.title = "Flows Intensity",
+  legend.nodes.pos = "bottomright", legend.node.txt = c("Dominant",
+  "Intermediary", "Dominated", "Size proportional\\nto sum of inflows"),
+  labels = FALSE)
 }
 \arguments{
 \item{mat}{A square matrix of dominant flows (see \link{domflows}).}
@@ -55,4 +56,3 @@ plotDomFlows(mat = flowSel, legend.flows.title = "Nb. of commuters")
 \seealso{
 \link{domflows}, \link{plotMapDomFlows}
 }
-

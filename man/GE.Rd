@@ -15,4 +15,3 @@ sp::plot(GE, col = "#cceae7", border = "grey50")
 \references{
 \url{http://professionnels.ign.fr/geofla#tab-3}
 }
-

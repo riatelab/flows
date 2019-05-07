@@ -17,4 +17,3 @@ sp::plot(UA, col = "#940000", border = "white", add = TRUE)
 \references{
 \url{http://professionnels.ign.fr/geofla#tab-3}
 }
-

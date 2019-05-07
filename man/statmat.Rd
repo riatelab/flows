@@ -70,4 +70,3 @@ str(mystats)
 \seealso{
 \link{compmat}
 }
-

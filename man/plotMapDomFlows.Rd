@@ -74,4 +74,3 @@ par(opar)
 \seealso{
 \link{domflows}, \link{plotDomFlows}
 }
-

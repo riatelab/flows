@@ -25,4 +25,4 @@ URL: https://github.com/rCarto/flows
 BugReports: https://github.com/rCarto/flows/issues
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 5.0.1
+RoxygenNote: 6.1.1

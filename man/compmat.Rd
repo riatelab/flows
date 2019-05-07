@@ -48,4 +48,3 @@ compmat(mat1 = myflows, mat2 = flowSel, digits = 1)
 \seealso{
 \link{statmat}
 }
-

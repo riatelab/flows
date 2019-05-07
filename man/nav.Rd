@@ -25,4 +25,3 @@ str(nav)
 \references{
 \url{http://www.insee.fr/fr/themes/detail.asp?reg_id=99&ref_id=mobilite-professionnelle-11}
 }
-
