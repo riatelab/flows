@@ -223,7 +223,7 @@ par(opar)
 
 
 # Statistics on major urban areas
-inflows <- data.frame(id = colnames(flowSel), w = colSums(flowSel))
+inflows <- data.frame(id = colnames(myflows), w = colSums(myflows))
 UA.df <- unique(data.frame(id = c(nav$i, nav$j),name = c(nav$namei, nav$namej)))
 UAindegreew <- merge(inflows, UA.df, by = "id", all.x = TRUE)
 UAindegreew[order(UAindegreew$w, decreasing = TRUE),][1:10,]
@@ -232,7 +232,7 @@ UAindegreew[order(UAindegreew$w, decreasing = TRUE),][1:10,]
 
 
 
-The top of the node hierarchy brings out clearly, in descending order, the domination of Nancy, Strasbourg, Mulhouse and Metz, each attracting more than 10 000 commuters.
+The top of the node hierarchy brings out clearly, in descending order, the domination of Nancy, Strasbourg, Metz and Mulhouse, each attracting more than 10 000 commuters.
 
 One could easily repeat these selections, with higher or smaller thresholds, to identify the most robust connections and the intermittent ones.
 
@@ -256,7 +256,7 @@ references:
     given: M.
   container-title: Papers and Proceedings of the Regional Science Association
   volume: 7
-  page: 29-42.bt
+  page: 29-42
   type: article-journal
   issued:
     year: 1961
