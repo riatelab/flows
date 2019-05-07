@@ -564,8 +564,8 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
   V(g)$names <- as.character(vertexdf$name)
   E(g)$color <- "black"
   E(g)$width <- ((E(g)$weight) * 8 / (max(E(g)$weight)-min(E(g)$weight)))+1
-  #   lg <- layout.fruchterman.reingold(g)
-  #   g <- set.graph.attribute(graph = g, name = "layout", value = lg)
+    # lg <- igraph::layout.kamada.kawai(g)
+    # g <- igraph::set.graph.attribute(graph = g, name = "layout", value = lg)
   if(labels == TRUE){
     x <- igraph::plot.igraph(g, vertex.label = V(g)$names, vertex.label.cex = 1,
                              vertex.label.color = "black",

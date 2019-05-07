@@ -1,10 +1,10 @@
 Package: flows
 Type: Package
 Title: Flow Selection and Analysis
-Version: 1.1.9000
+Version: 1.2.0
 Date: 2016-06-06
 Authors@R: c(
-      person("Timothée", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")),
+      person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
       person("Laurent", "Beauguitte", email = "laurent.beauguitte@univ-rouen.fr", role = c("aut")),
       person("Marianne", "Guérois", email = "guerois@parisgeo.cnrs.fr", role = c("ctb")))
 Description: Selections on flow matrices, statistics on selected flows, map and
