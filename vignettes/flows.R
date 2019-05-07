@@ -101,7 +101,7 @@ par(opar)
 
 
 # Statistics on major urban areas
-inflows <- data.frame(id = colnames(flowSel), w = colSums(flowSel))
+inflows <- data.frame(id = colnames(myflows), w = colSums(myflows))
 UA.df <- unique(data.frame(id = c(nav$i, nav$j),name = c(nav$namei, nav$namej)))
 UAindegreew <- merge(inflows, UA.df, by = "id", all.x = TRUE)
 UAindegreew[order(UAindegreew$w, decreasing = TRUE),][1:10,]

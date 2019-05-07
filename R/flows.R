@@ -467,8 +467,8 @@ firstflowsg <- function(mat, method = "nfirst", k, ties.method = "first"){
 #' Dacey's dominants flows analysis.\cr
 #' As the output is a boolean matrix, use element-wise multiplication to get flows intensity.
 #' @seealso \link{firstflows}, \link{firstflowsg}, \link{plotDomFlows}, \link{plotMapDomFlows}
-#' @references J. Nystuen & M. Dacey, 1961, "A Graph Theory Interpretation of Nodal Regions.",
-#' \emph{Papers and Proceedings of the Regional Science Association}, 7:29-42.bt
+#' @references J. Nystuen & M. Dacey, 1961, "A Graph Theory Interpretation of Nodal Regions",
+#' \emph{Papers and Proceedings of the Regional Science Association}, 7:29-42.
 #' @examples
 #' # Import data
 #' data(nav)
@@ -498,6 +498,71 @@ domflows <- function(mat, w, k){
   return(matfinal)
 }
 
+
+
+#' @title Nodal Flows
+#' @name nodalflows
+#' @description This function computes nodal flows following the Nystuen & Dacey method.
+#' @param mat A square matrix of flows.
+#' @examples
+#' # Import data
+#' @export
+#' @references J. Nystuen & M. Dacey, 1961, "A Graph Theory Interpretation of Nodal Regions",
+#' \emph{Papers and Proceedings of the Regional Science Association}, 7:29-42.
+nodalflows <- function(mat){
+  diag(mat) <- 0
+  # Select the dominant flows (incoming flows criterion)
+  flowSel1 <- domflows(mat = mat, w = colSums(mat), k = 1)
+  # Select the first flows
+  flowSel2 <- firstflows(mat = mat, method = "nfirst", ties.method = "first", k = 1)
+  # Combine selections
+  flowSel <- mat * flowSel1 * flowSel2
+  return(flowSel)
+}
+
+#' @title Plot Nodal Flows
+#' @name plotNodalFlows
+#' @description This function plots nodal flows following the Nystuen & Dacey method.
+#' @param mat A square matrix of flows.
+#' @param spdf A SpatialPolygonsDataFrame or a SpatialPointsDataFrame of units.
+#' @param spdfid Name of the unique identifier variable in the spdf data.frame.
+#' @param cex Share of the surface of the map occupied by circles (0.02 is 2\%).
+#' @param legend.flows.pos Position of the flows legend, one of "topleft", "top",
+#' "topright", "left", "right", "bottomleft", "bottom", "bottomright".
+#' @param legend.flows.title Title of the flows legend.
+#' @param legend.nodes.pos Position of the nodes legend, one of "topleft", "top",
+#' "topright", "left", "right", "bottomleft", "bottom", "bottomright".
+#' @param legend.node.txt Text of the nodes legend.
+#' @param add A boolean, if TRUE, add the layer to an existing plot.
+#' @examples
+#' # Import data
+#' @export
+#' @references J. Nystuen & M. Dacey, 1961, "A Graph Theory Interpretation of Nodal Regions",
+#' \emph{Papers and Proceedings of the Regional Science Association}, 7:29-42.
+plotNodalFlows <- function(mat, spdf, spdfid, cex = 0.04, legend.flows.pos = "topright",
+                           legend.flows.title = "flow intensity",
+                           legend.nodes.pos = "topleft",
+                           legend.node.txt = c("Dominant",
+                                               "Intermediary", "Dominated",
+                                               "Size proportional\nto sum of inflows"),
+                           add = FALSE){
+  matdom <-nodalflows(mat)
+  diag(mat) <- 0
+  inflows <- data.frame(id = colnames(mat), w = colSums(mat))
+  plotMapDomFlows(mat = matdom, spdf = spdf, spdfid = spdfid,
+                  w = inflows, wid = "id",
+                  wvar = "w", wcex = cex,
+                  legend.flows.pos = legend.flows.pos,
+                  legend.flows.title = legend.flows.title,
+                  legend.nodes.pos = legend.nodes.pos,
+                  legend.node.txt = legend.node.txt,
+                  add = add)
+
+  return(invisible(matdom))
+}
+
+
+
 #' @title Dominant Flows Graph
 #' @name plotDomFlows
 #' @description This function plots a dominant flows graph.
@@ -512,6 +577,7 @@ domflows <- function(mat, w, k){
 #' @note As square matrices can easily be plot with \link[igraph]{plot.igraph} or
 #' \link[sna]{gplot} functions from igraph and sna packages, we do not propose
 #' visualisation for other outputs.
+#' @details This function uses the Davidson Harel algorithm from igraph.
 #' @seealso \link{domflows}, \link{plotMapDomFlows}
 #' @import graphics
 #' @importFrom igraph "V" "E" "V<-" "E<-" "degree"
@@ -564,8 +630,8 @@ plotDomFlows <- function(mat, legend.flows.pos = "topright",
   V(g)$names <- as.character(vertexdf$name)
   E(g)$color <- "black"
   E(g)$width <- ((E(g)$weight) * 8 / (max(E(g)$weight)-min(E(g)$weight)))+1
-    # lg <- igraph::layout.kamada.kawai(g)
-    # g <- igraph::set.graph.attribute(graph = g, name = "layout", value = lg)
+  lg <- igraph::layout.davidson.harel(g)
+  g <- igraph::set.graph.attribute(graph = g, name = "layout", value = lg)
   if(labels == TRUE){
     x <- igraph::plot.igraph(g, vertex.label = V(g)$names, vertex.label.cex = 1,
                              vertex.label.color = "black",
