@@ -1,18 +1,13 @@
-# flows
+# `flows`: Flow Selection and Analysis <img src="man/figures/logo.png" align="right" width="140"/>
 
-***Flow Selection and Analysis - Sélection et analyse de flux***
+[![R-CMD-check](https://github.com/riatelab/flows/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/flows/actions)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version-ago/flows)](https://cran.r-project.org/package=flows)  
+
 
 ![](https://rgeomatic.hypotheses.org/files/2015/12/flows.png)
 
 ## Description
 **Selections** on flow matrices, **statistics** on selected flows, **map** and **graph** visualisations.
-
-A paper and a vignette describe the package and its functionalities:
-
-* [Beauguitte, L., Giraud, T. et Guérois, M. (2015). Un outil pour la sélection et la visualisation de flux : le package flows. Netcom, 29(3/4), 399-408.](https://journals.openedition.org/netcom/2134) (FR)
-* Introduction to the flows package (EN)
-
-
 
 
 ## Installation
@@ -25,7 +20,7 @@ install.packages("flows")
 Development version
 ```{r}
 require(remotes)
-remotes::install_github("rCarto/flows")
+remotes::install_github("riatelab/flows")
 ```
 
 
