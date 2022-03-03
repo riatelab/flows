@@ -1,28 +1,29 @@
 Package: flows
 Type: Package
 Title: Flow Selection and Analysis
-Version: 1.2.0
-Date: 2016-06-06
+Version: 2.0.0
 Authors@R: c(
       person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
       person("Laurent", "Beauguitte", email = "beauguittelaurent@hotmail.com", role = c("aut")),
       person("Marianne", "Guérois", email = "guerois@parisgeo.cnrs.fr", role = c("ctb")))
 Description: Selections on flow matrices, statistics on selected flows, map and
-    graph visualisations.
+    graph visualisations. See Beauguitte et al. (2015) <doi:10.4000/netcom.2134>.
 License: GPL-3
-LazyData: TRUE
 Depends:
-    R (>= 2.10)
+    R (>= 3.6.0)
 Imports:
-    reshape2,
     igraph,
-    sp,
     graphics,
+    mapsf, 
+    utils,
     stats
 Suggests:
-    knitr
-URL: https://github.com/rCarto/flows
-BugReports: https://github.com/rCarto/flows/issues
+    sna,
+    sf,
+    knitr, 
+    rmarkdown
+URL: https://github.com/riatelab/flows
+BugReports: https://github.com/riatelab/flows/issues
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.2
