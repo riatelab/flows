@@ -1,3 +1,19 @@
+---
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/", 
+  fig.width = 7, fig.height = 8,
+  dev = "png"
+)
+```
+
+
+
 # `flows`: Flow Selection and Analysis <img src="man/figures/logo.png" align="right" width="140"/>
 
 [![R-CMD-check](https://github.com/riatelab/flows/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/flows/actions)
@@ -23,7 +39,7 @@ remotes::install_github("riatelab/flows")
 
 Example of a dominant flows analysis on commuters data:
 
-```{r, fig.width = 7, fig.height = 8, warning=FALSE, message=FALSE,}
+```{r, warning=FALSE, message=FALSE}
 library(sf)
 library(flows)
 library(mapsf)
