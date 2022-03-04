@@ -27,5 +27,5 @@ GE <- st_read(system.file("gpkg/GE.gpkg", package = "flows"), layer = "region")
 }
 \references{
 Commuters dataset: \url{https://www.insee.fr/fr/statistiques/2022113} \cr
-Spatial dataset: \url{https://geoservices.ign.fr/geofla}
+Spatial dataset: \url{https://www.data.gouv.fr/en/datasets/geofla-r}
 }
