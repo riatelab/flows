@@ -5,3 +5,6 @@ testpack
 inst/doc
 /doc/
 /Meta/
+# produced vignettes & R code
+vignettes/*.html
+vignettes/*.R
