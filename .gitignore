@@ -3,3 +3,5 @@
 .RData
 testpack
 inst/doc
+/doc/
+/Meta/

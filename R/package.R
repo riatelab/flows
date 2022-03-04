@@ -1,5 +1,5 @@
 #' @title Package description
-#' @name flows-package
+#' @name flows
 #' @description Selections on flow matrices, statistics on selected flows, map
 #' and graph visualisations.
 #'
