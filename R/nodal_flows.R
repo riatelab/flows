@@ -62,6 +62,7 @@ nodal_flows <- function(mat){
 #'                  lwd = c(1,4,8,16), add = TRUE)
 #' mf_title("Dominant flows")
 map_nodal_flows <- function(mat,
+                            w,
                             x,
                             inches = .15,
                             col_node = c("red", "orange", "yellow"),
