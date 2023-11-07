@@ -62,7 +62,6 @@ nodal_flows <- function(mat){
 #'                  lwd = c(1,4,8,16), add = TRUE)
 #' mf_title("Dominant flows")
 map_nodal_flows <- function(mat,
-                            w,
                             x,
                             inches = .15,
                             col_node = c("red", "orange", "yellow"),
@@ -108,16 +107,19 @@ map_nodal_flows <- function(mat,
          val_order = c("Dominant", "Intermediate", "Dominated"),
          leg_val_rnd = c(0,0)
   )
-  legend(x = leg_pos_node, legend = leg_node,
-         cex = c(0.8), pt.cex = c(2.8,2,1,0), bty = "n",
-         pt.bg = c(col_node, NA),
-         pch = c(21,21,21,21))
+  # print(leg_pos_node)
+  do.call(mapsf::mf_legend,
+          list(type = "symb", pt_pch = rep(21,4),
+               pt_cex = c(2.8,2,1,1), title = NA,
+               val = leg_node,
+               pos = leg_pos_node, border = c(1,1,1,NA),
+               pal = c(col_node, NA), box_cex = c(1,.5))
+  )
 
 
   return(invisible(list(nodes = x, flows = links)))
 
 }
-
 
 
 

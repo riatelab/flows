@@ -1,7 +1,9 @@
 
 # `flows`: Flow Selection and Analysis <img src="man/figures/logo.png" align="right" width="140"/>
 
-[![R-CMD-check](https://github.com/riatelab/flows/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/flows/actions)
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/riatelab/flows/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/riatelab/flows/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 `flows` allows to select, analyse and visualise flows. Its main
 functionalities are: flows selection (main, dominant or major flows),
@@ -10,8 +12,7 @@ representation of dominant flows (map and graph).
 
 ## Installation
 
-You can install the development version of flows from
-GitHub with:
+You can install the development version of flows from GitHub with:
 
 ``` r
 remotes::install_github("riatelab/flows")
@@ -49,16 +50,15 @@ mf_credits("INSEE, 2011")
 mf_scale(50)
 ```
 
-![](man/figures/unnamed-chunk-4-1.png)<!-- -->
+![](man/figures/unnamed-chunk-3-1.png)<!-- -->
 
 ## Ressources
 
--   [Beauguitte, L., Giraud, T. et Guérois, M. (2015). Un outil pour la
-    sélection et la visualisation de flux : le package flows. Netcom,
-    29(3/4), 399-408.](https://netcom.revues.org/2134) <small>(This
-    paper is in French and refers to previous versions of the
-    package.)</small>
--   Package vignette
+- [Beauguitte, L., Giraud, T. et Guérois, M. (2015). Un outil pour la
+  sélection et la visualisation de flux : le package flows. Netcom,
+  29(3/4), 399-408.](https://netcom.revues.org/2134) <small>(This paper
+  is in French and refers to previous versions of the package.)</small>
+- Package vignette
 
 ## Community Guidelines
 

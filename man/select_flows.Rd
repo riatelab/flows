@@ -54,9 +54,9 @@ diag(mat) <- 0
 res <- select_flows(mat = mat, method = "nfirst", global = FALSE, k = 1)
 rowSums(res)
 
-# Select the 5 first flows of the matrix (from origins)
+# Select the 5 first flows of the matrix
 res <- select_flows(mat = mat, method = "nfirst", global = TRUE, k = 5)
-sum(rowSums(res))
+sum(res)
 
 # Select the flows greater than 5000
 res <- select_flows(mat = mat, method = "xfirst", k = 5000)

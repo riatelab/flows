@@ -3,3 +3,4 @@
 ^testpack$
 ^doc$
 .github
+^\.github$

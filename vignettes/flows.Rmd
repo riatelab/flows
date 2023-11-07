@@ -132,7 +132,7 @@ mystats$sumflows
 
 To ease comparisons, the `comp_mat()` function returns a data.frame that provides statistics on differences between two matrices (for example a matrix and selection of this matrix).
 
-Visualisation helps analysis, `plot_nodal_flow()` function produces a graph where sizes and colors of vertices depend on their position in the graph (dominant, intermediate or dominated) and thicknesses of links depend on flow intensites.    
+Visualisation helps analysis, `plot_nodal_flow()` function produces a graph where sizes and colors of vertices depend on their position in the graph (dominant, intermediate or dominated) and links widths depend on flow intensities.    
 
 The `map_nodal_flows()` function maps the selected flows according to the same principles.    
 
@@ -154,10 +154,10 @@ mat <- prepare_mat(x = nav, i = "i", j = "j", fij = "fij")
 diag(mat) <- 0
 
 # Selection of flows > 500
-mat_sel_1 <- select_flows(mat = mat, method = "xfirst", k = 500)
+mat_sel_1 <- select_flows(mat = mat, method = "xfirst", k = 500, global = TRUE)
 
 # Selection of flows > 1000
-mat_sel_2 <- select_flows(mat = mat, method = "xfirst", k = 1000)
+mat_sel_2 <- select_flows(mat = mat, method = "xfirst", k = 1000, global = TRUE)
 
 # Compare initial matrix and selected matrices
 compare_mat(mat1 = mat, mat2 = mat * mat_sel_1, digits = 0)
@@ -167,7 +167,7 @@ compare_mat(mat1 = mat, mat2 = mat * mat_sel_2, digits = 0)
 If we select flows greater than 500 commuters, we loose 96% of all links but only 38% of the volume of flows.
 With a threshold of 1000 commuters, 98% of links are lost but only 54% of the volume of flows.
 
-The following exemple selects flows that represent at least 20% of the sum of outgoing flows for each urban area.
+The following example selects flows that represent at least 20% of the sum of outgoing flows for each urban area.
 
 ```{r, fig.height = 6, fig.width=6}
 # Import data
@@ -186,14 +186,14 @@ mat_p <- mat  / rowSums(mat) * 100
 mat_p_sel <- select_flows(mat = mat_p, method = "xfirst", k = 20)
 
 # Compare initial and selected matrices
-compare_mat(mat1 = mat, mat2 = mat * mat_p_sel)
+compare_mat(mat1 = mat, mat2 = mat * mat_p_sel, digits = 2)
 
 ```
 
 This selection keeps only 8% of all links and 53% of the flows volume. 
 
 We decide run a dominant flow analysis on this dataset. 
-`nodal_flows()` combines the two critiria in a single function and returns a flow matrix.
+`nodal_flows()` combines the two criteria in a single function and returns a flow matrix.
 
 ```{r}
 nav <- read.csv(system.file("csv/nav.csv", package = "flows"))
@@ -203,9 +203,9 @@ res <- nodal_flows(mat)
 compare_mat(mat1 = mat, mat2 = res)
 ```
 
-This analysis keeps 4% of all links and 4% ot the flows volume. 
+This analysis keeps 4% of all links and 4% of the flows volume. 
 
-```{r, fig.height=7, fig.width=7, eval = TRUE}
+```{r, fig.height=5.77, fig.width=6, eval = TRUE}
 library(sf)
 library(mapsf)
 nav <- read.csv(system.file("csv/nav.csv", package = "flows"))
@@ -214,16 +214,20 @@ UA <- st_read(system.file("gpkg/GE.gpkg", package = "flows"),
               layer = "urban_area", quiet = TRUE)
 GE <- st_read(system.file("gpkg/GE.gpkg", package = "flows"), 
               layer = "region", quiet = TRUE)
-mf_map(GE, col = "#cceae7", border = NA)
+mf_map(GE, col = "#cceae7", border = NA, expandBB = c(0,0,0,.25))
 out <- map_nodal_flows(mat = mat, x = UA,
                        col_node = c('red', 'orange', 'yellow'),
                        col_flow = "grey30",
+                       leg_pos_node = "topright", 
+                       leg_pos_flow = "right",
+                       leg_flow = "Nb. of commuters",
                        breaks = c(4,100,1000,2500,8655),
                        lwd = c(1,4,8,16), add = TRUE)
+mf_label(out$nodes[out$nodes$w>6000,], var = 'name',
+         halo = TRUE, overlap = FALSE, pos = 4)
 mf_title("Dominant Flows of Commuters")
 mf_credits("INSEE, 2011")
 mf_scale()
-
 
 head(out$nodes[order(out$nodes$w, decreasing = TRUE), 2:3, drop = TRUE])
 
@@ -232,8 +236,6 @@ head(out$nodes[order(out$nodes$w, decreasing = TRUE), 2:3, drop = TRUE])
 
 
 The top of the node hierarchy brings out clearly, in descending order, the domination of Nancy, Strasbourg, Metz and Mulhouse, each attracting more than 10 000 commuters.
-
-One could easily repeat these selections, with higher or smaller thresholds, to identify the most robust connections and the intermittent ones.
 
 # Conclusion
 
