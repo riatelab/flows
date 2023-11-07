@@ -2,7 +2,6 @@
 # `flows`: Flow Selection and Analysis <img src="man/figures/logo.png" align="right" width="140"/>
 
 [![R-CMD-check](https://github.com/riatelab/flows/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/flows/actions)
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version-ago/flows)](https://cran.r-project.org/package=flows)
 
 `flows` allows to select, analyse and visualise flows. Its main
 functionalities are: flows selection (main, dominant or major flows),
@@ -11,13 +10,7 @@ representation of dominant flows (map and graph).
 
 ## Installation
 
-You can install the released version of flows from CRAN with:
-
-``` r
-install.packages("mapsf")
-```
-
-Alternatively, you can install the development version of flows from
+You can install the development version of flows from
 GitHub with:
 
 ``` r
