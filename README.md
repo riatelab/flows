@@ -2,6 +2,8 @@
 # `flows`: Flow Selection and Analysis <img src="man/figures/logo.png" align="right" width="140"/>
 
 <!-- badges: start -->
+
+[![Version](http://www.r-pkg.org/badges/version/flows)](https://cran.r-project.org/package=flows/)
 [![R-CMD-check](https://github.com/riatelab/flows/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/riatelab/flows/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 

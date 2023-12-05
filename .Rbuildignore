@@ -4,3 +4,4 @@
 ^doc$
 .github
 ^\.github$
+README.Rmd
