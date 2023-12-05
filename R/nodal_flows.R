@@ -109,8 +109,8 @@ map_nodal_flows <- function(mat,
   )
   # print(leg_pos_node)
   do.call(mapsf::mf_legend,
-          list(type = "symb", pt_pch = rep(21,4),
-               pt_cex = c(2.8,2,1,1), title = NA,
+          list(type = "symb", pch = rep(21,4),
+               cex = c(2.8,2,1,1), title = NA,
                val = leg_node,
                pos = leg_pos_node, border = c(1,1,1,NA),
                pal = c(col_node, NA), box_cex = c(1,.5))

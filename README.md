@@ -56,8 +56,9 @@ mf_scale(50)
 
 - [Beauguitte, L., Giraud, T. et Guérois, M. (2015). Un outil pour la
   sélection et la visualisation de flux : le package flows. Netcom,
-  29(3/4), 399-408.](https://netcom.revues.org/2134) <small>(This paper
-  is in French and refers to previous versions of the package.)</small>
+  29(3/4), 399-408.](https://journals.openedition.org/netcom/2134)
+  <small>(This paper is in French and refers to previous versions of the
+  package.)</small>
 - Package vignette
 
 ## Community Guidelines

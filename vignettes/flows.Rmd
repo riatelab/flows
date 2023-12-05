@@ -10,6 +10,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 5,
+  fig.height = 6
+)
+```
+
 # Introduction
 
 
@@ -57,7 +66,7 @@ A typical data workflow may be:
 
 ## Data Preparation
 
-Flow data can be found in wide (matrix) or long format (_i-j-fij_, i.e. origin - destination - flow intensity).
+Flow data can be found in wide (matrix) or long format (_i - j - fij_, i.e. origin - destination - flow intensity).
 As all **flows** function take flow data in wide format, the `prepare_mat()` function transforms a link list into a square matrix.
 `prepare_mat()` has four arguments: a data.frame to transform (`mat`), the origin (`i`), the destination (`j`) and the flow intensity (`fij`).
 
@@ -76,27 +85,25 @@ mat[1:4,1:4]
 
 Four selection methods based on flow origins are accessible through the `select_flows()` function:
 
-* `nfirst`: the `k` first flows from all origins;
+* `nfirst`: the `k` first flows from all origins;  
+* `xfirst`: all flows greater than a threshold `k`;  
+* `xsumfirst`: as many flows as necessary for each origin so that their sum is at least equal to `k`;  
+* `dominant`: flows that satify a dominance test, this function may be used to select flows obeying the second criterion of Nystuen and Dacey method.
 
-* `xfirst`: all flows greater than a threshold `k`;
-
-* `xsumfirst`: as many flows as necessary for each origin so that their sum is at least equal to `k`.
-
-Figure 1: The three methods of the `select_flows()` function
-<img src="figure1en.png" width="680px" />  
+Figure 1: The three methods of the `select_flows()` function 
+<img src="figure1en.png" width="680px" /> 
 **Black links are the selected ones.**
 
 Methods taking into account the total volume of flows are implemented when using `global = TRUE` parameter.
 They are identical to the ones described above: selection of the `k` first flows, selection of flows greater than `k` and  selection of flows such as the sum is at least equal to `k`.
 
-The `dominant` method selects flows based on a dominance test. This function may be used to select flows obeying the second criterion of Nystuen and Dacey method.
-
 All these functions take as input a square matrix of flows and generate binary matrices of the same size.
 Selected flows are coded 1, others 0.
 It is therefore possible to combine criteria of selection through element-wise multiplication of matrices (Figure 2).
 
-Figure 2: Flow selection and criteria combination
-<img src="figure2en.png" width="680px"  />
+
+Figure 2: Flow selection and criteria combination 
+<img src="figure2en.png" width="680px" />
 
 
 ## Statistics and Graphics
@@ -106,11 +113,6 @@ Measures provided are density (number of present flows divided by the number of 
 In addition, four graphics can be plotted: degree distribution curve (by default, outdegree), weighted degree distribution curve, Lorenz curve and boxplot on flow intensities.
 
 ```{r, fig.width=5, fig.height=5}
-# Import data
-nav <- read.csv(system.file("csv/nav.csv", package = "flows"))
-# Prepare data
-mat <- prepare_mat(x = nav, i = "i", j = "j", fij = "fij")
-
 # Get statistics about the matrix
 stat_mat(mat = mat, output = "none", verbose = TRUE)
 
@@ -145,11 +147,6 @@ As an illustration, we present a brief analysis of commuter flows between urban 
 We compare two different thresholds (500 and 1000) on the total volume of flows.
 
 ```{r, fig.height = 4, fig.width=4}
-# Import data
-nav <- read.csv(system.file("csv/nav.csv", package = "flows"))
-# Prepare data
-mat <- prepare_mat(x = nav, i = "i", j = "j", fij = "fij")
-
 # Remove the matrix diagonal
 diag(mat) <- 0
 
@@ -170,14 +167,6 @@ With a threshold of 1000 commuters, 98% of links are lost but only 54% of the vo
 The following example selects flows that represent at least 20% of the sum of outgoing flows for each urban area.
 
 ```{r, fig.height = 6, fig.width=6}
-# Import data
-nav <- read.csv(system.file("csv/nav.csv", package = "flows"))
-# Prepare data
-mat <- prepare_mat(x = nav, i = "i", j = "j", fij = "fij")
-
-# Remove the matrix diagonal
-diag(mat) <- 0
-
 # Percentage of each outgoing flows
 mat_p <- mat  / rowSums(mat) * 100
 
@@ -196,8 +185,6 @@ We decide run a dominant flow analysis on this dataset.
 `nodal_flows()` combines the two criteria in a single function and returns a flow matrix.
 
 ```{r}
-nav <- read.csv(system.file("csv/nav.csv", package = "flows"))
-mat <- prepare_mat(x = nav, i = "i", j = "j", fij = "fij")
 res <- nodal_flows(mat)
 
 compare_mat(mat1 = mat, mat2 = res)
@@ -208,13 +195,11 @@ This analysis keeps 4% of all links and 4% of the flows volume.
 ```{r, fig.height=5.77, fig.width=6, eval = TRUE}
 library(sf)
 library(mapsf)
-nav <- read.csv(system.file("csv/nav.csv", package = "flows"))
-mat <- prepare_mat(x = nav, i = "i", j = "j", fij = "fij")
 UA <- st_read(system.file("gpkg/GE.gpkg", package = "flows"), 
               layer = "urban_area", quiet = TRUE)
 GE <- st_read(system.file("gpkg/GE.gpkg", package = "flows"), 
               layer = "region", quiet = TRUE)
-mf_map(GE, col = "#cceae7", border = NA, expandBB = c(0,0,0,.25))
+mf_map(GE, col = "#c6deba", border = NA, expandBB = c(0, 0, 0, .25))
 out <- map_nodal_flows(mat = mat, x = UA,
                        col_node = c('red', 'orange', 'yellow'),
                        col_flow = "grey30",
@@ -223,14 +208,13 @@ out <- map_nodal_flows(mat = mat, x = UA,
                        leg_flow = "Nb. of commuters",
                        breaks = c(4,100,1000,2500,8655),
                        lwd = c(1,4,8,16), add = TRUE)
-mf_label(out$nodes[out$nodes$w>6000,], var = 'name',
-         halo = TRUE, overlap = FALSE, pos = 4)
+mf_label(out$nodes[out$nodes$w>6000,], 
+         var = 'name',
+         halo = TRUE, overlap = FALSE)
 mf_title("Dominant Flows of Commuters")
 mf_credits("INSEE, 2011")
 mf_scale()
-
 head(out$nodes[order(out$nodes$w, decreasing = TRUE), 2:3, drop = TRUE])
-
 ```
 
 

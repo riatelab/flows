@@ -3,9 +3,10 @@ Type: Package
 Title: Flow Selection and Analysis
 Version: 2.0.0
 Authors@R: c(
-      person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
-      person("Laurent", "Beauguitte", role = c("aut")),
-      person("Marianne", "Guérois", role = c("aut")))
+    person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr",
+    role = c("cre","aut"), comment = c(ORCID = "0000-0002-1932-3323")),
+    person("Laurent", "Beauguitte", role = c("aut")),
+    person("Marianne", "Guérois", role = c("aut")))
 Description: Selections on flow matrices, statistics on selected flows, map and
     graph visualisations. See Beauguitte et al. (2015) <doi:10.4000/netcom.2134>.
 License: GPL-3
