@@ -5,3 +5,4 @@
 .github
 ^\.github$
 README.Rmd
+^CITATION\.cff$
