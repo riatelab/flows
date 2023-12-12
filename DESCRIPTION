@@ -1,14 +1,23 @@
 Package: flows
 Type: Package
-Title: Flow Selection and Analysis
+Title: Selections on Flow Matrices, Statistics on Selected Flows, Map and Graph Visualisations
 Version: 2.0.0
 Authors@R: c(
     person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr",
     role = c("cre","aut"), comment = c(ORCID = "0000-0002-1932-3323")),
     person("Laurent", "Beauguitte", role = c("aut")),
     person("Marianne", "Guérois", role = c("aut")))
-Description: Selections on flow matrices, statistics on selected flows, map and
-    graph visualisations. See Beauguitte et al. (2015) <doi:10.4000/netcom.2134>.
+Description: The analysis and representation of flows often presuppose a selection
+    to facilitate interpretation. Various methods have been proposed for selecting
+    flows, one of the most widely used being based on major flows: it selects only
+    the most important flows, absolute or relative, on a local or global scale.
+    These methods often highlight hierarchies between locations, but the loss of
+    information caused by selection is rarely taken into account. It therefore
+    seems useful to propose statistical indicators to assess the loss of information
+    and the characteristics of selected flows. We provide functions that select
+    flows (main, dominant or major flows), provide statistics on selections and
+    offer visualizations in the form of maps and graphs.
+    See Beauguitte et al (2015) <doi:10.4000/netcom.2134>.
 License: GPL-3
 Depends:
     R (>= 3.6.0)

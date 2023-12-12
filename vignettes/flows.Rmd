@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 
 The **`flows`** package contains functions that select flows, provide statistics on selections and propose map and graph visualisations.    
-The first part of the vignette reminds several methods of flow selection, the second part presents the main functions of the package and the last one proposes an exemple of analysis based on commuters data in the French Grand Est region.  
+The first part of the vignette reminds several methods of flow selection, the second part presents the main functions of the package and the last one proposes an example of analysis based on commuters data in the French Grand Est region.  
 
 # Analysis of geographic flows: issues and methods
 

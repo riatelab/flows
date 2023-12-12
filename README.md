@@ -1,5 +1,5 @@
 
-# `flows`: Flow Selection and Analysis <img src="man/figures/logo.png" align="right" width="140"/>
+# `flows`: Selections on flow matrices, statistics on selected flows, cartographic and graphic visualizations <img src="man/figures/logo.png" align="right" width="140"/>
 
 <!-- badges: start -->
 
@@ -7,10 +7,17 @@
 [![R-CMD-check](https://github.com/riatelab/flows/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/riatelab/flows/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-`flows` allows to select, analyse and visualise flows. Its main
-functionalities are: flows selection (main, dominant or major flows),
-indicators production about selected flows and lost information,
-representation of dominant flows (map and graph).
+The analysis and representation of flows often presuppose a selection to
+facilitate interpretation. Various methods have been proposed for
+selecting flows, one of the most widely used being based on major flows:
+it selects only the most important flows, absolute or relative, on a
+local or global scale. These methods often highlight hierarchies between
+locations, but the loss of information caused by selection is rarely
+taken into account. It therefore seems useful to propose statistical
+indicators to assess the loss of information and the characteristics of
+selected flows. We provide functions that select flows (main, dominant
+or major flows), provide statistics on selections and offer
+visualizations in the form of maps and graphs.
 
 ## Installation
 
