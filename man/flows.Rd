@@ -2,6 +2,7 @@
 % Please edit documentation in R/package.R
 \docType{package}
 \name{flows}
+\alias{flows-package}
 \alias{flows}
 \title{Package description}
 \description{
@@ -14,4 +15,22 @@ a vignette (see \code{vignette(topic = "flows")}) and a paper (Beauguitte, Girau
 \references{
 L. Beauguitte, T. Giraud & M. Guérois, 2015. "Un outil pour la sélection et la visualisation de flux : le package flows",
  \emph{Netcom}, 29-3/4:399-408. \url{https://journals.openedition.org/netcom/2134}.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/riatelab/flows}
+  \item Report bugs at \url{https://github.com/riatelab/flows/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Timothée Giraud \email{timothee.giraud@cnrs.fr} (\href{https://orcid.org/0000-0002-1932-3323}{ORCID})
+
+Authors:
+\itemize{
+  \item Laurent Beauguitte
+  \item Marianne Guérois
+}
+
 }

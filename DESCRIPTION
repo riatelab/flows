@@ -12,8 +12,8 @@ Description: The analysis and representation of flows often presuppose a selecti
     flows, one of the most widely used being based on major flows: it selects only
     the most important flows, absolute or relative, on a local or global scale.
     These methods often highlight hierarchies between locations, but the loss of
-    information caused by selection is rarely taken into account. It therefore
-    seems useful to propose statistical indicators to assess the loss of information
+    information caused by selection is rarely taken into account. We
+    propose statistical indicators to assess the loss of information
     and the characteristics of selected flows. We provide functions that select
     flows (main, dominant or major flows), provide statistics on selections and
     offer visualizations in the form of maps and graphs.
@@ -36,4 +36,4 @@ URL: https://github.com/riatelab/flows
 BugReports: https://github.com/riatelab/flows/issues
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
