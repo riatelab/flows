@@ -21,8 +21,8 @@ importFrom(maplegend,
   leg_draw
 )
 importFrom(mapsf,
+  mf_get_breaks,
   mf_get_links,
-  mf_legend,
   mf_map
 )
 importFrom(utils,stack)

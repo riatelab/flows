@@ -41,7 +41,7 @@ nodal_flows <- function(mat) {
 #' @param leg_pos Position of the legend
 #' @param add A boolean, if TRUE, add the layer to an existing plot.
 #' @export
-#' @importFrom mapsf mf_get_links mf_map mf_legend
+#' @importFrom mapsf mf_get_links mf_map mf_get_breaks
 #' @importFrom maplegend leg_comp leg_draw
 #' @importFrom utils stack
 #' @return A list of sf objects is returned. The first element contains the
@@ -163,9 +163,9 @@ map_nodal_flows <- function(mat,
 #' "topright", "left", "right", "bottomleft", "bottom", "bottomright".
 #' @param leg_node Text of the nodes legend.
 #' @param labels A boolean, if TRUE, labels of dominant and intermediary nodes are plotted.
-#' @note As square matrices can easily be plotted with \link[igraph]{plot.igraph} or
-#' \link[sna]{gplot} functions from igraph and sna packages, we do not propose
-#' visualisation for other outputs.
+#' @note As square matrices can easily be plotted with plot.igraph or
+#' gplot functions from igraph and sna packages respectively, we do not propose
+#' visualisation for other output.
 #' @details This function uses the Davidson Harel algorithm from igraph.
 #' @import graphics
 #' @importFrom igraph "V" "E" "V<-" "E<-" "degree"

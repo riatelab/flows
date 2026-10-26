@@ -36,9 +36,9 @@ This function plots a dominant flows graph.
 This function uses the Davidson Harel algorithm from igraph.
 }
 \note{
-As square matrices can easily be plotted with \link[igraph]{plot.igraph} or
-\link[sna]{gplot} functions from igraph and sna packages, we do not propose
-visualisation for other outputs.
+As square matrices can easily be plotted with plot.igraph or
+gplot functions from igraph and sna packages respectively, we do not propose
+visualisation for other output.
 }
 \examples{
 nav <- read.csv(system.file("csv/nav.csv", package = "flows"))

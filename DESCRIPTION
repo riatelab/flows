@@ -29,7 +29,6 @@ Imports:
     utils,
     stats
 Suggests:
-    sna,
     sf,
     knitr, 
     rmarkdown

@@ -204,8 +204,7 @@ out <- map_nodal_flows(
   mat = mat, x = UA,
   col_node = c("red", "orange", "yellow"),
   col_flow = "grey30",
-  leg_pos_node = "topright",
-  leg_pos_flow = "right",
+  leg_pos = "topright",
   leg_flow = "Nb. of commuters",
   breaks = c(4, 100, 1000, 2500, 8655),
   lwd = c(1, 4, 8, 16), add = TRUE
