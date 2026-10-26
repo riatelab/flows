@@ -16,8 +16,7 @@ map_nodal_flows(
   leg_node = c("Dominant", "Intermediate", "Dominated",
     "Size proportional\\nto sum of inflows"),
   leg_flow = "Flow intensity",
-  leg_pos_flow = "topleft",
-  leg_pos_node = "topright",
+  leg_pos = "topleft",
   add = FALSE
 )
 }
@@ -44,9 +43,7 @@ breaks, or a classification method name (see mf_get_breaks())}
 
 \item{leg_flow}{Label for the flows legend}
 
-\item{leg_pos_flow}{Position of the flows legend}
-
-\item{leg_pos_node}{Position of the node legend}
+\item{leg_pos}{Position of the legend}
 
 \item{add}{A boolean, if TRUE, add the layer to an existing plot.}
 }

@@ -9,12 +9,20 @@ export(select_flows)
 export(stat_mat)
 import(graphics)
 import(stats)
-importFrom(igraph,"E")
-importFrom(igraph,"E<-")
-importFrom(igraph,"V")
-importFrom(igraph,"V<-")
-importFrom(igraph,"degree")
-importFrom(mapsf,mf_get_links)
-importFrom(mapsf,mf_legend)
-importFrom(mapsf,mf_map)
+importFrom(igraph,
+  "E<-",
+  "V<-",
+  E,
+  V,
+  degree
+)
+importFrom(maplegend,
+  leg_comp,
+  leg_draw
+)
+importFrom(mapsf,
+  mf_get_links,
+  mf_legend,
+  mf_map
+)
 importFrom(utils,stack)

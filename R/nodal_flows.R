@@ -38,11 +38,11 @@ nodal_flows <- function(mat) {
 #' @param col_flow Flows color
 #' @param leg_node Labels for the nodes legend
 #' @param leg_flow Label for the flows legend
-#' @param leg_pos_flow Position of the flows legend
-#' @param leg_pos_node Position of the node legend
+#' @param leg_pos Position of the legend
 #' @param add A boolean, if TRUE, add the layer to an existing plot.
 #' @export
 #' @importFrom mapsf mf_get_links mf_map mf_legend
+#' @importFrom maplegend leg_comp leg_draw
 #' @importFrom utils stack
 #' @return A list of sf objects is returned. The first element contains the
 #' nodes with their weight and classification (dominant, intermediary, dominated).
@@ -78,8 +78,7 @@ map_nodal_flows <- function(mat,
                               "Size proportional\nto sum of inflows"
                             ),
                             leg_flow = "Flow intensity",
-                            leg_pos_flow = "topleft",
-                            leg_pos_node = "topright",
+                            leg_pos = "topleft",
                             add = FALSE) {
   op <- par(lend = 1)
   on.exit(par(op), add = TRUE)
@@ -106,28 +105,46 @@ map_nodal_flows <- function(mat,
   x[!x$id %in% fdom$j & x$id %in% fdom$i, "node"] <- "Dominated"
   x <- x[!is.na(x$node), ]
 
+
+
   mf_map(links, "fij", "grad",
     add = add, col = col_flow,
     nbreaks = nbreaks, breaks = breaks,
-    leg_pos = leg_pos_flow, leg_title = leg_flow,
+    leg_pos = NA, leg_title = leg_flow,
     lwd = lwd, leg_val_rnd = 0
   )
   mf_map(x, c("w", "node"), "prop_typo",
-    add = T, inches = inches,
-    pal = col_node, leg_pos = c(NA, NA),
+    add = TRUE, inches = inches, lwd = 1,
+    pal = col_node, leg_pos = NA,
     val_order = c("Dominant", "Intermediate", "Dominated"),
     leg_val_rnd = c(0, 0)
   )
 
-  mf_legend(
-    type = "symb", pch = rep(21, 4),
-    cex = c(2.8, 2, 1, 1), title = NA,
-    val = leg_node,
-    pos = leg_pos_node, border = c(1, 1, 1, NA),
-    pal = c(col_node, NA), box_cex = c(1, .5)
+  breaks <- mf_get_breaks(x = links[["fij"]], nbreaks = nbreaks,
+                          breaks = breaks)
+  l1 <- list(
+    type = "grad_line",
+    val =  breaks,
+    col = col_flow,
+    lwd = lwd,
+    title = leg_flow,
+    val_rnd = 0
   )
-
-
+  l1 <- do.call(leg_comp, l1)
+  l2 <- list(
+    leg = l1,
+    type = "symb",
+    pch = rep(21, 4),
+    cex = c(2.8, 2, 1, 1),
+    title = NA,
+    val = leg_node,
+    border = c(rep(getOption("mapsf.background"), 3), NA),
+    lwd = 1,
+    pal = c(col_node, NA),
+    box_cex = c(1, .75)
+  )
+  l2 <- do.call(leg_comp, l2)
+  leg_draw(l2, pos = leg_pos,mar = getOption("mapsf.mar"), frame = FALSE)
 
   return(invisible(list(nodes = x, flows = links)))
 }
