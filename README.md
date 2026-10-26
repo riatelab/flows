@@ -3,8 +3,8 @@
 
 <!-- badges: start -->
 
-[![Version](http://www.r-pkg.org/badges/version/flows)](https://cran.r-project.org/package=flows/)
-[![R-CMD-check](https://github.com/riatelab/flows/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/riatelab/flows/actions/workflows/R-CMD-check.yaml)
+[![flows status
+badge](https://riatelab.r-universe.dev/flows/badges/version)](https://riatelab.r-universe.dev/flows)
 <!-- badges: end -->
 
 The analysis and representation of flows often presuppose a selection to
@@ -21,10 +21,10 @@ visualizations in the form of maps and graphs.
 
 ## Installation
 
-You can install the development version of flows from GitHub with:
+You can install the development version of flows from r-universe with:
 
 ``` r
-remotes::install_github("riatelab/flows")
+install.packages('flows', repos = c('https://riatelab.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
 ## Usage
@@ -40,20 +40,26 @@ nav <- read.csv(system.file("csv/nav.csv", package = "flows"))
 # Trnasform to wide
 mat <- prepare_mat(x = nav, i = "i", j = "j", fij = "fij")
 # import spatial objects
-UA <- st_read(system.file("gpkg/GE.gpkg", package = "flows"), 
-              layer = "urban_area", quiet = TRUE)
-GE <- st_read(system.file("gpkg/GE.gpkg", package = "flows"), 
-              layer = "region", quiet = TRUE)
+UA <- st_read(system.file("gpkg/GE.gpkg", package = "flows"),
+  layer = "urban_area", quiet = TRUE
+)
+GE <- st_read(system.file("gpkg/GE.gpkg", package = "flows"),
+  layer = "region", quiet = TRUE
+)
 # Map
 mf_map(GE, col = "#c6deba")
-out <- map_nodal_flows(mat = mat, x = UA,
-                       inches = .17,
-                       col_node = c('red', 'orange', 'yellow'),
-                       col_flow = "grey30",
-                       breaks = c(4,100,1000,2500,8655),
-                       lwd = c(1,4,8,16), add = TRUE)
-mf_label(out$nodes[out$nodes$w>6000,], var = 'name',
-         halo = TRUE, overlap = FALSE, pos = 4)
+out <- map_nodal_flows(
+  mat = mat, x = UA,
+  inches = .17,
+  col_node = c("red", "orange", "yellow"),
+  col_flow = "grey30",
+  breaks = c(4, 100, 1000, 2500, 8655),
+  lwd = c(1, 4, 8, 16), add = TRUE
+)
+mf_label(out$nodes[out$nodes$w > 6000, ],
+  var = "name",
+  halo = TRUE, overlap = FALSE, pos = 4
+)
 mf_title("Dominant Flows of Commuters")
 mf_credits("INSEE, 2011")
 mf_scale(50)
