@@ -156,18 +156,17 @@ map_nodal_flows <- function(mat,
 #' @name plot_nodal_flows
 #' @description This function plots a dominant flows graph.
 #' @param mat A square matrix of dominant flows (see \link{nodal_flows}).
-#' @param leg_pos_flows Position of the flows legend, one of "topleft", "top",
+#' @param leg_pos Position of the legend, one of "topleft", "top",
 #' "topright", "left", "right", "bottomleft", "bottom", "bottomright".
 #' @param leg_flow Title of the flows legend.
-#' @param leg_pos_node Position of the nodes legend, one of "topleft", "top",
-#' "topright", "left", "right", "bottomleft", "bottom", "bottomright".
-#' @param leg_node Text of the nodes legend.
+#' @param leg_node Title of the nodes legend.
+#' @param leg_node_modalities Text of node modalities.
 #' @param labels A boolean, if TRUE, labels of dominant and intermediary nodes are plotted.
 #' @note As square matrices can easily be plotted with plot.igraph or
 #' gplot functions from igraph and sna packages respectively, we do not propose
 #' visualisation for other output.
 #' @details This function uses the Davidson Harel algorithm from igraph.
-#' @returns Nothing is returned, a graph is displayed.
+#' @returns The graph is returned, a graph is displayed.
 #' @import graphics
 #' @importFrom igraph "V" "E" "V<-" "E<-" "degree"
 #' @examples
@@ -179,66 +178,111 @@ map_nodal_flows <- function(mat,
 #' plot_nodal_flows(mat = res)
 #' @export
 plot_nodal_flows <- function(mat,
-                             leg_pos_flows = "topright",
-                             leg_flow = "Flows Intensity",
-                             leg_pos_node = "bottomright",
-                             leg_node = c(
-                               "Dominant", "Intermediary",
-                               "Dominated",
-                               "Size proportional\nto sum of inflows"
-                             ),
+                             leg_pos = "topright",
+                             leg_flow = "Flow Intensity",
+                             leg_node = "Node type",
+                             leg_node_modalities = c("Dominant", "Intermediary", "Dominated"),
                              labels = FALSE) {
   g <- igraph::graph.adjacency(adjmatrix = mat, mode = "directed", weighted = TRUE)
   g <- igraph::delete.vertices(g, names(degree(g)[degree(g) == 0]))
   vertexdf <- data.frame(id = V(g)$name, col = NA, size = NA, name = NA)
   # Dominant
   vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "col"] <- "red"
-  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "size"] <- 6
+  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "size"] <- 2.8
   vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "name"] <-
     as.character(vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") < 1), "id"])
   # intermediaire
   vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") > 0), "col"] <- "orange"
-  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") > 0), "size"] <- 4
+  vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") > 0), "size"] <- 2
   vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") > 0), "name"] <-
     as.character(vertexdf[(degree(g, mode = "in") > 0) & (degree(g, mode = "out") > 0), "id"])
   # Dominé
   vertexdf[(degree(g, mode = "in") < 1) & (degree(g, mode = "out") > 0), "col"] <- "yellow"
-  vertexdf[(degree(g, mode = "in") < 1) & (degree(g, mode = "out") > 0), "size"] <- 2
+  vertexdf[(degree(g, mode = "in") < 1) & (degree(g, mode = "out") > 0), "size"] <- 1
 
   V(g)$color <- vertexdf$col
   V(g)$size <- vertexdf$size
   V(g)$names <- as.character(vertexdf$name)
-  E(g)$color <- "black"
-  E(g)$width <- ((E(g)$weight) * 8 / (max(E(g)$weight) - min(E(g)$weight))) + 1
-  lg <- igraph::layout.davidson.harel(g)
-  g <- igraph::set.graph.attribute(graph = g, name = "layout", value = lg)
-  if (isTRUE(labels)) {
-    x <- igraph::plot.igraph(g,
-      vertex.label = V(g)$names, vertex.label.cex = 1,
-      vertex.label.color = "black",
-      vertex.size = V(g)$size, edge.arrow.size = 0
-    )
-  } else {
-    x <- igraph::plot.igraph(g,
-      vertex.label = NA,
-      vertex.size = V(g)$size, edge.arrow.size = 0
+
+  layout <-  igraph::layout.davidson.harel(g)
+  # Normalize the layout in which the vertices are positioned
+  vertex.layout <- edge.layout <- igraph::norm_coords(
+    layout,
+    ymin = -1,
+    ymax = 1,
+    xmin = -1,
+    xmax = 1
+  )
+
+  E(g)$width <- ((E(g)$weight /  max(E(g)$weight))) * 10
+  # Legend values and thickness
+  breaks.edge <- seq(max(E(g)$weight), min(E(g)$weight), length.out = 4)
+
+
+  plot.new()
+  # Setting new graphic parameters
+  opar <- par(usr = c(-1.1, 1.4, -1.1, 1.1), xpd = TRUE)
+  on.exit(par(opar))
+
+  # Display edges
+  igraph::plot.igraph(
+    g,
+    edge.curved = .1,
+    layout = edge.layout,
+    vertex.size = 0,
+    edge.color = "black",
+    add = TRUE, edge.arrow.size = 0,
+    edge.width = E(g)$width,
+    vertex.label = NA
+  )
+
+  points(
+    x = vertex.layout[, 1],
+    y = vertex.layout[, 2],
+    pch = 21,
+    cex =  V(g)$size ,
+    bg =  V(g)$color ,
+    col = "grey",
+    lwd = 1
+  )
+
+  if(isTRUE(labels)){
+    text(
+      x = edge.layout[, 1],
+      y = edge.layout[, 2] + yinch(.01),
+      labels = V(g)$names,
+      family = "sans",
+      col = "black",
+      cex = .8,
+      adj = c(.5, 0)
     )
   }
-  LegendPropLines(
-    pos = leg_pos_flows, legTitle = leg_flow,
-    legTitleCex = 0.8, legValuesCex = 0.6,
-    varvect = c(min(E(g)$weight), max(E(g)$weight)),
-    sizevect = c(2, 10), col = "black",
-    frame = FALSE, round = 0
+
+
+
+  l1 <- list(
+    type = "prop_line",
+    val = rev(breaks.edge),
+    col = "black",
+    lwd = max(E(g)$width),
+    title = leg_flow,
+    val_rnd = 0
   )
-
-
-  legend(
-    x = leg_pos_node, legend = leg_node,
-    cex = c(0.8), pt.cex = c(2.8, 2, 1, 0), bty = "n",
-    pt.bg = c("red", "orange", "yellow", NA),
-    pch = c(21, 21, 21, 21)
+  l1 <- do.call(leg_comp, l1)
+  l2 <- list(
+    leg = l1,
+    type = "symb",
+    pch = rep(21, 3),
+    cex = c(2.8, 2, 1),
+    title = leg_node,
+    val = leg_node_modalities,
+    border = rep("black", 3),
+    lwd = 1,
+    pal = c("red", "orange", "yellow"),
+    box_cex = c(1, .75)
   )
+  l2 <- do.call(leg_comp, l2)
+  leg_draw(l2, pos = leg_pos, mar = par("mar"), frame = FALSE)
 
-  return(invisible(NULL))
+  return(invisible(g))
 }

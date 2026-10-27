@@ -6,31 +6,29 @@
 \usage{
 plot_nodal_flows(
   mat,
-  leg_pos_flows = "topright",
-  leg_flow = "Flows Intensity",
-  leg_pos_node = "bottomright",
-  leg_node = c("Dominant", "Intermediary", "Dominated",
-    "Size proportional\\nto sum of inflows"),
+  leg_pos = "topright",
+  leg_flow = "Flow Intensity",
+  leg_node = "Node type",
+  leg_node_modalities = c("Dominant", "Intermediary", "Dominated"),
   labels = FALSE
 )
 }
 \arguments{
 \item{mat}{A square matrix of dominant flows (see \link{nodal_flows}).}
 
-\item{leg_pos_flows}{Position of the flows legend, one of "topleft", "top",
+\item{leg_pos}{Position of the legend, one of "topleft", "top",
 "topright", "left", "right", "bottomleft", "bottom", "bottomright".}
 
 \item{leg_flow}{Title of the flows legend.}
 
-\item{leg_pos_node}{Position of the nodes legend, one of "topleft", "top",
-"topright", "left", "right", "bottomleft", "bottom", "bottomright".}
+\item{leg_node}{Title of the nodes legend.}
 
-\item{leg_node}{Text of the nodes legend.}
+\item{leg_node_modalities}{Text of node modalities.}
 
 \item{labels}{A boolean, if TRUE, labels of dominant and intermediary nodes are plotted.}
 }
 \value{
-Nothing is returned, a graph is displayed.
+The graph is returned, a graph is displayed.
 }
 \description{
 This function plots a dominant flows graph.
