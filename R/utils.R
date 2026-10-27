@@ -32,7 +32,7 @@ firstflows <- function(mat, method = "nfirst", ties.method = "first", k) {
     return(matfinal)
   }
   for (i in 1:nrow(matfinal)) {
-    matfinal[names(lfirst[i][]), lfirst[[i]][is.na(lfirst[[i]]) == F]] <- 1
+    matfinal[names(lfirst[i][]), lfirst[[i]][is.na(lfirst[[i]]) == FALSE]] <- 1
   }
   return(matfinal)
 }

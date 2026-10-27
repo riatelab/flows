@@ -86,7 +86,7 @@ map_nodal_flows <- function(mat,
   w <- colSums(mat)
   dt <- data.frame(id = names(w), w)
   names(x)[1] <- "id"
-  x <- merge(x, dt, by.x = names(x)[1], by.y = names(dt)[1], all.x = T)
+  x <- merge(x, dt, by.x = names(x)[1], by.y = names(dt)[1], all.x = TRUE)
   res <- select_flows(mat = mat, method = "nfirst", global = FALSE, k = 1)
   res2 <- select_flows(mat = mat, method = "dominant", w = w, k = 1)
   mm <- mat * res * res2
