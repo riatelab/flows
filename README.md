@@ -1,11 +1,6 @@
+**&#9888; This project has moved to a new location: https://codeberg.org/riatelab/flows/ &#9888;**
 
 # `flows`: Selections on flow matrices, statistics on selected flows, cartographic and graphic visualizations <img src="man/figures/logo.png" align="right" width="140"/>
-
-<!-- badges: start -->
-
-[![flows status
-badge](https://riatelab.r-universe.dev/flows/badges/version)](https://riatelab.r-universe.dev/flows)
-<!-- badges: end -->
 
 The analysis and representation of flows often presuppose a selection to
 facilitate interpretation. Various methods have been proposed for
@@ -18,66 +13,3 @@ indicators to assess the loss of information and the characteristics of
 selected flows. We provide functions that select flows (main, dominant
 or major flows), provide statistics on selections and offer
 visualizations in the form of maps and graphs.
-
-## Installation
-
-You can install the development version of flows from r-universe with:
-
-``` r
-install.packages('flows', repos = c('https://riatelab.r-universe.dev', 'https://cloud.r-project.org'))
-```
-
-## Usage
-
-Example of a dominant flows analysis on commuters data:
-
-``` r
-library(sf)
-library(flows)
-library(mapsf)
-# Import datasets
-nav <- read.csv(system.file("csv/nav.csv", package = "flows"))
-# Trnasform to wide
-mat <- prepare_mat(x = nav, i = "i", j = "j", fij = "fij")
-# import spatial objects
-UA <- st_read(system.file("gpkg/GE.gpkg", package = "flows"),
-  layer = "urban_area", quiet = TRUE
-)
-GE <- st_read(system.file("gpkg/GE.gpkg", package = "flows"),
-  layer = "region", quiet = TRUE
-)
-# Map
-mf_map(GE, col = "#c6deba")
-out <- map_nodal_flows(
-  mat = mat, x = UA,
-  inches = .17,
-  col_node = c("red", "orange", "yellow"),
-  col_flow = "grey30",
-  breaks = c(4, 100, 1000, 2500, 8655),
-  lwd = c(1, 4, 8, 16), add = TRUE
-)
-mf_label(out$nodes[out$nodes$w > 6000, ],
-  var = "name",
-  halo = TRUE, overlap = FALSE, pos = 4
-)
-mf_title("Dominant Flows of Commuters")
-mf_credits("INSEE, 2011")
-mf_scale(50)
-```
-
-![](man/figures/unnamed-chunk-3-1.png)<!-- -->
-
-## Ressources
-
-- [Beauguitte, L., Giraud, T. et Guérois, M. (2015). Un outil pour la
-  sélection et la visualisation de flux : le package flows. Netcom,
-  29(3/4), 399-408.](https://journals.openedition.org/netcom/2134)
-  <small>(This paper is in French and refers to previous versions of the
-  package.)</small>
-- Package vignette
-
-## Community Guidelines
-
-One can contribute to the package through [pull
-requests](https://github.com/riatelab/flows/pulls) and report issues or
-ask questions [here](https://github.com/riatelab/flows/issues).
