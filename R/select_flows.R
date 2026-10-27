@@ -69,10 +69,9 @@
 #' res[3, 2]
 select_flows <- function(mat, method = "nfirst", ties = "first", global = FALSE, k, w) {
   if (method %in% c("nfirst", "xfirst", "xsumfirst")) {
-    if (global == TRUE) {
+    if (isTRUE(global)) {
       x <- firstflowsg(mat = mat, method = method, k = k, ties.method = ties)
-    }
-    if (global == FALSE) {
+    } else {
       x <- firstflows(mat = mat, method = method, k = k, ties.method = ties)
     }
   }

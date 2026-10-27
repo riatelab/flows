@@ -29,6 +29,9 @@ plot_nodal_flows(
 
 \item{labels}{A boolean, if TRUE, labels of dominant and intermediary nodes are plotted.}
 }
+\value{
+Nothing is returned, a graph is displayed.
+}
 \description{
 This function plots a dominant flows graph.
 }

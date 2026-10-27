@@ -167,6 +167,7 @@ map_nodal_flows <- function(mat,
 #' gplot functions from igraph and sna packages respectively, we do not propose
 #' visualisation for other output.
 #' @details This function uses the Davidson Harel algorithm from igraph.
+#' @returns Nothing is returned, a graph is displayed.
 #' @import graphics
 #' @importFrom igraph "V" "E" "V<-" "E<-" "degree"
 #' @examples
@@ -211,7 +212,7 @@ plot_nodal_flows <- function(mat,
   E(g)$width <- ((E(g)$weight) * 8 / (max(E(g)$weight) - min(E(g)$weight))) + 1
   lg <- igraph::layout.davidson.harel(g)
   g <- igraph::set.graph.attribute(graph = g, name = "layout", value = lg)
-  if (labels == TRUE) {
+  if (isTRUE(labels)) {
     x <- igraph::plot.igraph(g,
       vertex.label = V(g)$names, vertex.label.cex = 1,
       vertex.label.color = "black",
@@ -238,4 +239,6 @@ plot_nodal_flows <- function(mat,
     pt.bg = c("red", "orange", "yellow", NA),
     pch = c(21, 21, 21, 21)
   )
+
+  return(invisible(NULL))
 }

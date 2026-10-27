@@ -146,7 +146,7 @@ stat_mat <- function(mat, output = "all", verbose = TRUE) {
     sizecomp = clustg$csize, wcomp = compw$x
   )
 
-  if (verbose == TRUE) {
+  if (isTRUE(verbose)) {
     ## stat cat
     cat("matrix dimension:", matdim, "X", matdim, "\n")
     cat("nb. links:", nbcellfull, "\n")
