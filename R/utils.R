@@ -125,60 +125,6 @@ domflows <- function(mat, w, k) {
 
 
 
-#### Private
-#' @title nfirst
-#' @name nfirst
-#' @noRd
-nfirst <- function(x, k, ties.method) {
-  x <- x[x > 0]
-  if (length(x) > 0) {
-    if (length(x) > k) {
-      x <- x[rank(x, ties.method = ties.method) > (length(x) - k)]
-      x <- names(x)
-    } else {
-      x <- names(x)
-    }
-  }
-  return(x)
-}
-
-#' @title xfirst
-#' @name xfirst
-#' @noRd
-xfirst <- function(x, k, ties.method) {
-  x <- x[x > 0]
-  if (length(x) > 0) {
-    x <- x[x > k]
-    x <- names(x)
-  } else {
-    x <- names(x)
-  }
-  return(x)
-}
-
-#' @title xsumfirst
-#' @name xsumfirst
-#' @noRd
-xsumfirst <- function(x, k, ties.method) {
-  x <- x[x > 0]
-  x <- x[order(x, decreasing = TRUE)]
-  x <- cumsum(x = x)
-  if (length(x) > 0) {
-    if (x[1] >= k) {
-      x <- names(x[1])
-    } else {
-      # at least k
-      x <- x[1:(length(x[(x <= k) == TRUE]) + 1)]
-      # less than k
-      # x <- x[(x <= k)]
-      x <- names(x)
-    }
-  } else {
-    x <- names(x)
-  }
-  # pb return error if k > sum(mat) or k > sum(mat/w)
-  return(x)
-}
 
 
 #' @title LegendPropLines
