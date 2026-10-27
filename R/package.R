@@ -16,7 +16,7 @@
 #' An introduction to the package conceptual background and usage is proposed in
 #' a vignette (see \code{vignette(topic = "flows")}) and a paper (Beauguitte, Giraud & Guérois 2015).
 #' @references L. Beauguitte, T. Giraud & M. Guérois, 2015. "Un outil pour la sélection et la visualisation de flux : le package flows",
-#'  \emph{Netcom}, 29-3/4:399-408. \url{https://journals.openedition.org/netcom/2134}.
+#'  \emph{Netcom}, 29-3/4:399-408. \url{https://doi.org/10.4000/netcom.2134}.
 "_PACKAGE"
 
 #' @title Commuters datasets
