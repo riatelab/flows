@@ -5,8 +5,11 @@ Version: 2.0.0
 Authors@R: c(
     person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr",
     role = c("cre","aut"), comment = c(ORCID = "0000-0002-1932-3323")),
-    person("Laurent", "Beauguitte", role = c("aut")),
-    person("Marianne", "Guérois", role = c("aut")))
+    person("Laurent", "Beauguitte",
+    role = c("aut"), comment = c(ORCID = "0000-0001-8803-6056")),
+    person("Marianne", "Guérois",
+    role = c("aut"), comment = c(ORCID = "0000-0001-8285-1877"))
+    )
 Description: The analysis and representation of flows often presuppose a selection
     to facilitate interpretation. Various methods have been proposed for selecting
     flows, one of the most widely used being based on major flows: it selects only

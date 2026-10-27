@@ -8,6 +8,16 @@
 \description{
 Selections on flow matrices, statistics on selected flows, map
 and graph visualisations.
+The analysis and representation of flows often presuppose a selection
+to facilitate interpretation. Various methods have been proposed for selecting
+flows, one of the most widely used being based on major flows: it selects only
+the most important flows, absolute or relative, on a local or global scale.
+These methods often highlight hierarchies between locations, but the loss of
+information caused by selection is rarely taken into account. We
+propose statistical indicators to assess the loss of information
+and the characteristics of selected flows. We provide functions that select
+flows (main, dominant or major flows), provide statistics on selections and
+offer visualizations in the form of maps and graphs.
 
 An introduction to the package conceptual background and usage is proposed in
 a vignette (see \code{vignette(topic = "flows")}) and a paper (Beauguitte, Giraud & Guérois 2015).
@@ -30,8 +40,8 @@ Useful links:
 Authors:
 \itemize{
   \item Timothée Giraud \email{timothee.giraud@cnrs.fr} (\href{https://orcid.org/0000-0002-1932-3323}{ORCID})
-  \item Laurent Beauguitte
-  \item Marianne Guérois
+  \item Laurent Beauguitte (\href{https://orcid.org/0000-0001-8803-6056}{ORCID})
+  \item Marianne Guérois (\href{https://orcid.org/0000-0001-8285-1877}{ORCID})
 }
 
 }
