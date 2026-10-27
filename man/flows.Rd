@@ -4,7 +4,7 @@
 \name{flows}
 \alias{flows-package}
 \alias{flows}
-\title{Package description}
+\title{Flow Matrix Selection with Statistics and Visualisation}
 \description{
 Selections on flow matrices, statistics on selected flows, map
 and graph visualisations.
@@ -24,7 +24,7 @@ a vignette (see \code{vignette(topic = "flows")}) and a paper (Beauguitte, Girau
 }
 \references{
 L. Beauguitte, T. Giraud & M. Guérois, 2015. "Un outil pour la sélection et la visualisation de flux : le package flows",
- \emph{Netcom}, 29-3/4:399-408. \url{https://doi.org/10.4000/netcom.2134}.
+ \emph{Netcom}, 29-3/4:399-408. \doi{10.4000/netcom.2134}.
 }
 \seealso{
 Useful links:

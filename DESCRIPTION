@@ -1,6 +1,6 @@
 Package: flows
 Type: Package
-Title: Selections on Flow Matrices, Statistics on Selected Flows, Map and Graph Visualisations
+Title: Flow Matrix Selection with Statistics and Visualisation
 Version: 2.0.0
 Authors@R: c(
     person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr",
